@@ -1,0 +1,180 @@
+/* ---------- MatOS BYOK provider card (Settings → MatOS) ----------
+   Sibling of the ChatGPT subscription card: same card chrome, but the body
+   is a small provider form (protocol / base URL / key / models) with a
+   verify-on-save action bar. */
+
+.matos-byok-provider {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 13px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--accent) 4%, var(--bg-panel)),
+    var(--bg-panel) 46%
+  );
+}
+
+.matos-byok-provider__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.matos-byok-provider__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  flex: 0 0 auto;
+  color: var(--accent-strong);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 26%, transparent);
+}
+
+.matos-byok-provider__intro {
+  flex: 1;
+  min-width: 0;
+}
+
+.matos-byok-provider__title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.matos-byok-provider__title-row h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.matos-byok-provider__intro p {
+  margin: 4px 0 0;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.matos-byok-provider__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 650;
+  color: var(--text-muted);
+  border: 1px solid var(--border-soft);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+}
+
+.matos-byok-provider__badge--active {
+  color: var(--green, #238636);
+  border-color: color-mix(in srgb, var(--green, #238636) 35%, var(--border-soft));
+  background: color-mix(in srgb, var(--green, #238636) 8%, transparent);
+}
+
+.matos-byok-provider__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.matos-byok-provider__status {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.matos-byok-provider__form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.matos-byok-provider__field-row {
+  display: flex;
+  gap: 8px;
+}
+
+.matos-byok-provider__field-row .matos-byok-provider__field {
+  flex: 1;
+  min-width: 0;
+}
+
+.matos-byok-provider__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.matos-byok-provider__field > span {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.matos-byok-provider__field input,
+.matos-byok-provider__field select {
+  height: 30px;
+  padding: 0 9px;
+  border-radius: 7px;
+  border: 1px solid var(--border-soft);
+  background: var(--bg-panel);
+  color: var(--text);
+  font-size: 12px;
+}
+
+.matos-byok-provider__field input:focus,
+.matos-byok-provider__field select:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border-soft));
+}
+
+.matos-byok-provider__notice {
+  padding: 7px 10px;
+  border-radius: 7px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.matos-byok-provider__notice--ok {
+  color: var(--green, #238636);
+  border: 1px solid color-mix(in srgb, var(--green, #238636) 30%, transparent);
+  background: color-mix(in srgb, var(--green, #238636) 7%, transparent);
+}
+
+.matos-byok-provider__notice--error {
+  color: var(--red, #cf3f3f);
+  border: 1px solid color-mix(in srgb, var(--red, #cf3f3f) 30%, transparent);
+  background: color-mix(in srgb, var(--red, #cf3f3f) 7%, transparent);
+}
+
+.matos-byok-provider__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.matos-byok-provider__actions .primary,
+.matos-byok-provider__actions .ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.matos-byok-provider__privacy {
+  margin: 0;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}

@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "allowJs": true,
+    "noEmit": true,
+    "types": [
+      "bun-types"
+    ],
+    "allowImportingTsExtensions": true
+  },
+  "include": [
+    "src/entrypoints/*.ts",
+    "src/matos/**/*",
+    "scripts/*.ts"
+  ]
+}

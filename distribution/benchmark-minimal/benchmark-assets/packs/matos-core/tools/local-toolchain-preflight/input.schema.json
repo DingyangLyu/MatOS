@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["vasp", "qe", "lammps", "elk", "openfoam", "conda", "python", "gpu", "wannier90", "gw", "orca", "thermocalc"]
+      },
+      "description": "Optional subset of local toolchain checks. Defaults to the standard core checks: vasp, qe, lammps, conda, and python. Pass elk, openfoam, gpu, wannier90, gw, orca, or thermocalc explicitly when needed."
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["vasp", "qe", "lammps", "elk", "openfoam", "conda", "python", "gpu", "wannier90", "gw", "orca", "thermocalc"]
+      },
+      "description": "Compatibility alias for checks. Prefer checks in new calls."
+    },
+    "toolchainRoot": {
+      "type": "string",
+      "description": "Optional container-visible toolchain root override. Defaults to MATOS_EXTERNAL_TOOLCHAIN_ROOT, MATOS_CONTAINER_TOOLCHAIN_ROOT, MATOS_COMPUTE_TOOLCHAIN_CONTAINER_ROOT, then /opt/matos-tools."
+    },
+    "timeoutSeconds": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 30,
+      "description": "Per-command timeout for non-expensive help/version checks. Defaults to 20 seconds because QE, pw2wannier90.x, and ABINIT startup probes can take several seconds on shared storage."
+    },
+    "detail": {
+      "type": "string",
+      "enum": ["summary", "full"],
+      "default": "full",
+      "description": "Return compact tool status only with summary, or include detailed diagnostics and runtime library paths with full. Defaults to full for backward compatibility."
+    },
+    "gpuIdleUtilizationMaxPercent": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 5,
+      "description": "GPU utilization percentage at or below this threshold is considered idle for local routing."
+    },
+    "gpuIdleMemoryUsedMiBMax": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1048576,
+      "default": 1024,
+      "description": "GPU memory used at or below this threshold is considered idle for local routing."
+    }
+  },
+  "additionalProperties": false
+}

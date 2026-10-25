@@ -1,0 +1,387 @@
+/* file-viewer 手机适配层(mobile UX round-2)。全部规则必须包在
+   @media (max-width: 768px) 或 (hover: none) 查询内,桌面零回退。
+
+   覆盖对象(文件面板 = FileWorkspace 壳 + DesignFilesPanel 树/列表 +
+   DfPreview 快速预览 + FileViewer 各类查看器):
+   1. 窄屏布局:df-panel 预览双栏 → 单栏 + 预览全屏叠层(关闭按钮即返回);
+   2. 触屏可达性:hover 显隐的行菜单/勾选框常显,行高与按钮 ≥44px 触控目标;
+   3. 长文件名:列表行 2 行截断(break-all 保证无空格哈希名也能换行);
+   4. 面包屑:单行横滚 + 尾部渐变提示 + 初始吸附到当前段;
+   5. 行菜单/右键弹层:改为底部动作单(覆盖 JS 内联 top/left 需 !important);
+   6. 上传:触屏隐藏"拖拽上传"提示(无拖拽),点击上传按钮加大;
+   7. 预览缩放/横滚:markdown 表格滚动阴影提示、PDF 缩放钮加大、图片 contain。 */
+
+/* ============================================================
+   A. 窄屏布局重排(视口宽度驱动)
+   ============================================================ */
+@media (max-width: 768px) {
+  /* --- A1. 列表 + 预览双栏 → 单栏;预览变全屏叠层 --------------- */
+  /* 桌面 grid 为 minmax(280px,1fr)+minmax(0,380px),390px 视口下预览列
+     会被挤到 ~110px 且列表不足 280px。窄屏改单列,预览绝对定位盖在
+     列表上,df-preview-close(coarse 指针下常显)充当返回按钮。 */
+  .df-panel,
+  .df-panel:not(.no-preview) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .df-main {
+    border-right: none;
+  }
+  .df-preview {
+    position: absolute;
+    inset: 0;
+    z-index: 8; /* 高于 df-reloading-overlay(5) 与 df-drop-overlay(6) */
+    border-left: none;
+    animation: mob-fv-preview-in 200ms cubic-bezier(0.23, 1, 0.32, 1);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @keyframes mob-fv-preview-in {
+    from { opacity: 0; transform: translateX(24px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .df-preview { animation: none; }
+  }
+  /* 叠层内预览图充分利用高度;缩略图从固定 16/10 比例改为弹性伸展。 */
+  .df-preview-thumb {
+    aspect-ratio: auto;
+    flex: 1 1 auto;
+    min-height: 200px;
+    margin: 12px;
+  }
+  /* 桌面缩略图用 cover 裁切;全屏预览时应完整显示图片/视频。 */
+  .df-preview-thumb img,
+  .df-preview-thumb video {
+    object-fit: contain;
+  }
+  .df-preview-meta {
+    padding: 0 14px calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* --- A2. 顶栏两行化:面包屑一行 + 动作条一行 ------------------- */
+  /* 单行时 7~8 个动作按钮会把面包屑挤到 <90px。改为面包屑独占首行,
+     动作条第二行可横滚。 */
+  .df-topbar {
+    margin: 0 12px 4px;
+    flex-wrap: wrap;
+    gap: 0 12px;
+  }
+  .df-topbar-left {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .df-topbar-right {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .df-topbar-right::-webkit-scrollbar { display: none; }
+  .df-actions { flex-wrap: nowrap; }
+
+  /* --- A3. 面包屑:单行横滚 + 尾部渐变 + 初始吸附当前段 ----------- */
+  .df-panel .df-breadcrumbs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    /* 右缘渐变提示还有内容;配合下面的 padding-right,滚到底时当前段
+       停在渐变区之前,不会被淡化。 */
+    -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+    mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+    padding-right: 28px;
+  }
+  .df-panel .df-breadcrumbs::-webkit-scrollbar { display: none; }
+  /* 唯一吸附点设在最后一段:Chromium 初始布局即吸附,深路径默认露出
+     当前目录而不是根目录。 */
+  .df-panel .df-breadcrumb-segment:last-child { scroll-snap-align: end; }
+  .df-panel .df-breadcrumb-segment { flex: 0 0 auto; }
+  /* 单段不再无限截断挤掉后续段;每段限宽,整条靠横滚。
+     注意:不要改 display——crumb 是 flex 子项,块化后 text-overflow
+     省略号才生效(inline-flex 会破坏省略号);触控高度用 padding 抬。 */
+  .df-panel .df-breadcrumb-btn,
+  .df-panel .df-breadcrumb-current {
+    flex: 0 0 auto;
+    max-width: 52vw;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  /* --- A4. 列表行:精简列(藏体积列)+ 网格重排 ------------------ */
+  /* 桌面 6 列:勾选 20 | 图标 30 | 名称 | 体积 | 时间 | 菜单 28。
+     390px 下体积列意义最小,隐藏之;时间保留;菜单加大到 40px。
+     display:none 的子项会让 grid 自动放置错位,必须同步重定义列。 */
+  .df-row.df-file-row,
+  .df-row.df-dir-row {
+    grid-template-columns: 24px 32px minmax(0, 1fr) auto 40px;
+    padding: 8px 10px 8px 12px;
+  }
+  .df-row.df-file-row > .df-row-size,
+  .df-row.df-dir-row > .df-row-size {
+    display: none;
+  }
+
+  /* --- A5. 长文件名:2 行夹断 + break-all --------------------------
+     单行 ellipsis 在窄屏丢信息太多;无空格长名(哈希、下划线连接)
+     必须 break-all 才能换行。line-clamp 自带尾部省略号。 */
+  .df-row.df-file-row .df-row-name,
+  .df-row.df-dir-row .df-row-name {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    line-height: 1.35;
+    font-size: 14px;
+  }
+
+  /* --- A6. 区块标签/批量条/横幅对齐窄屏边距 ---------------------- */
+  .df-section-label { padding: 8px 12px; }
+  .df-batch-bar { margin: 0 12px 8px; }
+  .df-batch-actions { flex-wrap: wrap; justify-content: flex-end; }
+  .df-upload-banner { margin: 0 12px 8px; }
+  .df-inline-notice { margin: 0 12px 6px; }
+
+  /* --- A7. 空态与上传 CTA --------------------------------------- */
+  .df-empty { padding: 32px 16px; min-height: 260px; }
+  .df-empty-pill { padding: 24px 20px; max-width: 100%; }
+
+  /* --- A8. FileViewer 预览正文窄屏排版 --------------------------- */
+  .image-body { padding: 12px; }
+  .document-preview { padding: 20px 16px; }
+  .markdown-rendered { padding: 24px 16px 48px; }
+  /* markdown 表格横滚提示:滚动阴影(Lea Verou 技法)。cover 层
+     (attachment:local)随内容滚动,滚到边缘时盖住对应侧阴影,天然
+     起到"还有内容/到底了"的指示。基底色保持原 --bg-elevated。 */
+  .markdown-rendered > table {
+    background:
+      linear-gradient(to right, var(--bg-elevated) 40%, transparent) left / 32px 100% no-repeat local,
+      linear-gradient(to left, var(--bg-elevated) 40%, transparent) right / 32px 100% no-repeat local,
+      linear-gradient(to right, color-mix(in srgb, var(--text) 14%, transparent), transparent) left / 12px 100% no-repeat scroll,
+      linear-gradient(to left, color-mix(in srgb, var(--text) 14%, transparent), transparent) right / 12px 100% no-repeat scroll,
+      var(--bg-elevated);
+  }
+  /* 表格单元窄屏收紧,减少一屏只能看一两列的情况。 */
+  .markdown-rendered th,
+  .markdown-rendered td {
+    padding: 8px 10px;
+  }
+}
+
+/* ============================================================
+   B. 触屏交互适配(hover 不可用 / 粗指针驱动)
+   ============================================================ */
+@media (hover: none) and (pointer: coarse) {
+  /* --- B1. 行内操作从 hover 显隐 → 常显 --------------------------
+     桌面 .df-row-check/.df-row-menu 默认 opacity:0,hover 才出现;
+     触屏没有 hover,必须常显。菜单钮同时加大到 40px 触控目标。
+     (React 只在 hover/active 时写内联 opacity:1,常态无内联,
+     此处同权重后加载即可生效,无需 !important。) */
+  .df-row-check {
+    opacity: 1;
+    width: 24px;
+    height: 24px;
+  }
+  .df-row-menu {
+    opacity: 1;
+    min-width: 40px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 18px;
+  }
+  /* 行与名称按钮成为足尺寸触控目标(图标 32 + 上下 8px ≈ 48px)。 */
+  .df-row {
+    min-height: 52px;
+  }
+  .df-row-name-btn {
+    width: 100%;
+    min-height: 40px;
+    justify-content: center;
+  }
+
+  /* --- B2. 树视图行:26px → ≥44px -------------------------------- */
+  .df-tree-row {
+    min-height: 44px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    gap: 8px;
+    font-size: 13.5px;
+  }
+  .df-tree-chevron { width: 22px; }
+  .df-tree-row .df-row-icon { width: 24px; }
+
+  /* --- B3. 顶栏动作按钮 ≥40px ------------------------------------ */
+  /* 容器查询 ≤470px 已把按钮压成 icon-only + 6px padding(≈25px),
+     触屏下补足触控目标。 */
+  .df-actions button {
+    min-width: 40px;
+    min-height: 40px;
+    justify-content: center;
+  }
+  .df-actions .df-project-menu-trigger {
+    width: 40px;
+    height: 40px;
+  }
+  .df-actions .df-project-menu button {
+    min-height: 44px;
+    justify-content: flex-start;
+  }
+  .df-batch-actions button { min-height: 40px; }
+  .df-upload-banner button { min-height: 36px; padding: 5px 12px; }
+  .df-section-more { min-height: 40px; }
+  .df-row-collapse { width: 32px; min-height: 40px; }
+
+  /* --- B4. 触屏无拖拽:隐藏"拖拽上传"底部提示带 ------------------ */
+  /* 空闲态 footer 只含拖拽提示,整条隐藏;agent 运行时 footer 显示
+     RotatingTip(不含 .df-drop-hint),不受影响。 */
+  .df-footer-info:has(> .df-drop-hint) {
+    display: none;
+  }
+  /* 空态的点击上传 CTA 加大。 */
+  .df-empty-cta {
+    min-height: 44px;
+    padding: 10px 18px;
+    font-size: 13.5px;
+  }
+
+  /* --- B5. 行菜单/树右键弹层 → 底部动作单 ------------------------ */
+  /* 三个 df-row-popover(文件行 ⋯ 菜单、目录行 ⋯ 菜单、树长按菜单)
+     均为 position:fixed + JS 内联 top/left;触屏改为底部动作单,
+     覆盖内联样式必须 !important。长按(Android WebView 触发
+     contextmenu)与 ⋯ 钮共用此形态。 */
+  .df-row-popover {
+    top: auto !important;
+    left: 10px !important;
+    right: 10px;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    min-width: 0;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 8px;
+    border-radius: 16px;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+    animation: mob-fv-sheet-in 180ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  @keyframes mob-fv-sheet-in {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .df-row-popover { animation: none; }
+  }
+  /* 半透明遮罩:pointer-events:none 让点击穿透到 document,
+     沿用现有"点外部关闭"逻辑。 */
+  .df-row-popover::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: color-mix(in srgb, var(--text) 26%, transparent);
+    pointer-events: none;
+  }
+  .df-row-popover button {
+    min-height: 48px;
+    padding: 0 14px;
+    font-size: 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* --- B6. FileWorkspace 标签条触控 ------------------------------ */
+  .ws-tabs-shell { height: 44px; }
+  .ws-tab { min-height: 36px; padding: 6px 10px; }
+  .ws-tab-close { min-width: 28px; min-height: 28px; }
+  .ws-tabs-shell .icon-only { min-width: 40px; min-height: 40px; }
+  .app .ws-tabs-actions .chrome-action { height: 36px; min-height: 36px; }
+  .app .ws-tabs-actions .chrome-action-icon { width: 36px; height: 36px; min-height: 36px; }
+
+  /* --- B7. FileViewer 工具栏残余 30px 控件补足 --------------------
+     第一轮已覆盖 .viewer-toolbar .icon-only;此处补齐同栏的
+     viewer-action-icon(30px)、版本触发器、普通 viewer-action、
+     ghost-link 与模式标签。min-* 只抬触控目标,不改图标字号。 */
+  .viewer-action-icon {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .viewer-toolbar .viewer-action,
+  .viewer-toolbar .ghost-link {
+    min-height: 40px;
+  }
+  .viewer-toolbar .file-version-trigger {
+    min-width: 44px;
+    min-height: 40px;
+  }
+  .viewer-toolbar .viewer-tab {
+    min-height: 40px;
+  }
+  .viewer-comment-count-trigger {
+    min-height: 44px;
+  }
+  /* HTML 查看器的 icon-only 模式标签固定 32px 宽,触屏放宽。 */
+  .html-viewer .viewer-mode-tabs .viewer-tab {
+    width: auto;
+    min-width: 40px;
+  }
+  /* 视口尺寸切换器(手机/平板/桌面预览)与模式下拉触发器。 */
+  .viewer-viewport-switcher { width: auto; }
+  .viewer-viewport-trigger {
+    width: auto;
+    min-width: 40px;
+    min-height: 40px;
+  }
+  .viewer-mode-trigger { min-height: 40px; }
+
+  /* --- B8. 工具栏各下拉菜单项 ≥44px ------------------------------ */
+  .viewer-toolbar-more-item {
+    min-height: 44px;
+    font-size: 14px;
+  }
+  .zoom-menu-item {
+    min-height: 44px;
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+  .share-menu-item {
+    min-height: 44px;
+    font-size: 14px;
+  }
+  .share-menu-popover {
+    max-width: calc(100vw - 24px);
+  }
+  .viewer-viewport-menu-item {
+    min-height: 44px;
+  }
+
+  /* --- B9. 快速预览叠层的返回/操作钮 ------------------------------ */
+  /* df-preview-close 在 any-pointer:coarse 下已常显(30px),加大并
+     提高对比,承担"返回列表"职责。 */
+  .df-preview-close {
+    width: 40px;
+    height: 40px;
+    top: 10px;
+    right: 10px;
+    background: var(--bg-panel);
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.14));
+  }
+  .df-preview-open-cta { min-height: 44px; }
+  .df-preview-actions button,
+  .df-preview-actions .ghost-link {
+    min-height: 40px;
+  }
+  .df-preview-download { min-height: 40px; display: inline-flex; align-items: center; }
+
+  /* --- B10. PDF 查看器(pdf.js)缩放控件 --------------------------
+     CSS Modules 哈希类名不可依赖,经稳定的 data-testid 定位。 */
+  [data-testid='latex-pdf-viewer'] button {
+    min-height: 40px;
+    min-width: 36px;
+    font-size: 13px;
+  }
+}

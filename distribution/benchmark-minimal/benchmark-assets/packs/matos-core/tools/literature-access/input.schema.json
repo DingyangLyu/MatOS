@@ -1,0 +1,46 @@
+{
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "status",
+        "plan",
+        "scan",
+        "resolve"
+      ],
+      "description": "status reports configured access channels; plan returns a safe acquisition plan; scan indexes local PDF/BibTeX files; resolve checks legal open-access locations for DOI inputs."
+    },
+    "query": {
+      "type": "string",
+      "description": "Research topic, title, author, or free-text query used to filter local files and build next actions."
+    },
+    "dois": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "DOIs to resolve through legal open-access metadata providers."
+    },
+    "libraryRoots": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional container-visible local library roots to scan. Defaults to MATOS_LITERATURE_LIBRARY_ROOTS and common workspace literature folders."
+    },
+    "maxResults": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 200,
+      "description": "Maximum local file or DOI records to return. Default 50."
+    },
+    "maxDepth": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 8,
+      "description": "Maximum directory depth for local library scan. Default 5."
+    }
+  },
+  "additionalProperties": false
+}

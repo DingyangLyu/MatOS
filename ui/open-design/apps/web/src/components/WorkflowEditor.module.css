@@ -1,0 +1,235 @@
+.editor {
+  min-width: 0;
+  container: workflow-editor / inline-size;
+}
+.editor :global(.wf-body) {
+  position: relative;
+  padding-top: 36px;
+}
+.editor :global(.wf-view-tabs) {
+  position: absolute;
+  top: 3px;
+  left: 8px;
+  display: flex;
+  gap: 2px;
+  height: 28px;
+}
+.editor :global(.wf-view-tabs [aria-selected='true']) {
+  border-color: var(--border);
+  background: var(--bg-subtle);
+}
+.editor :global(.wf-canvas.is-hidden) {
+  display: none;
+}
+.editor :global(.wf-inspector) {
+  flex-basis: 320px;
+  min-width: 0;
+  max-width: 100%;
+}
+.editor :global(.wf-inspector-title) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.editor :global(.wf-save-status) {
+  max-width: 240px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.editor :global(.wf-toolbar-file) {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.editor :global(.wf-step-list) {
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
+  overflow: auto;
+}
+.editor :global(.wf-step-row) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 8px;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  text-align: left;
+}
+.editor :global(.wf-step-row.is-selected) {
+  background: var(--bg-subtle);
+}
+.editor :global(.wf-step-row b) {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.editor :global(.wf-step-row small),
+.editor :global(.wf-step-row > span) {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.editor :global(.wf-conflict),
+.editor :global(.wf-run-setup) {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  max-height: 40%;
+  overflow: auto;
+  flex-shrink: 0;
+}
+.editor :global(.wf-conflict) {
+  background: color-mix(in srgb, #ce9938 10%, transparent);
+}
+.editor :global(.wf-conflict-diff) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+.editor :global(.wf-conflict-diff > div) {
+  min-width: 0;
+}
+.editor :global(.wf-conflict-diff pre) {
+  max-height: 230px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+}
+.editor :global(.wf-conflict-actions) {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.editor :global(.wf-parameter-grid) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+.editor :global(.wf-parameter-grid:empty) {
+  display: none;
+}
+.editor :global(.wf-advanced) {
+  margin: 14px 0;
+}
+.editor :global(.wf-advanced summary) {
+  font-size: 12px;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+.editor :global(.wf-inspector-desc) {
+  display: none;
+}
+.editor :global(.wf-settings-form h3) {
+  font-size: 13px;
+  margin: 16px 0 10px;
+}
+.editor :global(fieldset) {
+  margin: 0 0 12px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  min-width: 0;
+}
+.editor :global(legend) {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 0 4px;
+  overflow-wrap: anywhere;
+}
+.editor :global(fieldset input:not([type='checkbox'])),
+.editor :global(fieldset select) {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: inherit;
+  padding: 7px 8px;
+  font-size: 12px;
+}
+.editor :global(fieldset > button) {
+  margin-top: 8px;
+}
+.editor :global(.wf-check) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  font-size: 12px;
+}
+.editor :global(.wf-field small) {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.editor :global([aria-invalid='true']) {
+  border-color: #db6868 !important;
+}
+.editor :global(.wf-parse-error) {
+  overflow-wrap: anywhere;
+}
+@container workflow-editor (max-width: 760px) {
+  .editor :global(.wf-inspector) {
+    position: absolute;
+    z-index: 10;
+    top: 36px;
+    right: 0;
+    bottom: 0;
+    width: min(360px, 100%);
+    box-sizing: border-box;
+    background: var(--bg-panel);
+    box-shadow: -5px 0 20px #0002;
+  }
+  .editor :global(.wf-toolbar) {
+    padding: 8px;
+    gap: 8px;
+  }
+  .editor :global(.wf-toolbar-title) {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+  .editor :global(.wf-toolbar-actions) {
+    justify-content: flex-start;
+    gap: 5px;
+  }
+  .editor :global(.wf-save-status) {
+    flex-basis: 100%;
+    max-width: none;
+    font-size: 10px;
+  }
+  .editor :global(.wf-save-status:empty) {
+    display: none;
+  }
+  .editor :global(.wf-conflict-diff) {
+    grid-template-columns: 1fr;
+  }
+  .editor :global(.wf-run-panel-body) {
+    flex-direction: column;
+    overflow: auto;
+  }
+  .editor :global(.wf-run-panel-nodes) {
+    flex: 0 0 auto;
+    width: 100%;
+    max-height: 145px;
+  }
+  .editor :global(.wf-run-panel-side) {
+    flex: 0 0 auto;
+    min-height: 130px;
+    border-left: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .editor :global(*) {
+    animation: none !important;
+    transition: none !important;
+  }
+}

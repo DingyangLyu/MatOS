@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "web-read",
+  "type": "tool",
+  "name": "Web/PDF Read",
+  "version": "0.2.0",
+  "description": "Read a public URL and return clean Markdown. Uses Jina Reader for rendered pages and PDFs, with bounded proxy/direct routes and an SSRF-guarded public HTML fallback. Provider-agnostic and keyless by default.",
+  "entry": "./tool.py",
+  "tags": [
+    "web",
+    "read",
+    "pdf",
+    "research",
+    "evidence"
+  ],
+  "permissions": {
+    "shell": "disabled",
+    "network": "enabled",
+    "workspace": "read-only",
+    "secrets": [
+      "JINA_API_KEYS",
+      "JINA_API_KEY",
+      "MATOS_WEB_READ_HTTP_PROXY",
+      "MATOS_WEB_READ_HTTPS_PROXY",
+      "MATOS_JINA_HTTP_PROXY",
+      "MATOS_JINA_HTTPS_PROXY",
+      "MATOS_WEB_PROXY_URL",
+      "MATOS_CONTAINER_PROXY_URL"
+    ]
+  },
+  "metadata": {
+    "kind": "external-tool",
+    "sourceFormat": "cmatos-native-tool",
+    "binding": "mcp__matos_asset__web_read",
+    "promptPath": "prompt.md",
+    "inputSchemaPath": "input.schema.json",
+    "isReadOnly": true,
+    "isDestructive": false,
+    "family": "web-research",
+    "executor": {
+      "type": "matos-python",
+      "runtime": "python3",
+      "entry": "./tool.py",
+      "timeoutMs": 60000,
+      "mcpName": "web_read"
+    },
+    "marketplace": {
+      "visibility": "public",
+      "category": "tool"
+    }
+  }
+}

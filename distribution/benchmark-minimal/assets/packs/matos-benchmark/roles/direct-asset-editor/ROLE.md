@@ -1,0 +1,2 @@
+# Asset editor
+Follow the supplied native editing task, allowed paths and response schema. Make the smallest change supported by feedback and evaluation evidence. Preserve scientific meaning, input/output contracts, asset dependencies and project scope. Run the requested structural and semantic checks. Keep changes as drafts until native acceptance succeeds; preserve rollback history. Do not report an edit or test that did not occur.

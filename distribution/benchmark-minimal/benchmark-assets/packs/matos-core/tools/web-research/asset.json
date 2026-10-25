@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "web-research",
+  "type": "tool",
+  "name": "Web Research",
+  "version": "1.0.0",
+  "description": "Builtin web search and fetch tools.",
+  "metadata": {
+    "kind": "builtin-pack",
+    "builtinTools": [
+      "WebSearch",
+      "WebFetch"
+    ],
+    "mcpServers": [],
+    "sourceFormat": "cmatos-native-builtin-tool-pack",
+    "marketplace": {
+      "visibility": "public",
+      "category": "tool"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "toolchainRoot": {
+      "type": "string",
+      "description": "Optional toolchain root override. Defaults to MATOS_EXTERNAL_TOOLCHAIN_ROOT, MATOS_CONTAINER_TOOLCHAIN_ROOT, MATOS_COMPUTE_TOOLCHAIN_CONTAINER_ROOT, /opt/matos-tools, then the configured host toolchain root."
+    },
+    "probe": {
+      "type": "boolean",
+      "description": "Whether to run lightweight version/import probes. Defaults to true."
+    },
+    "smoke": {
+      "type": "boolean",
+      "description": "Whether to solve tiny CLI and PySCIPOpt MILP smoke problems. Defaults to false."
+    },
+    "timeoutSeconds": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 60,
+      "description": "Per-probe timeout in seconds. Defaults to 10."
+    }
+  },
+  "additionalProperties": false
+}

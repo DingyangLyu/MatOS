@@ -1,0 +1,9 @@
+parameters:
+  - name: x_Li
+    type: range
+    bounds: [0.0, 1.0]
+    value_type: float
+
+objectives:
+  - name: formation_energy_per_atom
+    minimize: true

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "semantic-acceptance-judge",
+  "type": "role",
+  "name": "Semantic Acceptance Judge",
+  "version": "2.0.0",
+  "description": "Hidden semantic review of validated asset edits; returns accept or rollback.",
+  "entry": "ROLE.md",
+  "dependencies": [
+    "skill:system-role"
+  ],
+  "mounts": {
+    "skills": [
+      "skill:system-role"
+    ]
+  },
+  "runtime": {
+    "permissionMode": "dontAsk",
+    "allowedTools": []
+  },
+  "metadata": {
+    "sourceFormat": "matos-public-minimal",
+    "group": "evolution",
+    "hidden": true,
+    "provider": "self-evolution",
+    "mode": "semantic-acceptance"
+  }
+}

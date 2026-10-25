@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "id": "local-toolchain-preflight",
+  "type": "tool",
+  "name": "Local Toolchain Preflight",
+  "version": "1.0.1",
+  "description": "Check whether the MatOS local/container scientific toolchain is mounted and usable before QE, Elk, Wannier90, GW/BSE, LAMMPS, VASP wrapper, ORCA, Thermo-Calc, or Conda execution.",
+  "entry": "./tool.py",
+  "tags": [
+    "materials",
+    "toolchain",
+    "container",
+    "preflight",
+    "vasp",
+    "elk",
+    "hdf5",
+    "wannier90",
+    "gw",
+    "bse",
+    "yambo",
+    "orca",
+    "thermocalc",
+    "calphad"
+  ],
+  "permissions": {
+    "shell": "read-only",
+    "network": "disabled",
+    "workspace": "read-only",
+    "secrets": [
+      "MATOS_EXTERNAL_TOOLCHAIN_ROOT",
+      "MATOS_CONTAINER_TOOLCHAIN_ROOT",
+      "MATOS_COMPUTE_TOOLCHAIN_CONTAINER_ROOT",
+      "MATOS_VASP_RUNNER_URL",
+      "MATOS_MKL_ROOT",
+      "THERMOCALC_HOME",
+      "THERMO_CALC_HOME",
+      "THERMOCALC_ROOT",
+      "TC_HOME",
+      "TC_ROOT",
+      "THERMOCALC_LICENSE_FILE",
+      "TC_LICENSE_FILE",
+      "LM_LICENSE_FILE",
+      "RLM_LICENSE",
+      "LSHOST"
+    ]
+  },
+  "metadata": {
+    "kind": "external-tool",
+    "sourceFormat": "cmatos-native-tool",
+    "binding": "mcp__matos_asset__local_toolchain_preflight",
+    "promptPath": "prompt.md",
+    "inputSchemaPath": "input.schema.json",
+    "isReadOnly": true,
+    "isDestructive": false,
+    "family": "local-toolchain",
+    "executor": {
+      "type": "matos-python",
+      "runtime": "python3",
+      "entry": "./tool.py",
+      "timeoutMs": 30000,
+      "mcpName": "local_toolchain_preflight"
+    },
+    "marketplace": {
+      "visibility": "public",
+      "category": "tool"
+    }
+  }
+}

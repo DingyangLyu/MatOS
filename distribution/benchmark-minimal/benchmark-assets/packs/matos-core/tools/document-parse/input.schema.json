@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string",
+      "description": "Absolute or workspace-relative path to a local document file. Required."
+    },
+    "max_chars": {
+      "type": "integer",
+      "minimum": 500,
+      "maximum": 200000,
+      "description": "Maximum characters of extracted text to return (default 60000)."
+    },
+    "start_char": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Character offset to start reading from. Use next_start_char from a truncated response to continue without losing text."
+    }
+  },
+  "required": [
+    "path"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "mp-query",
+  "type": "tool",
+  "name": "Materials Project Query",
+  "version": "1.0.0",
+  "description": "Query the Materials Project database for crystal structures and computed properties by formula or materials-id.",
+  "entry": "./tool.py",
+  "tags": [
+    "materials",
+    "databases",
+    "network"
+  ],
+  "permissions": {
+    "shell": "disabled",
+    "network": "enabled",
+    "workspace": "read-only",
+    "secrets": [
+      "MP_API_KEY"
+    ]
+  },
+  "metadata": {
+    "kind": "external-tool",
+    "sourceFormat": "cmatos-native-tool",
+    "migratedFrom": "../MatOS/container/tools/mp-query/matos.tool.json",
+    "binding": "mcp__matos_asset__mp_query",
+    "promptPath": "prompt.md",
+    "inputSchemaPath": "input.schema.json",
+    "isReadOnly": true,
+    "isDestructive": false,
+    "family": "mcp",
+    "supportDirs": [],
+    "executor": {
+      "type": "matos-python",
+      "runtime": "python3",
+      "entry": "./tool.py",
+      "timeoutMs": 30000,
+      "mcpName": "mp_query"
+    },
+    "marketplace": {
+      "visibility": "public",
+      "category": "tool"
+    }
+  }
+}

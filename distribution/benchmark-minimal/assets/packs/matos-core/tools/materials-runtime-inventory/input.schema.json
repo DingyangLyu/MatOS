@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "includeToolchain": {
+      "type": "boolean",
+      "default": true,
+      "description": "Include local QE/LAMMPS/VASP/Conda preflight status."
+    },
+    "includeConda": {
+      "type": "boolean",
+      "default": true,
+      "description": "Include system and current-user Conda environment inventory."
+    },
+    "includeMlip": {
+      "type": "boolean",
+      "default": true,
+      "description": "Include mounted MLIP model assets and runtime package status."
+    },
+    "includeQePseudo": {
+      "type": "boolean",
+      "default": true,
+      "description": "Include QE SSSP pseudopotential mount summary."
+    },
+    "detail": {
+      "type": "string",
+      "enum": [
+        "summary",
+        "full"
+      ],
+      "default": "summary",
+      "description": "Return compact inventory by default, or fuller nested catalog outputs for diagnosis."
+    },
+    "timeoutSeconds": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 60,
+      "default": 20,
+      "description": "Per-section timeout for delegated read-only catalog calls."
+    }
+  },
+  "additionalProperties": false
+}

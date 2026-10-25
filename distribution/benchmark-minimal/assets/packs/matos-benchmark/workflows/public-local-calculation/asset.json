@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "public-local-calculation",
+  "type": "workflow",
+  "name": "Local numerical summary",
+  "version": "1.0.0",
+  "description": "Minimal public workflow example.",
+  "entry": "workflow.json",
+  "metadata": {},
+  "dependencies": []
+}

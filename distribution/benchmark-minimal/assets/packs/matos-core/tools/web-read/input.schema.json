@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "url": {
+      "type": "string",
+      "description": "Public http(s) URL to read (web page or PDF). Jina handles rendered pages/PDFs; public HTML has a bounded direct fallback."
+    },
+    "max_chars": {
+      "type": "integer",
+      "minimum": 500,
+      "maximum": 120000,
+      "description": "Maximum characters of Markdown to return (default 40000)."
+    }
+  },
+  "required": [
+    "url"
+  ],
+  "additionalProperties": false
+}

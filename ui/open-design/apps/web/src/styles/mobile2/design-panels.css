@@ -1,0 +1,377 @@
+/* design-panels 手机适配层(mobile UX round-2)。全部规则必须包在
+   @media (max-width: 768px) 或 (hover: none) 查询内,桌面零回退。
+
+   覆盖对象(设计面板组 = DesignBrowserPanel 设计浏览 + DesignFilesPanel
+   设计文件补缺 + DesignSystemFlow 设计系统流程):
+   1. 设计浏览:chrome 栏 2 行化(导航+动作同行、地址栏整行),参考板
+      2 列卡片网格,大图预览全屏化 + 触控关闭/下滑关闭(tsx 加
+      db-staged-preview 作用域类,避免影响聊天面板同名弹层);
+   2. 设计文件:只补 mobile2/file-viewer.css 未覆盖的缺口——移动到
+      文件夹对话框、行内重命名输入、菜单中 <a download> 撑满行
+      (下载语义不变);
+   3. 设计系统流程:review 标签栏换行、栏距收紧、纵向高度用 dvh、
+      表单控件触控化;390px 复合网格(360px 定宽列等)桌面 css 在
+      900px 断点已兜底,此处仅补触控与残余细节;
+   4. iOS 聚焦缩放守护:面板内文本输入 focus 计算字号 ≥16px,仅在
+      触屏主指针设备生效,桌面密排不受影响。
+
+   加载顺序:mobile2/index.css 中位于 file-viewer.css 之后,同权重
+   后来者赢;本文件刻意不重复 file-viewer.css 已有的 df-* 规则。 */
+
+/* ============================================================
+   A. DesignBrowserPanel — 窄屏布局(视口宽度驱动)
+   ============================================================ */
+@media (max-width: 768px) {
+  /* --- A1. chrome 栏:3 行堆叠 → 2 行(导航 | 动作 / 地址栏整行) ----
+     桌面 720px 断点把 db-chrome 改成单列,nav / 地址 / 动作各占一行
+     (实测 121px 高)。手机浏览器惯例是控件同行 + 地址栏独立成行:
+     用 grid-area 重排既有子元素,省 ~30px 纵向空间。 */
+  .db-chrome {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'nav actions'
+      'addr addr';
+    gap: 6px 8px;
+    padding: 6px 10px 8px;
+  }
+  .db-nav {
+    grid-area: nav;
+    justify-content: flex-start;
+  }
+  .db-address-form {
+    grid-area: addr;
+  }
+  .db-actions {
+    grid-area: actions;
+    justify-content: flex-end;
+  }
+
+  /* --- A2. 地址栏:34px → 44px,防 iOS 聚焦缩放字号在 D 节统一处理 - */
+  .db-address-form {
+    height: 44px;
+    padding-inline: 12px;
+  }
+  /* 地址建议下拉在小屏高度里最多留 ~55vh,项高触控化在 C 节。 */
+  .db-suggestions {
+    max-height: min(420px, calc(100dvh - 200px));
+  }
+
+  /* --- A3. 参考板起始页:hero 收紧 --------------------------------
+     32px 大标题 + 副文案在 390px 占近 180px;压缩留白与字阶,
+     让首屏露出分类与卡片。 */
+  .db-start-hero {
+    padding: 14px 16px 8px;
+    gap: 10px;
+  }
+  .db-start h2 {
+    margin-top: 8px;
+    font-size: 21px;
+    line-height: 1.12;
+  }
+  .db-start-sub {
+    margin-top: 6px;
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+
+  /* --- A4. 筛选工具条与搜索 --------------------------------------- */
+  .db-reference-toolbar {
+    gap: 8px;
+    padding: 8px 16px 10px;
+  }
+  /* 搜索框(桌面 720 断点已 flex:1 1 100% 单独成行)拉到 44px。 */
+  .db-reference-search {
+    height: 44px;
+    border-radius: var(--radius-md);
+  }
+
+  /* --- A5. 参考卡片:1 列大卡 → 2 列紧凑网格 -----------------------
+     桌面 auto-fill minmax(252px,1fr) 在 390px 只出 1 列,一屏 2 张;
+     2 列 + 紧凑卡片让一屏可扫 6 张。描述夹 2 行防卡高参差。 */
+  .db-reference-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .db-reference-board {
+    padding: 14px 16px 36px;
+    gap: 22px;
+  }
+  .db-reference-card {
+    padding: 12px;
+  }
+  .db-reference-card > button {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 9px;
+  }
+  .db-reference-icon {
+    width: 30px;
+    height: 30px;
+    padding: 5px;
+  }
+  .db-reference-title span {
+    font-size: 13px;
+  }
+  .db-reference-title small {
+    font-size: 10.5px;
+  }
+  .db-reference-card p {
+    margin: 9px 0 10px;
+    min-height: 0;
+    font-size: 11.5px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+
+  /* --- A6. 状态 toast:避开底部手势区,允许换行 -------------------- */
+  .db-status {
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    max-width: calc(100vw - 24px);
+    white-space: normal;
+    text-align: center;
+  }
+
+  /* --- A7. 大图预览(db-staged-preview 作用域,见 tsx)全屏化 ------
+     桌面是 720px 居中卡片;手机改近全屏:卡片贴边、图高吃满可用
+     高度,头部关闭钮 44px(C 节再兜底 coarse 情况)。下滑关闭手势
+     由 tsx 的 touch 事件实现,这里给出手势过程的视觉基础。 */
+  .staged-preview-modal.db-staged-preview {
+    padding: 10px;
+    align-items: center;
+  }
+  .db-staged-preview .staged-preview-card {
+    width: 100%;
+    max-height: calc(100dvh - 20px - env(safe-area-inset-bottom, 0px));
+    padding: 10px;
+  }
+  .db-staged-preview .staged-preview-card > img {
+    max-height: calc(100dvh - 96px - env(safe-area-inset-bottom, 0px));
+    /* 图片区整体可作为拖拽面;禁掉浏览器默认平移即由 tsx 接管。 */
+    touch-action: pan-x pinch-zoom;
+  }
+}
+
+/* ============================================================
+   B. DesignSystemFlow — 窄屏布局(视口宽度驱动)
+   桌面 css 在 900px 断点已把 ds-workspace / ds-files-panel /
+   ds-review-column / 包网格降为单列,此处只处理 768px 内的残余。
+   ============================================================ */
+@media (max-width: 768px) {
+  /* --- B1. 顶栏:64px 定高 → 自适应,留出换行余地 ------------------ */
+  .ds-setup-topbar {
+    height: auto;
+    min-height: 56px;
+    padding: 8px 14px;
+    gap: 10px;
+  }
+  /* --- B2. review 标签栏:56px 定高单行 → 可换行 -------------------
+     segmented(system/workspace/files)+ 右侧动作在 390px 放不下
+     一行;换行后动作退到第二行,不再互相挤压截断。 */
+  .ds-review-tabs {
+    height: auto;
+    min-height: 52px;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 8px 14px;
+  }
+  .ds-review-column {
+    /* 900px 断点已修为 calc(100vw - 32px),此处只收纵向留白。 */
+    padding: 22px 0 44px;
+  }
+  .ds-review-sections {
+    gap: 12px;
+  }
+  /* --- B3. 定高 100vh 造成 WebView 地址栏收展跳动,统一 dvh --------
+     dvh 不被支持时该声明被丢弃,回落桌面 100vh,无风险。 */
+  .ds-workspace,
+  .ds-project-chat,
+  .ds-agent-rail {
+    min-height: 100dvh;
+  }
+  .ds-file-workspace-host .workspace {
+    min-height: calc(100dvh - 56px);
+  }
+  /* --- B4. 生成回顾卡与包卡片:边距收紧 ---------------------------- */
+  .ds-generation-review-card,
+  .ds-package-card,
+  .ds-revision-card {
+    border-radius: 10px;
+  }
+  .ds-package-card__head {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  /* 溯源链接列表:长 URL 芯片可断行,不顶破卡片。 */
+  .ds-source-link-chip {
+    max-width: 100%;
+  }
+  .ds-source-link-label {
+    overflow-wrap: anywhere;
+  }
+}
+
+/* ============================================================
+   C. 触屏交互适配(hover 不可用 / 粗指针驱动)
+   ============================================================ */
+@media (hover: none) and (pointer: coarse) {
+  /* --- C1. 设计浏览 chrome 图标钮:30px → 44px 触控目标 ------------
+     桌面容器查询(≤620px)把 .db-icon-btn 压到 30px;触屏需要
+     ≥44px。图标字号不变,只抬命中区。 */
+  .db-icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+  .db-viewport-switcher .db-icon-btn {
+    width: auto;
+    min-width: 52px;
+    min-height: 44px;
+  }
+  .db-nav,
+  .db-actions {
+    gap: 0;
+  }
+  /* 触屏没有 hover,自定义 tooltip 永不出现,禁用其占位动画层。 */
+  .db-tooltip-anchor:not(.od-tooltip)::after {
+    display: none;
+  }
+  /* --- C2. 下拉与菜单项触控化 ------------------------------------- */
+  .db-suggestions button {
+    min-height: 48px;
+  }
+  .db-viewport-menu {
+    width: 180px;
+  }
+  .db-viewport-menu button {
+    min-height: 44px;
+  }
+  .db-menu {
+    width: min(300px, calc(100vw - 20px));
+  }
+  .db-menu button {
+    min-height: 46px;
+    font-size: 13.5px;
+  }
+  .db-menu button.db-browser-use-action {
+    min-height: 52px;
+  }
+  .db-browser-use-search {
+    min-height: 44px;
+  }
+  .db-status-action {
+    min-height: 36px;
+    padding: 6px 12px;
+  }
+  /* 参考板分类芯片与卡片动作钮。 */
+  .db-reference-chip {
+    min-height: 38px;
+    padding: 7px 14px;
+  }
+  .db-reference-search-clear {
+    min-width: 36px;
+    min-height: 36px;
+  }
+  .db-reference-actions button {
+    min-height: 42px;
+  }
+  .db-reference-empty-action {
+    min-height: 44px;
+    padding: 10px 18px;
+  }
+  /* 评论标记(浏览页锚点)从 24px 抬到 32px 命中区。 */
+  .db-comment-marker {
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  /* --- C3. 大图预览:关闭钮 44px + 头部留白 ------------------------ */
+  .db-staged-preview .staged-preview-head .icon-only {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* --- C4. 设计文件补缺(file-viewer.css 未覆盖部分) --------------
+     菜单底部动作单里的 Download 是 <a download> 包 button:a 是
+     inline,button 不撑满行,触控区断成两截。保持 <a download>
+     语义(App 下载桥依赖),仅把布局撑满。 */
+  .df-row-popover a {
+    display: flex;
+    text-decoration: none;
+  }
+  .df-row-popover a > button {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+  /* 移动到文件夹对话框:控件 30px 档 → 44px 档。 */
+  .df-move-card {
+    width: min(420px, calc(100vw - 24px));
+    padding: 16px 14px calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+  .df-move-label select,
+  .df-move-label input {
+    min-height: 44px;
+    padding: 8px 10px;
+  }
+  .df-move-actions button {
+    min-height: 44px;
+    padding: 8px 16px;
+    font-size: 13.5px;
+  }
+
+  /* --- C5. 设计系统流程控件触控化 ---------------------------------- */
+  .segmented button {
+    min-height: 42px;
+    padding: 8px 16px;
+  }
+  .ds-setup-actions button,
+  .ds-resource-inline button,
+  .ds-drop-zone-wrap > button,
+  .ds-github-access-toggle,
+  .ds-github-access-actions button,
+  .ds-section-actions button {
+    min-height: 44px;
+  }
+  .ds-setup-topbar .primary,
+  .ds-setup-topbar .ghost {
+    min-height: 42px;
+  }
+  .ds-design-md-actions button,
+  .ds-design-md-button-row button {
+    min-height: 42px;
+  }
+  .ds-source-link-open,
+  .ds-source-link-remove {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+/* ============================================================
+   D. iOS 聚焦缩放守护(触屏主指针,桌面不受影响)
+   WebKit 在聚焦控件计算字号 <16px 时会整页放大。壳的
+   maximum-scale=1 是第一道防线;真 16px 字号保证在 Android
+   WebView 与任何丢掉该 meta 的壳里同样稳。
+   ============================================================ */
+@media (hover: none) and (pointer: coarse) {
+  .db-address-form input,
+  .db-reference-search input,
+  .db-browser-use-search input,
+  .db-inspect-text,
+  .df-rename-input,
+  .df-tree-rename-input,
+  .df-tree-editor input,
+  .df-move-label select,
+  .df-move-label input,
+  .ds-setup-field input,
+  .ds-setup-field textarea,
+  .ds-setup-field select,
+  .ds-resource-inline input,
+  .ds-resource-description textarea,
+  .ds-body-editor textarea {
+    font-size: 16px;
+  }
+}

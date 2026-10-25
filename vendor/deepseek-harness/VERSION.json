@@ -1,0 +1,9 @@
+{
+  "project": "deepseek-ai/deepseek-harness",
+  "version": "dsh-v0.2.1-alpha.2",
+  "commit": "d743267388641bc76f17c45ce8b4c231aed1d32c",
+  "license": "MIT",
+  "source": "https://github.com/deepseek-ai/deepseek-harness",
+  "integration": "external-sdk-profile",
+  "notes": "The runtime is launched through MATOS_DSH_BIN and MATOS_DSH_PROFILE. The pinned upstream identity is recorded here until the deployment image carries the built DSH runtime."
+}

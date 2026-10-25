@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "name": "public-local-calculation",
+  "version": "1.0.0",
+  "description": "Compute a small local numerical summary and retain its artifact.",
+  "parameters": {
+    "values": {
+      "type": "array",
+      "default": [
+        1,
+        2,
+        3
+      ],
+      "description": "Finite numeric inputs."
+    }
+  },
+  "policy": {
+    "approvalMode": "bypass",
+    "defaultRisk": "low"
+  },
+  "nodes": {
+    "calculate": {
+      "type": "exec",
+      "dependsOn": [],
+      "command": "python3 - <<'PY'\nimport json,math,os,statistics\nfrom pathlib import Path\np=json.loads(os.environ.get('MATOS_WORKFLOW_PARAMETERS_JSON','{}'))\nx=p.get('values',[1,2,3])\nassert isinstance(x,list) and x and all(type(v) in (int,float) and math.isfinite(v) for v in x), 'values must be finite numbers'\nr={'count':len(x),'mean':statistics.mean(x),'population_std':statistics.pstdev(x)}\nout=Path(os.environ['MATOS_WORKFLOW_ARTIFACT_ROOT'])/'summary.json'\nout.write_text(json.dumps(r,indent=2)+'\\n')\nprint(json.dumps(r))\nPY",
+      "artifactContract": {
+        "summary": {
+          "path": "summary.json",
+          "kind": "result",
+          "required": true
+        }
+      }
+    }
+  },
+  "outputs": {
+    "summary": {
+      "value": "{{ nodes.calculate.outputs.stdout }}"
+    }
+  }
+}

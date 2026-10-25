@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "self-evolution-worker",
+  "type": "role",
+  "name": "Self Evolution Worker",
+  "version": "2.0.0",
+  "description": "Hidden generic self-evolution worker used to run multiple stage directives over one shared evidence prefix for prompt-cache reuse.",
+  "entry": "ROLE.md",
+  "dependencies": [
+    "skill:system-role"
+  ],
+  "mounts": {
+    "skills": [
+      "skill:system-role"
+    ]
+  },
+  "runtime": {
+    "permissionMode": "dontAsk",
+    "allowedTools": []
+  },
+  "metadata": {
+    "sourceFormat": "matos-public-minimal",
+    "group": "evolution",
+    "hidden": true,
+    "provider": "self-evolution",
+    "mode": "shared-prompt-cache-worker"
+  }
+}

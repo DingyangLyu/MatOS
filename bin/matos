@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+export MATOS_ORIGINAL_CWD="${MATOS_ORIGINAL_CWD:-$PWD}"
+export MATOS_BUNDLED_ASSET_ROOT="${MATOS_BUNDLED_ASSET_ROOT:-$ROOT_DIR/distribution/benchmark-minimal/assets}"
+
+# Standalone project metadata is data, never shell code.
+if [[ -f "$MATOS_ORIGINAL_CWD/.matos/matos.json" ]]; then
+  matos_profile_done=0
+  while IFS= read -r -d '' key && IFS= read -r -d '' value; do
+    if [[ "$key" == __MATOS_ENV_DONE ]]; then matos_profile_done=1; continue; fi
+    [[ "$key" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] || { echo "Invalid project environment key" >&2; exit 2; }
+    if [[ "$key" =~ ^(MATOS_USER_ID|TMPDIR|TMP|TEMP|MATOS_TMP_DIR|MATOS_HOST_TMP_DIR)$ || ! -v "$key" ]]; then
+      export "$key=$value"
+    elif [[ -n "${MATOS_STANDALONE_WORKSPACE:-}" && "${MATOS_ASSETS_CWD:-}" == "$MATOS_STANDALONE_WORKSPACE" && ( "$key" == MATOS_ASSETS_CWD || "$key" == MATOS_SCOPE_REF ) ]]; then
+      export "$key=$value"
+    fi
+  done < <(cd "$ROOT_DIR" && bun scripts/matos-standalone-env.ts "$MATOS_ORIGINAL_CWD")
+  [[ "$matos_profile_done" == 1 ]] || { echo "Could not read standalone project configuration" >&2; exit 2; }
+fi
+bundle="$(python3 "$ROOT_DIR/scripts/matos-dsh-runtime.py" path)"
+if [[ -f "$bundle/manifest.json" && -x "$bundle/node/bin/node" ]]; then
+  export PATH="$bundle/node/bin:$bundle/bin:$PATH"
+  export MATOS_DSH_EXEC_BIN="${MATOS_DSH_EXEC_BIN:-$bundle/bin/dsh}"
+  export MATOS_DSH_PROFILE_TEMPLATE="${MATOS_DSH_PROFILE_TEMPLATE:-$bundle/profiles}"
+  export MATOS_DSH_PNPM_BIN="${MATOS_DSH_PNPM_BIN:-$bundle/pnpm/bin/pnpm.cjs}"
+  export MATOS_DSH_OFFLINE="${MATOS_DSH_OFFLINE:-1}"
+fi
+if [[ -z "${TMPDIR:-}" || "$TMPDIR" == /tmp || "$TMPDIR" == /tmp/* ]]; then
+  export TMPDIR="${MATOS_HOST_TMP_DIR:-$ROOT_DIR/.matos/tmp}"
+  mkdir -p "$TMPDIR"
+fi
+export TMP="$TMPDIR" TEMP="$TMPDIR"
+case "${1:-}" in gateway|workspace)
+  echo 'This edition has one local user. Start the web workspace with scripts/matos-web.sh.' >&2
+  exit 2 ;;
+esac
+cd "$ROOT_DIR"
+exec bun "$ROOT_DIR/src/entrypoints/matos.ts" "$@"

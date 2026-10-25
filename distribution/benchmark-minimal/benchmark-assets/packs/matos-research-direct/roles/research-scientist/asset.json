@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "research-scientist",
+  "type": "role",
+  "name": "Research Scientist",
+  "version": "0.1.0",
+  "description": "Autonomous scientific execution, reproducible code, analysis and reports across scientific domains.",
+  "entry": "ROLE.md",
+  "dependencies": [
+    "tool:files-core",
+    "tool:shell-core",
+    "tool:agent-orchestration",
+    "tool:web-research",
+    "tool:web-read",
+    "tool:document-parse",
+    "tool:conda-environment-catalog",
+    "tool:mlip-model-catalog",
+    "tool:local-toolchain-preflight",
+    "tool:atomistic-toolchain-catalog",
+    "tool:battery-electrochem-catalog",
+    "tool:scip-toolchain-catalog",
+    "skill:scientific-programming",
+    "skill:answer-finalization"
+  ],
+  "mounts": {
+    "tools": [
+      "tool:files-core",
+      "tool:shell-core",
+      "tool:agent-orchestration",
+      "tool:web-research",
+      "tool:web-read",
+      "tool:document-parse",
+      "tool:conda-environment-catalog",
+      "tool:mlip-model-catalog",
+      "tool:local-toolchain-preflight",
+      "tool:atomistic-toolchain-catalog",
+      "tool:battery-electrochem-catalog",
+      "tool:scip-toolchain-catalog"
+    ],
+    "skills": ["skill:scientific-programming", "skill:answer-finalization"],
+    "workflows": [],
+    "roles": []
+  },
+  "runtime": {
+    "permissionMode": "bypassPermissions",
+    "assetDiscoveryTools": true,
+    "workflowFacadeTools": true
+  },
+  "metadata": {"sourceFormat": "cmatos-native-role"}
+}

@@ -1,0 +1,44 @@
+{
+  "name": "@open-design/contracts",
+  "version": "0.12.1",
+  "private": true,
+  "type": "module",
+  "description": "Shared pure TypeScript contracts for the Open Design web/daemon boundary.",
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.mjs"
+    },
+    "./api/connectionTest": {
+      "types": "./dist/api/connectionTest.d.ts",
+      "default": "./dist/api/connectionTest.mjs"
+    },
+    "./api/amrWallet": {
+      "types": "./dist/api/amrWallet.d.ts",
+      "default": "./dist/api/amrWallet.mjs"
+    },
+    "./api/research": {
+      "types": "./dist/api/research.d.ts",
+      "default": "./dist/api/research.mjs"
+    }
+  },
+  "scripts": {
+    "build": "node ./esbuild.config.mjs && tsc -p tsconfig.json --emitDeclarationOnly",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit"
+  },
+  "dependencies": {
+    "@open-design/release": "workspace:*",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.0",
+    "typescript": "5.9.3",
+    "vitest": "4.1.6"
+  }
+}

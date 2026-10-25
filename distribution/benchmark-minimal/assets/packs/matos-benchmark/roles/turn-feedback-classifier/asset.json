@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "turn-feedback-classifier",
+  "type": "role",
+  "name": "Turn Feedback Classifier",
+  "version": "2.0.0",
+  "description": "Hidden realtime self-evolution role that semantically classifies one user turn message as agent feedback or not, complementing the keyword fast path.",
+  "entry": "ROLE.md",
+  "dependencies": [
+    "skill:system-role"
+  ],
+  "mounts": {
+    "skills": [
+      "skill:system-role"
+    ]
+  },
+  "metadata": {
+    "sourceFormat": "matos-public-minimal",
+    "group": "evolution",
+    "hidden": true,
+    "provider": "self-evolution",
+    "mode": "turn-feedback-classifier"
+  },
+  "runtime": {
+    "permissionMode": "dontAsk",
+    "allowedTools": []
+  }
+}

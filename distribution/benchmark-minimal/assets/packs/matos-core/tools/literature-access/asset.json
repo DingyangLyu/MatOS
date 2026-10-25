@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "literature-access",
+  "type": "tool",
+  "name": "Literature Access",
+  "version": "0.1.0",
+  "description": "Credential-safe literature access planner and local library scanner for OA, Zotero/PDF libraries, institution proxy/VPN, and browser-login handoff workflows.",
+  "entry": "./tool.py",
+  "tags": [
+    "literature",
+    "papers",
+    "pdf",
+    "zotero",
+    "research",
+    "access"
+  ],
+  "permissions": {
+    "shell": "disabled",
+    "network": "enabled",
+    "workspace": "read-only",
+    "secrets": [
+      "MATOS_LITERATURE_HTTP_PROXY",
+      "MATOS_LITERATURE_HTTPS_PROXY",
+      "MATOS_LITERATURE_EZPROXY_BASE_URL",
+      "MATOS_LITERATURE_BROWSER_PROFILE",
+      "MATOS_LITERATURE_COOKIE_JAR",
+      "MATOS_LITERATURE_LIBRARY_ROOTS",
+      "MATOS_LITERATURE_UNPAYWALL_EMAIL"
+    ]
+  },
+  "metadata": {
+    "kind": "external-tool",
+    "sourceFormat": "cmatos-native-tool",
+    "binding": "mcp__matos_asset__literature_access",
+    "promptPath": "prompt.md",
+    "inputSchemaPath": "input.schema.json",
+    "isReadOnly": true,
+    "isDestructive": false,
+    "family": "academic-research",
+    "executor": {
+      "type": "matos-python",
+      "runtime": "python3",
+      "entry": "./tool.py",
+      "timeoutMs": 60000,
+      "mcpName": "literature_access"
+    },
+    "marketplace": {
+      "visibility": "public",
+      "category": "tool"
+    }
+  }
+}

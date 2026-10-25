@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "toolchainRoot": {
+      "type": "string",
+      "description": "Optional toolchain root override. Defaults to MATOS_EXTERNAL_TOOLCHAIN_ROOT/MATOS_CONTAINER_TOOLCHAIN_ROOT, then /opt/matos-tools or the local host toolchain root."
+    },
+    "envName": {
+      "type": "string",
+      "default": "matos-battery-electrochem-py311",
+      "description": "Shared Conda environment name to inspect."
+    },
+    "probePackages": {
+      "type": "boolean",
+      "default": true,
+      "description": "Import PyBaMM, PyBOP, BPX, liionpack, and OpenPNM with the environment Python."
+    },
+    "includeExamples": {
+      "type": "boolean",
+      "default": true,
+      "description": "Include recommended MatOS tool/workflow entrypoints and example tasks."
+    },
+    "timeoutSeconds": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 30,
+      "default": 10,
+      "description": "Per-command probe timeout."
+    }
+  },
+  "additionalProperties": false
+}

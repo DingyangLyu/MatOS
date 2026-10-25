@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": ["create_env", "pip_install", "ensure_packages", "probe"],
+      "description": "create_env creates a user-scoped Conda env. pip_install installs packages into an existing user env. ensure_packages creates the env if missing, installs requested packages, and probes imports. probe checks imports without changing the env."
+    },
+    "envName": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$",
+      "description": "User environment name. The resolved prefix is always <userEnvRoot>/<envName>; absolute paths and ../ are rejected."
+    },
+    "pythonVersion": {
+      "type": "string",
+      "default": "3.11",
+      "description": "Python version for create_env or ensure_packages when the env does not exist."
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "PyPI package specifiers to install, such as doped or doped==3.1.0. URLs, local paths, whitespace, and leading dash options are rejected."
+    },
+    "imports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Import names to probe after create/install, such as doped."
+    },
+    "upgrade": {
+      "type": "boolean",
+      "default": false,
+      "description": "Pass --upgrade to pip install."
+    },
+    "dryRun": {
+      "type": "boolean",
+      "default": false,
+      "description": "Return the planned command and validated prefix without executing conda or pip."
+    },
+    "timeoutSeconds": {
+      "type": "number",
+      "minimum": 5,
+      "maximum": 1200,
+      "default": 600,
+      "description": "Command timeout for create/install operations."
+    }
+  },
+  "required": ["action", "envName"]
+}

@@ -1,0 +1,171 @@
+.env
+.env.*
+!.env.example
+node_modules
+.cursor/
+
+# Computer Use runtime (auto-generated)
+.runtime/
+extracted-natives/
+
+# MatOS runtime/session state (auto-generated)
+.matos/algorithms/
+.matos/assets/generated/
+.matos/assets/algorithm-evaluations/
+.matos/asset-history-cache/
+.matos/asset-history/
+.matos/asset-history.git/
+.matos/evolution/
+.matos/learning/
+.matos/locks/
+.matos/runtime/
+.matos/runtime-production-*/
+.matos/sessions/
+.matos/source-cache/
+.matos/tmp/
+.matos/cache/openvsx/
+.matos/gateway/
+.matos/tmp-smoke/
+.matos/benchmarks/
+.matos/workbench/
+# Runtime state written under asset packs (e.g. instrument task/measurement
+# outputs). The rules above only anchor .matos/ at the repo root; asset-pack
+# tools keep their own nested .matos/ runtime tree that must not be committed.
+matos-assets/**/.matos/
+
+# One-off local scratch outputs from codemods / QA / memory experiments
+/matos-tmp/
+/memory-annotations-test/
+
+# Container build scratch
+container/.build/
+
+extensions/UI/
+!ui/coze-studio/source/docker/.env.debug.example
+!ui/coze-studio/source/frontend/packages/studio/open-platform/chat-app-sdk/.env.default
+ui/coze-studio/source/**/node_modules/
+ui/coze-studio/source/**/.turbo/
+ui/coze-studio/source/**/.cache/
+ui/coze-studio/source/**/.vite/
+ui/coze-studio/source/**/.nyc_output/
+ui/coze-studio/source/**/dist/
+ui/coze-studio/source/**/build/
+ui/coze-studio/source/**/coverage/
+ui/coze-studio/source/**/storybook-static/
+ui/coze-studio/source/**/*.tsbuildinfo
+ui/coze-studio/source/**/*.log
+ui/coze-studio/source/bin/resources/static/
+ui/coze-studio/source/backend/static/
+
+# Local upstream/reference repositories cloned for product research.
+external-ref/
+
+# Python runtime caches from real tool execution
+__pycache__/
+*.pyc
+
+# Local MatOS workspaces and one-off scientific scratch outputs
+/workspace/
+/BaTiO3.cif
+
+# Benchmark/agent scratch sandboxes created by local runner sessions
+/.tmp-agent/
+/.tmp/
+/CRASH
+/input_tmp.in
+
+# vePFS-backed TMPDIR for test runs (keeps temp off the small local overlay)
+/.tmp-test/
+
+# KC-Chat 运行时产物（插件自动生成，请勿入库）
+.cursor/mcp.json
+.cursor/kc-mcp/
+.cursor/kc-mcp-messages/
+.cursor/kc-chat-exports/
+.matos-typecheck-tsconfig.json
+.matos/intake/
+
+# MatOS runtime-local state (materialized assets/index caches; matos.json stays tracked)
+.matos/assets/
+.matos/index/
+
+# MuJoCo crash/warning logs dropped wherever the engine runs
+MUJOCO_LOG.TXT
+
+# Zip-extraction artifacts and local reference archives
+__MACOSX/
+/matos-tech/
+/matos-tech.zip
+
+# One-off QE budget scratch dirs
+/.tmp-qe-budget-*/
+
+# Self-evolution evidence snapshots carry embedded .matos runtime/source-cache
+# state (git clones, asset-history) that must never enter the repo
+/artifacts/matos-self-evolution-*/
+
+# Local editor settings
+.vscode/
+
+# labworld build output and test scratch
+labworld/dist/
+labworld/tests/draft-out/
+labworld/.tmp-test/
+
+# Materialized MuJoCo scenes generated per lab-env run
+.matos/lab-env/
+
+# Ops watchdog reports (timestamped runtime state)
+.matos/ops/
+
+# Locally rendered sim videos/demo media (commit curated copies under artifacts/ instead)
+.matos-artifacts/
+
+# Simulated SDL iteration records emitted by sdl-glue runs
+matos-assets/packs/matos-virtual-lab/tools/sdl-glue/sdl-records/
+
+# Deployment env template stays tracked; real deploy env values never enter git
+!.env.deploy.example
+
+# Local operator credential notes must never be committed
+matos-beijing-admin-login.txt
+*-admin-login.txt
+
+# Mobile signing / distribution artifacts (closed-source hardening).
+# Release keystore + signing.env live outside the repo in
+# matos-tools/android-signing/ and must never be committed.
+*.keystore
+signing.env
+*.apk
+*.aab
+google-services.json
+GoogleService-Info.plist
+
+# Private DSH upgrade runtimes, profiles, credentials and validation outputs.
+.matos/dsh-*
+
+# Prepared offline DSH distribution and private deployment acceptance state.
+/vendor/deepseek-harness/runtime/
+.matos/deployment-fix-*/
+.matos/deployment-review-*/
+
+# Public source setup intermediates and template.
+/vendor/deepseek-harness/.dsh-prepare-*/
+
+# Validated, immutable public runtime revisions and atomic selection.
+/vendor/deepseek-harness/runtime-releases/
+/vendor/deepseek-harness/runtime-active.json
+/vendor/deepseek-harness/.runtime-update.lock
+/vendor/deepseek-harness/.runtime-active-*.json
+
+# Local public installation receipts and dependency caches.
+/.matos/build-cache/
+/.matos/public-installation.json
+/.matos/offline-dependencies.json
+
+# Per-installation state is never source.
+/.matos/
+# Local deployment settings and logs (may hold a model key).
+matos-deploy.conf
+matos-deploy.conf.pending
+.matos/deploy/

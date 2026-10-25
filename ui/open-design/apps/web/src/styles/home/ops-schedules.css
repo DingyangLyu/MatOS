@@ -1,0 +1,676 @@
+/* ============================================================
+   Operations + Scheduled tasks console.
+
+   Two related runtime surfaces share one visual language:
+   - `.matos-ops`   — /ops runtime monitor (styles in mathub.css get a
+                      richer "console" pass here, layered on top).
+   - `.matos-sched` — /schedules native cron workflow scheduler.
+
+   Imported after mathub.css so the ops overrides win at equal
+   specificity. Tokens come from styles/tokens.css.
+   ============================================================ */
+
+/* ---- Ops monitor: richer, less "flat white" ---- */
+
+/* Stat tiles gain depth: a soft tone-tinted wash, a bolder accent edge,
+   and a hover lift so the headline numbers read as live instruments. */
+.matos-ops__stat {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--matos-ops-tone, var(--accent)) 5%, var(--bg-panel)) 0%, var(--bg-panel) 62%);
+  box-shadow: var(--shadow-xs);
+  transition: transform 140ms var(--ease-out), box-shadow 140ms var(--ease-out),
+    border-color 140ms var(--ease-out);
+}
+
+.matos-ops__stat::before {
+  width: 3px;
+  background: linear-gradient(180deg, var(--matos-ops-tone, var(--border)), color-mix(in srgb, var(--matos-ops-tone, var(--border)) 35%, transparent));
+}
+
+.matos-ops__stat:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+  border-color: color-mix(in srgb, var(--matos-ops-tone, var(--border-strong)) 45%, var(--border));
+}
+
+.matos-ops__stat-head svg {
+  color: var(--matos-ops-tone, var(--text-muted));
+}
+
+/* Panels: hairline heading accent + gentle hover so each block feels like a
+   card in a dashboard rather than a plain box. */
+.matos-ops__panel {
+  transition: box-shadow 140ms var(--ease-out), border-color 140ms var(--ease-out);
+}
+
+.matos-ops__panel:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.matos-ops__panel .assets-panel__head h2 {
+  position: relative;
+  padding-left: 12px;
+}
+
+.matos-ops__panel .assets-panel__head h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 15px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+/* Cross-link to the scheduled-tasks console from the ops hero. */
+.matos-ops__schedlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 120ms var(--ease-out), border-color 120ms var(--ease-out),
+    background-color 120ms var(--ease-out);
+}
+
+.matos-ops__schedlink:hover {
+  color: var(--accent-strong, var(--accent));
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--border));
+  background: var(--accent-tint);
+}
+
+.matos-ops__schedlink svg {
+  color: var(--accent);
+}
+
+/* Meter fills read as gradients, not solid bars. */
+.matos-ops__meter-fill[data-tone='cool'] {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+.matos-ops__meter-fill[data-tone='warm'] {
+  background: linear-gradient(90deg, #d97706, #f59e0b);
+}
+.matos-ops__meter-fill[data-tone='hot'] {
+  background: linear-gradient(90deg, #dc2626, #f87171);
+}
+.matos-ops__meter-fill[data-tone='accent'] {
+  background: linear-gradient(90deg, var(--accent-strong, var(--accent)), var(--accent));
+}
+
+/* ============================================================
+   Scheduled tasks (/schedules)
+   ============================================================ */
+
+.matos-sched {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.matos-sched__hero-side {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Live pill — the resident tick loop's heartbeat. */
+.matos-sched__pulse {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 8px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.matos-sched__pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.matos-sched__pulse.is-live {
+  color: #15803d;
+  border-color: color-mix(in srgb, #16a34a 32%, var(--border));
+  background: color-mix(in srgb, #16a34a 7%, var(--bg-panel));
+}
+
+.matos-sched__pulse.is-live .matos-sched__pulse-dot {
+  background: #16a34a;
+  box-shadow: 0 0 0 0 color-mix(in srgb, #16a34a 60%, transparent);
+  animation: matos-sched-pulse 2s var(--ease-out) infinite;
+}
+
+@keyframes matos-sched-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, #16a34a 55%, transparent); }
+  70% { box-shadow: 0 0 0 6px color-mix(in srgb, #16a34a 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, #16a34a 0%, transparent); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .matos-sched__pulse.is-live .matos-sched__pulse-dot { animation: none; }
+}
+
+/* Primary "New schedule" button. */
+.matos-sched__new {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 13px 0 11px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid transparent;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background-color 120ms var(--ease-out), transform 120ms var(--ease-out);
+}
+
+.matos-sched__new:hover {
+  background: var(--accent-strong, var(--accent));
+}
+
+.matos-sched__new:active {
+  transform: translateY(1px);
+}
+
+.matos-sched__new:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Stat band — mirrors the ops tiles so the two consoles feel related. */
+.matos-sched__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.matos-sched__stat {
+  --matos-sched-tone: var(--border-strong, var(--border));
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 12px);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--matos-sched-tone) 5%, var(--bg-panel)) 0%, var(--bg-panel) 62%);
+  padding: 13px 15px;
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+}
+
+.matos-sched__stat[data-tone='accent'] {
+  --matos-sched-tone: var(--accent);
+}
+
+.matos-sched__stat-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  margin-bottom: 7px;
+}
+
+.matos-sched__stat-head svg {
+  color: var(--matos-sched-tone);
+}
+
+.matos-sched__stat-value {
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text-strong);
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Create / edit form ---- */
+.matos-sched__form {
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
+  box-shadow: var(--shadow-sm);
+}
+
+.matos-sched__form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 14px;
+  padding: 4px 2px 2px;
+}
+
+.matos-sched__field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.matos-sched__field--wide {
+  grid-column: 1 / -1;
+}
+
+.matos-sched__field > span {
+  font-size: 11.5px;
+  font-weight: 650;
+  color: var(--text-muted);
+}
+
+.matos-sched__field input,
+.matos-sched__field select,
+.matos-sched__field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 6px);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  transition: border-color 120ms var(--ease-out), box-shadow 120ms var(--ease-out);
+}
+
+.matos-sched__field textarea {
+  resize: vertical;
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.matos-sched__field input:focus,
+.matos-sched__field select:focus,
+.matos-sched__field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+
+.matos-sched__field input:disabled,
+.matos-sched__field select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.matos-sched__hint {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.matos-sched__form-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+}
+
+.matos-sched__preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-tint);
+  color: var(--accent-strong, var(--accent));
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.matos-sched__preview svg {
+  color: var(--accent);
+}
+
+.matos-sched__form-error {
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 550;
+}
+
+.matos-sched__form-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.matos-sched__btn {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 120ms var(--ease-out), border-color 120ms var(--ease-out);
+}
+
+.matos-sched__btn:hover {
+  border-color: var(--border-strong, var(--border));
+}
+
+.matos-sched__btn--primary {
+  border-color: transparent;
+  background: var(--accent);
+  color: #fff;
+}
+
+.matos-sched__btn--primary:hover {
+  background: var(--accent-strong, var(--accent));
+}
+
+.matos-sched__btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* ---- Schedule list ---- */
+.matos-sched__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.matos-sched__card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 14px 13px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 12px);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow 140ms var(--ease-out), border-color 140ms var(--ease-out),
+    transform 140ms var(--ease-out);
+}
+
+.matos-sched__card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+  background: var(--accent);
+}
+
+.matos-sched__card.is-paused::before {
+  background: var(--border-strong, var(--border));
+}
+
+.matos-sched__card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--border-strong, var(--border));
+}
+
+.matos-sched__card.is-paused {
+  opacity: 0.72;
+}
+
+.matos-sched__card-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.matos-sched__card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.matos-sched__state {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.matos-sched__state--on {
+  background: #16a34a;
+  box-shadow: 0 0 0 3px color-mix(in srgb, #16a34a 16%, transparent);
+}
+
+.matos-sched__state--off {
+  background: var(--text-muted);
+}
+
+.matos-sched__name {
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--text-strong);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.matos-sched__wf {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 260px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.matos-sched__wf svg {
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+
+.matos-sched__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.matos-sched__cadence {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.matos-sched__cadence svg {
+  color: var(--text-muted);
+}
+
+.matos-sched__cron {
+  padding: 1px 7px;
+  border-radius: var(--radius-sm, 6px);
+  background: var(--bg-subtle);
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.matos-sched__tz {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.matos-sched__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.matos-sched__fact {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.matos-sched__fact em {
+  font-style: normal;
+  font-weight: 600;
+}
+
+.matos-sched__fact strong {
+  color: var(--text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.matos-sched__fact strong.is-muted {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.matos-sched__fact--error {
+  color: #b91c1c;
+}
+
+.matos-sched__fact--error svg {
+  color: #dc2626;
+}
+
+.matos-sched__actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 320px;
+}
+
+.matos-sched__act {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 120ms var(--ease-out), border-color 120ms var(--ease-out),
+    background-color 120ms var(--ease-out);
+}
+
+.matos-sched__act:hover {
+  color: var(--text-strong);
+  border-color: var(--border-strong, var(--border));
+  background: var(--bg-subtle);
+}
+
+.matos-sched__act:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.matos-sched__act--danger:hover {
+  color: #b91c1c;
+  border-color: color-mix(in srgb, #dc2626 40%, var(--border));
+  background: color-mix(in srgb, #dc2626 7%, transparent);
+}
+
+/* ---- Empty state ---- */
+.matos-sched__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 36px 20px;
+  text-align: center;
+}
+
+.matos-sched__empty > svg {
+  color: var(--text-muted);
+  opacity: 0.6;
+  margin-bottom: 2px;
+}
+
+.matos-sched__empty-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--text-strong);
+}
+
+.matos-sched__empty-body {
+  margin: 0 0 6px;
+  max-width: 380px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 860px) {
+  .matos-sched__stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .matos-sched__form-grid {
+    grid-template-columns: 1fr;
+  }
+  .matos-sched__card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .matos-sched__actions {
+    max-width: none;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .matos-sched__stats {
+    grid-template-columns: 1fr;
+  }
+  .matos-sched__wf {
+    max-width: 180px;
+  }
+}

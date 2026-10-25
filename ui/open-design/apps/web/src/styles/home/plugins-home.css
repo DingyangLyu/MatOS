@@ -1,0 +1,517 @@
+.plugins-home {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.plugins-home__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.plugins-home__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.plugins-home__subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+.plugins-home__title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-strong);
+  letter-spacing: -0.01em;
+}
+.plugins-home__head-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+/* The bare <input> below picks up the global `input { ... }` rule
+   from index.css (border, radius-sm, padding, and a rectangular
+   focus box-shadow). We override every property the parent pill
+   already provides so the focus halo only paints once, on the
+   pill-shaped container, and the input renders flush inside it. */
+@media (max-width: 720px) {
+  .plugins-home__head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .plugins-home__head-tools {
+    justify-content: flex-end;
+  }
+}
+.plugins-home__empty {
+  color: var(--text-muted);
+  font-size: 13px;
+  padding: 20px 16px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+}
+.plugins-home__empty code {
+  font-size: 12px;
+  background: var(--bg-subtle);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ============================================================
+   Faceted filter — a single combined bar. An optional Saved chip
+   (rich layout only) + category pills live on the left, the search
+   field + clear-filters affordance live on the right.
+   ============================================================ */
+
+.plugins-home__linkbtn {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.plugins-home__linkbtn:hover {
+  color: var(--text);
+}
+/* Touch: the underlined text links ("Open assets workbench" and the
+   per-group "View all" on the Home assets strip) measured ~17px tall at
+   390px — under every tap-target minimum. Padding-only growth; negative
+   margin keeps the text where the zero-padding desktop layout put it.
+   14px vertical (not 12px) because 12px landed the audit at 41px; the
+   ~17px text line needs 14px to clear a 44px hit box. */
+@media (hover: none), (pointer: coarse) {
+  .plugins-home__linkbtn {
+    padding: 14px 12px;
+    margin: -14px -12px;
+  }
+}
+/* Right-aligned cluster paired with the chip strip on the same row.
+   Hosts the search input, the filtered-count, and a clear-filters
+   link when at least one facet is active. It can wrap under the
+   chip strip on constrained viewports instead of forcing a local
+   horizontal scrollbar. */
+/*
+ * Planned scene buckets stay visible even before the bundled catalog
+ * has examples for every bucket. Fade zero-count chips without adding
+ * synthetic placeholder cards to the starter grid.
+ */
+/*
+ * "All" pills always reflect the catalog's full size (or full lane
+ * size in the sub-row's case) and should not pick up the empty
+ * treatment even when an unrelated category happens to be zero.
+ */
+
+/* ============================================================
+   Card grid — fluid columns sized so a 1440px home view fits
+   four to five tiles per row on desktop, while still falling back
+   to two-up on tablet and one-up on phones.
+   ============================================================ */
+.plugins-home__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+@media (min-width: 1100px) {
+  .plugins-home__grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+}
+@media (min-width: 1400px) {
+  .plugins-home__grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+.plugins-home__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  overflow: hidden;
+  transition: border-color 120ms var(--ease-out), box-shadow 160ms var(--ease-out),
+    transform 160ms var(--ease-out);
+  isolation: isolate;
+  content-visibility: auto;
+  contain: layout paint style;
+  contain-intrinsic-size: 280px 260px;
+}
+.plugins-home__card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md, 0 12px 32px rgba(0, 0, 0, 0.08));
+  transform: translateY(-2px);
+}
+.plugins-home__card.is-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.plugins-home__card.is-featured {
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--border));
+}
+.plugins-home__grid--gallery {
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+}
+/* Phones: a 360px track minimum overflows a ~350px content column, which
+   drags the whole entry view into horizontal scroll. One column fits. */
+@media (max-width: 640px) {
+  .plugins-home__grid--gallery {
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 1400px) {
+  .plugins-home__grid--gallery {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  }
+}
+.plugins-home__card--gallery {
+  cursor: pointer;
+  contain-intrinsic-size: 400px 340px;
+}
+.plugins-home__card--gallery:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.plugins-home__gallery-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-subtle);
+  min-width: 0;
+}
+.plugins-home__gallery-dot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border-radius: 50%;
+  background: #3ad29f;
+}
+.plugins-home__gallery-name {
+  flex: 1;
+  min-width: 0;
+  /* Reset the <button> chrome — this is the accessible "open details"
+     control but reads as the tile's plain title. */
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.plugins-home__gallery-name:hover {
+  color: var(--accent);
+}
+.plugins-home__gallery-name:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.plugins-home__gallery-frame {
+  position: relative;
+  height: 300px;
+  background: #fff;
+  overflow: hidden;
+}
+.plugins-home__gallery-actions {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  z-index: 4;
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition:
+    opacity 180ms var(--ease-out),
+    transform 180ms var(--ease-out);
+}
+.plugins-home__card--gallery:hover .plugins-home__gallery-actions,
+.plugins-home__card--gallery:focus-within .plugins-home__gallery-actions {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.plugins-home__gallery-actions .plugins-home__action {
+  min-width: 0;
+  flex: 1;
+  height: 38px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 650;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+.plugins-home__gallery-actions .plugins-home__action span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* PreviewSurface fills the fixed-height gallery frame instead of its
+   default 4/3 aspect box. */
+/* Hover auto-pans the scaled preview down to reveal the rest of the
+   page. The iframe stays inert (pointer-events: none, inherited) so a
+   click anywhere on the tile — preview included — opens the detail
+   modal rather than being swallowed by the embedded page. */
+/* Decks ship a fixed 16:9 stage that scales itself to its viewport. The tall
+   scroll-preview viewport above would letterbox that stage, leaving a dark
+   --stage-bg band above/below the slide. Give deck tiles a 16:9 frame and let
+   the iframe fill it natively (no transform), so the stage fits edge-to-edge
+   with no band, and skip the scroll-pan (there is nothing below to reveal). */
+.plugins-home__card--gallery[data-od-mode="deck"] .plugins-home__gallery-frame {
+  /* Replace the fixed 300px scroll-preview frame with a 16:9 box so the deck
+     stage fills it exactly — no dark letterbox band, and no leftover white
+     strip below the slide. */
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+
+/* ---------- Hero preview surface ---------- */
+
+/* Image / video */
+@keyframes plugins-home-shimmer {
+  to {
+    background-position: -200% 0, 0 0;
+  }
+}
+/* Sandboxed HTML iframe — scaled-down "thumbnail" of a real page */
+
+/* Design-system showcase tile */
+
+/* Text fallback */
+
+/* ---------- Hover overlay (mask) ----------
+   The overlay floats over the preview surface on hover/focus,
+   surfacing description, tags, and primary actions without
+   stealing the resting state. Mirrors the lightbox-style
+   reveal Lovart and similar galleries use.
+   --------------------------------------------------------- */
+
+/* ---------- Resting metadata foot ----------
+   Always visible at the bottom of the card, showing title +
+   trust pill. The overlay's matching info supersedes this on
+   hover — keeping the foot small means cards still answer
+   "what is this?" before any pointer motion.
+   --------------------------------------------------------- */
+
+/* Card action buttons — overlay variant */
+.plugins-home__action {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 120ms var(--ease-out), border-color 120ms var(--ease-out),
+    color 120ms var(--ease-out);
+}
+.plugins-home__action--primary {
+  flex: 1;
+  background: white;
+  color: #111;
+  border: 1px solid white;
+}
+.plugins-home__action--primary:hover:not(:disabled) {
+  background: #f3f3f3;
+  border-color: #f3f3f3;
+}
+.plugins-home__action--primary:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
+.plugins-home__gallery-actions .plugins-home__action--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg-panel);
+}
+.plugins-home__gallery-actions .plugins-home__action--primary:hover:not(:disabled),
+.plugins-home__gallery-actions .plugins-home__action--primary:focus-visible {
+  background: color-mix(in srgb, var(--accent) 88%, #fff);
+  border-color: color-mix(in srgb, var(--accent) 88%, #fff);
+  color: var(--bg-panel);
+}
+
+/* Touch/coarse-pointer fallback — overlays should be visible
+   without hover so phone/tablet users can still see metadata. */
+@media (hover: none) {
+  .plugins-home__gallery-actions {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+
+/* Touch-target floor for the two tile controls the 390px audit still
+   flagged: the always-visible "Open" action measured 38px tall and the
+   window-bar title button ("Battery Interface Modeler") only 18.8px.
+   The whole card article is tappable and triggers the same open(), so
+   these are duplicate affordances — but they LOOK like the control users
+   aim at, so give them real ≥44px hit boxes. The title grows via
+   padding + negative margin (zero layout shift inside the window bar);
+   its inflated box overlapping the inert version chip is harmless
+   because the card underneath opens the same asset anyway. */
+@media (hover: none), (pointer: coarse) {
+  .plugins-home__gallery-actions .plugins-home__action {
+    height: 44px;
+  }
+  .plugins-home__gallery-name {
+    padding: 13px 6px;
+    margin: -13px -6px;
+  }
+}
+
+/* ============================================================
+   New-user templates reveal (HomeTemplatesReveal)
+   Collapsed by default for users with no projects so the hero
+   composer owns the first screen; a bottom hint + upward scroll
+   gesture smoothly reveals the Community gallery.
+   ============================================================ */
+.home-templates-reveal {
+  display: flex;
+  flex-direction: column;
+}
+/* Collapsed: clip the gallery to zero height and fade it out. Uses the repo's
+   canonical auto-height pattern (grid-template-rows 0fr -> 1fr) so the expand
+   animates to the gallery's NATURAL height — a fixed max-height ceiling (was
+   6000px) clipped the last rows once the gallery outgrew it. The inner wrapper
+   owns overflow:hidden so the collapsed rows clip cleanly. */
+.home-templates-reveal__body {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 420ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 320ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.home-templates-reveal__inner {
+  min-height: 0;
+  overflow: hidden;
+}
+.home-templates-reveal.is-revealed .home-templates-reveal__body {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.home-templates-reveal.is-revealed .home-templates-reveal__inner {
+  /* Leave room for the fixed collapse pill so it never covers the last row. */
+  padding-bottom: 64px;
+}
+
+/* Bottom hint — pinned to the very bottom of the viewport, intentionally
+   faint so it sits at the edge of attention. An up arrow bobs gently to
+   suggest the scroll-up gesture without pulling focus from the hero. */
+button.home-templates-reveal__hint {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  color: var(--text-faint);
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  opacity: 0.7;
+  transition: opacity 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+button.home-templates-reveal__hint:hover {
+  background: transparent;
+  opacity: 1;
+  color: var(--text-muted);
+}
+button.home-templates-reveal__hint:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  opacity: 1;
+}
+.home-templates-reveal__hint-arrow {
+  animation: home-templates-bob 1.8s ease-in-out infinite;
+}
+/* Fade + lift the arrow on each cycle so the affordance reads clearly:
+   it rises and brightens, then settles and dims — a gentle "pull me up". */
+@keyframes home-templates-bob {
+  0% {
+    transform: translateY(3px);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(3px);
+    opacity: 0.25;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-templates-reveal__hint-arrow,
+  .home-templates-reveal__collapse {
+    animation: none;
+  }
+  .home-templates-reveal__hint-arrow {
+    opacity: 0.85;
+  }
+  .home-templates-reveal__body {
+    transition: none;
+  }
+}
+
+/* Collapse control — pinned to the bottom of the viewport (mirroring the
+   hint slot) so it's always reachable while the gallery is open, instead of
+   being stranded far below the fold. Reversible: folds the gallery away. */
+button.home-templates-reveal__collapse {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 15px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  box-shadow: var(--shadow-sm, 0 4px 14px rgba(0, 0, 0, 0.08));
+  animation: home-templates-fade-in 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+@keyframes home-templates-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}

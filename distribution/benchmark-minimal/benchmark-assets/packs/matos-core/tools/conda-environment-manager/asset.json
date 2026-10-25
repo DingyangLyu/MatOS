@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "conda-environment-manager",
+  "type": "tool",
+  "name": "Conda Environment Manager",
+  "version": "1.0.0",
+  "description": "Create current-user persistent Conda environments and install Python packages into those user-scoped environments only.",
+  "entry": "./tool.py",
+  "tags": [
+    "runtime",
+    "conda",
+    "python",
+    "environment",
+    "package-install",
+    "user-scope"
+  ],
+  "permissions": {
+    "shell": "enabled",
+    "network": "enabled",
+    "workspace": "read-write",
+    "secrets": [
+      "MATOS_USER_CONDA_ENVS_PATH",
+      "MATOS_PIP_INDEX_URL",
+      "MATOS_PIP_EXTRA_INDEX_URL",
+      "MATOS_CONDA_CHANNELS",
+      "MATOS_CONDA_CHANNEL_ALIAS",
+      "CONDA_EXE",
+      "MAMBA_EXE",
+      "MICROMAMBA_EXE"
+    ]
+  },
+  "metadata": {
+    "kind": "external-tool",
+    "sourceFormat": "cmatos-native-tool",
+    "binding": "mcp__matos_asset__conda_environment_manager",
+    "promptPath": "prompt.md",
+    "inputSchemaPath": "input.schema.json",
+    "isReadOnly": false,
+    "isDestructive": false,
+    "family": "runtime",
+    "executor": {
+      "type": "matos-python",
+      "runtime": "python3",
+      "entry": "./tool.py",
+      "timeoutMs": 600000,
+      "mcpName": "conda_environment_manager"
+    },
+    "marketplace": {
+      "visibility": "public",
+      "category": "tool"
+    }
+  }
+}

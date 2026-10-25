@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "scientific-programming",
+  "type": "skill",
+  "name": "scientific-programming",
+  "version": "0.1.0",
+  "description": "Write correct scientific/numerical code under hidden tests. Extract the function contract (I/O shapes, units, tolerances) first, write local self-tests, run import/smoke checks, and repair failing code before final submission. Use for SciCode-style, ScienceAgentBench-style, and any exact-implementation coding task.",
+  "entry": "SKILL.md",
+  "tags": [
+    "scientific-programming",
+    "numerical",
+    "hidden-tests",
+    "test-first",
+    "repair-loop"
+  ],
+  "dependencies": [
+    "skill:answer-finalization"
+  ],
+  "metadata": {
+    "sourceFormat": "cmatos-native-skill",
+    "marketplace": {
+      "visibility": "public",
+      "category": "skill"
+    }
+  }
+}

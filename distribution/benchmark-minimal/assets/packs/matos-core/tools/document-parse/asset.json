@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "document-parse",
+  "type": "tool",
+  "name": "Document Parse (local files)",
+  "version": "0.1.0",
+  "description": "Extract plain text from a local document (PDF, DOCX, HTML, TXT/MD/CSV/JSON, and other office formats via LibreOffice). For remote URLs/PDFs use web_read instead.",
+  "entry": "./tool.py",
+  "tags": [
+    "document",
+    "pdf",
+    "parse",
+    "research"
+  ],
+  "permissions": {
+    "shell": "enabled",
+    "network": "disabled",
+    "workspace": "read-only",
+    "secrets": []
+  },
+  "metadata": {
+    "kind": "external-tool",
+    "sourceFormat": "cmatos-native-tool",
+    "binding": "mcp__matos_asset__document_parse",
+    "promptPath": "prompt.md",
+    "inputSchemaPath": "input.schema.json",
+    "isReadOnly": true,
+    "isDestructive": false,
+    "family": "document",
+    "executor": {
+      "type": "matos-python",
+      "runtime": "python3",
+      "entry": "./tool.py",
+      "timeoutMs": 150000,
+      "mcpName": "document_parse"
+    },
+    "marketplace": {
+      "visibility": "public",
+      "category": "tool"
+    }
+  }
+}

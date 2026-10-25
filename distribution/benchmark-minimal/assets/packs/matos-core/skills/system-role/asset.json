@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "system-role",
+  "type": "skill",
+  "name": "system-role",
+  "version": "1.0.0",
+  "description": "System role configuration. Reads MATOS_ROLE to determine available capabilities. Always loaded.",
+  "entry": "SKILL.md",
+  "tags": [],
+  "metadata": {
+    "sourceFormat": "cmatos-native-skill",
+    "migratedFrom": "../MatOS/container/skills/system-role/SKILL.md",
+    "toolReferences": [],
+    "marketplace": {
+      "visibility": "public",
+      "category": "skill"
+    }
+  }
+}

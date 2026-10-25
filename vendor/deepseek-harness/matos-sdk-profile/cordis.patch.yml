@@ -1,0 +1,7 @@
+- id: sdk-jsonrpc-server
+  disabled: true
+
+- insert:
+    - id: matos-sdk-server
+      name: '@matos/dsh-assets/sdk'
+      inject: [sdkAppStartup, loader]

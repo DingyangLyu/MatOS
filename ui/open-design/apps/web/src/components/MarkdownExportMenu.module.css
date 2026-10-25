@@ -1,0 +1,4 @@
+.root { position: relative; display: inline-flex; flex: 0 0 auto; align-items: center; }
+.menu { position: fixed; z-index: 10000; width: 220px; max-width: calc(100vw - 16px); padding: 4px; background: var(--panel, #fff); color: var(--text, #222); border: 1px solid var(--border, #dce0e5); border-radius: 6px; box-shadow: 0 4px 16px #0002; }
+.menu button { display: flex; align-items: center; justify-content: flex-start; gap: 8px; width: 100%; min-height: 36px; white-space: nowrap; }
+.error { position: fixed; width: 220px; max-width: calc(100vw - 16px); padding: 8px; border: 1px solid #bc3442; border-radius: 4px; background: var(--panel, #fff); color: #bc3442; font-size: 12px; z-index: 10001; overflow-wrap: anywhere; }

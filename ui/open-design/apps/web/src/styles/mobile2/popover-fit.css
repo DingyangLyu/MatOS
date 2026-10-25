@@ -1,0 +1,149 @@
+/* 手机 UX 二轮 · 小型弹窗视口适配兜底层(popover/下拉/tooltip/气泡)。
+   背景:390x844 触屏实测(生产站 Playwright 量测)发现若干弹层超出视口;
+   另有一批 CSS 定位弹层按代码审计存在同类越界风险。本文件只做两类事:
+   1) 实测越界的弹层改为视口安全的呈现(底部抽屉 / 宽高上限 + 内部滚动);
+   2) 纯 hover 触发的装饰性 CSS tooltip 在触屏(hover:none)下隐藏——触屏
+      没有悬停,这些气泡只会在 tap 后以粘滞 hover 形式出现且常越界。
+   全部规则包在移动端媒体查询内,桌面零影响。加载顺序在 mobile2 汇总
+   最后,同权重选择器可稳定覆盖桌面样式;不改动其他归属人的 mobile2 文件。 */
+
+@media (max-width: 768px) {
+  /* 首页输入卡的入场动画(entrance.css:od-fade-slide-up + fill-mode both)
+     播完后把 identity transform 永久留在卡片上,使卡片成为 fixed 后代的
+     containing block——实测下方两个"底部抽屉"会错误地以卡片为坐标系。
+     弹层打开时移除该动画(动画早在弹层可打开前就播完,视觉零变化),
+     选择器与 home-hero.css:354 既有的 :has() 列表一致。 */
+  .home-hero__input-card:has(.inline-switcher__popover),
+  .home-hero__input-card:has(.session-mode-toggle__popover),
+  .home-hero__input-card:has(.home-hero__context-picker),
+  .home-hero__input-card:has(.home-hero__template-menu) {
+    animation: none;
+  }
+
+  /* ---- 实测越界 1:模型/执行内联切换弹层(entry-layout.css .inline-switcher__popover)
+     桌面为锚点右对齐 absolute(right:0; width:320px)。窄屏上锚点 chip 距左边
+     不足 320px,实测左溢 17px(rect.x=-17)。改为固定底部抽屉:视口内边距
+     10px,超高内部滚动。 */
+  /* 双写 .home-hero__execution-switcher 后代选择器:home-hero.css:987/3366
+     的同名双类规则(right:0 / left:auto / max-width)优先级更高,需持平
+     并靠加载顺序取胜。 */
+  .inline-switcher__popover,
+  .home-hero__execution-switcher .inline-switcher__popover {
+    position: fixed !important;
+    top: auto !important;
+    left: 10px !important;
+    right: 10px !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: min(72vh, calc(100dvh - 90px)) !important;
+    overflow-y: auto !important;
+    z-index: 2000 !important;
+  }
+
+  /* ---- 实测越界 2:首页模板选择菜单(home-hero.css .home-hero__template-menu)
+     桌面 absolute 下拉,max-height 440px 以"距视口顶 200px"估算,实测锚点
+     在 y≈426,菜单下缘 866 > 844,下溢 22px。同样改固定底部抽屉。 */
+  .home-hero__template-menu {
+    position: fixed !important;
+    top: auto !important;
+    left: 10px !important;
+    right: 10px !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    max-height: min(72vh, calc(100dvh - 90px)) !important;
+    overflow-y: auto !important;
+    z-index: 2000 !important;
+  }
+
+  /* ---- 实测越界 3:首页最近项目卡片 ⋯ 菜单(recent-projects.css
+     .recent-projects__card-menu)。桌面 absolute 开在卡片下方;卡片条位于
+     页面底部时菜单整体落在视口外(实测 y=850,下溢 146px)。改固定底部
+     抽屉(形态与 mobile2 已有的 df-row-popover 长按菜单一致)。 */
+  .recent-projects__card-menu {
+    position: fixed !important;
+    top: auto !important;
+    left: 10px !important;
+    right: 10px !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    max-height: 60vh;
+    overflow-y: auto !important;
+    z-index: 2000 !important;
+  }
+
+  /* ---- 审计风险兜底:以下弹层未在实测会话中复现越界,但定位模式同类
+     (锚点相对 absolute / JS 定位无高度上限),统一加"不超过视口"的宽高
+     上限与内部滚动。clamp 对未越界的实例数值上无变化,桌面被媒体查询隔离。 */
+
+  /* 首页模板栏 "…" 更多快捷面板:JS fixed(top/right),无纵向 clamp。 */
+  .home-hero__shortcut-menu-panel {
+    max-width: calc(100vw - 16px);
+    max-height: min(420px, calc(100dvh - 90px));
+    overflow-y: auto;
+  }
+
+  /* 会话切换下拉(.conv-menu,固定 width:320px、JS left 无 clamp;
+     当前无组件引用,防复活兜底)。 */
+  .conv-menu {
+    max-width: calc(100vw - 16px);
+    max-height: min(420px, calc(100dvh - 90px));
+  }
+
+  /* 自动化任务弹层(tasks.css,absolute left:0,max-width 340px)。 */
+  .automation-popover {
+    max-width: min(340px, calc(100vw - 16px));
+    max-height: min(360px, calc(100dvh - 90px));
+  }
+
+  /* 项目反馈气泡(right:0 右对齐,
+     width min(360px,88vw):锚点距右边不足时左溢)。 */
+  .ds-project-feedback-popover {
+    width: min(360px, 88vw, calc(100vw - 16px));
+    max-height: min(70vh, calc(100dvh - 90px));
+    overflow-y: auto;
+  }
+
+  /* 缩放菜单(shell.css,left:50% 居中translate:触发器贴边时半宽越界)。 */
+  .zoom-menu-popover {
+    max-width: calc(100vw - 16px);
+  }
+
+  /* 入口帮助弹层 / 导航创建菜单 / 产物工具菜单 / 工作区标签弹层:
+     absolute 锚定 + 固定 min-width,统一宽高上限。 */
+  .entry-help-popover,
+  .create-menu,
+  .artifact-tool-menu,
+  .workspace-tabs-popover {
+    max-width: calc(100vw - 16px);
+    max-height: min(70vh, calc(100dvh - 90px));
+    overflow-y: auto;
+  }
+}
+
+/* 触屏专属:粘滞 hover 中和 + 装饰性 hover tooltip 隐藏。
+   (hover:none) 仅命中无悬停能力的触屏设备,桌面(含触控笔记本外接鼠标)
+   不受影响。 */
+@media (max-width: 768px) and (hover: none) {
+  /* 卡片 hover 浮起 transform 会让卡片成为 fixed 后代的 containing block,
+     tap 后粘滞 :hover 直接破坏上面 .recent-projects__card-menu 的底部抽屉
+     定位;触屏无真实悬停,去掉该浮起无感知。 */
+  .recent-projects__card:hover {
+    transform: none;
+  }
+
+  /* 纯 hover 触发的 CSS 伪元素 tooltip(非 od-tooltip JS 层):触屏下只会
+     在 tap 后粘滞出现,且多为贴边按钮(顶栏右缘/查看器工具栏),气泡
+     right:100% / left:100% / translate(-50%) 定位常越界。按钮本身有
+     aria-label,气泡纯装饰,直接隐藏。 */
+  .entry-nav-rail [data-tooltip]::after,
+  .entry-main__topbar-chips--icon-only [data-tooltip]:not(.od-tooltip)::after,
+  .chat-queued-send-tooltip:not(.od-tooltip)[data-tooltip]::after,
+  .viewer-action-icon:not(.od-tooltip)[data-tooltip]::after,
+  .viewer-comment-count-trigger:not(.od-tooltip)[data-tooltip]::after,
+  .assistant-copy-button:not(.od-tooltip)[data-tooltip]::after,
+  .assistant-feedback-button:not(.od-tooltip)[data-tooltip]::after,
+  .viewer-action[data-coming-soon='true']::after,
+  .viewer-toggle[data-coming-soon='true']::after {
+    display: none;
+  }
+}

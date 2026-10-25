@@ -1,0 +1,189 @@
+/* chat-content 手机适配层(mobile UX round-2)。全部规则必须包在
+   @media (max-width: 768px) 或 (hover: none) 查询内,桌面零回退。
+
+   作用域:聊天消息内容渲染(AssistantMessage 里的 .msg / .prose-block /
+   .md-* markdown 节点、思考/工具/系统折叠块)与输入器(ChatComposer 的
+   .composer / @提及 & 斜杠弹层 / + 菜单 / 附件预览条)。不触碰 chat.css、
+   chat-mobile.css、ChatPane 的消息 hover 操作与代码块复制按钮(其他负责人域)。
+   选择器特异性刻意 ≥ 桌面同名规则,叠加"加载在桌面样式之后",移动端稳赢。 */
+
+/* 唯一的非 media 基线规则:上传失败重试按钮(tsx 新增)默认隐藏,使桌面维持
+   "仅一行错误文案"的原有外观(桌面零回退);仅在下方触屏媒体查询里显示。 */
+.composer .composer-upload-error__retry {
+  display: none;
+}
+
+/* =====================================================================
+   1. 消息内容渲染 —— AssistantMessage / markdown
+   ===================================================================== */
+
+@media (max-width: 768px) {
+  /* --- 1.1 GFM 表格:窄屏横滚而非挤压竖排 --------------------------------
+     桌面表格 width:100% 会把多列压进 ~353px,单元格文字被迫逐字竖排
+     ("材料体系名称较长列" → 4 行,"稳定性" → 一列单字),几乎不可读。
+     给单元格最小列宽,让表格自然宽度超过容器,由已 overflow-x:auto 的
+     .md-table-wrap 承担横向滚动。首列(常是名称)给更宽的下限。 */
+  .msg .prose-block .md-table th,
+  .msg .prose-block .md-table td {
+    min-width: 92px;
+    white-space: normal;
+  }
+  .msg .prose-block .md-table th:first-child,
+  .msg .prose-block .md-table td:first-child {
+    min-width: 120px;
+  }
+  /* 横滚提示:左右边缘的可滚阴影(background-attachment 混合 local/scroll,
+     滚到端点自动隐藏对应侧)。退化时仍是普通底色 + 原生横滚,不影响功能。 */
+  .msg .prose-block .md-table-wrap {
+    background:
+      linear-gradient(to right, var(--bg-elevated) 30%, transparent) 0 0,
+      linear-gradient(to left, var(--bg-elevated) 30%, transparent) 100% 0,
+      radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.14), transparent) 0 0,
+      radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.14), transparent) 100% 0;
+    background-repeat: no-repeat;
+    background-size: 44px 100%, 44px 100%, 16px 100%, 16px 100%;
+    background-attachment: local, local, scroll, scroll;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  /* --- 1.2 引用块 / 告警块:窄屏内边距 + 轻底色,提升可读 -----------------
+     桌面仅左侧 3px 竖线 + 左内边距 14px,窄屏读起来偏"裸"。补一层轻底色
+     和四周内边距,让引用与正文有清晰分界。 */
+  .msg .prose-block .md-quote {
+    margin: 12px 0;
+    padding: 8px 12px 8px 14px;
+    background: color-mix(in srgb, var(--bg-subtle) 55%, transparent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+
+  /* --- 1.3 思考块正文:窄屏收窄左缩进,省回宝贵横向空间 ------------------- */
+  .msg .thinking-body {
+    padding-left: 14px;
+  }
+
+  /* --- 1.4 行级数学公式:若渲染为 KaTeX 块则允许横滚(防溢出) ------------
+     当前 markdown 管线不渲染 KaTeX,该规则为防御性:一旦启用块级公式,
+     窄屏也不会横向撑破气泡。整块包在 max-width:768 内,桌面零影响。 */
+  .msg .prose-block .katex-display {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  /* --- 1.5 行内链接触控:抬高行高 + 给链接垂直命中区 ----------------------
+     行内链接实测仅 18px 高,手指难点。加大 prose 行高避免相邻行重叠,并给
+     <a> 垂直 padding —— inline 元素的 padding 会扩大可点命中盒。 */
+  .msg .prose-block {
+    line-height: 1.75;
+  }
+  .msg .prose-block .md-link {
+    padding-block: 3px;
+    border-radius: 3px;
+  }
+
+  /* --- 1.6 折叠区(思考 / 工具调用 / 系统提醒)展开触发器 → 44px ---------- */
+  .msg .thinking-toggle,
+  .msg .action-card-toggle,
+  .msg .system-reminder-toggle {
+    min-height: 44px;
+  }
+}
+
+/* =====================================================================
+   2. 输入器 —— ChatComposer
+   ===================================================================== */
+
+@media (max-width: 768px) {
+  /* --- 2.1 @提及弹层:高度贴合内容,消除固定 460px 空白 -------------------
+     桌面 .mention-popover 固定 height=var(--cfl-max-h)(最高 460),内容只有
+     一两条时窄屏出现大半屏空白。改为按内容自适应,仅保留上限。 */
+  .mention-popover {
+    height: auto;
+    max-height: var(--cfl-max-h, 460px);
+  }
+
+  /* --- 2.2 + 菜单:窄屏加宽,长项("Reference another project")不再局促 --- */
+  .plus-menu__popup {
+    min-width: min(300px, calc(100vw - 24px));
+  }
+
+  /* --- 2.3 上传失败提示:窄屏成块、留白、换行,不再是贴边小灰字 ----------- */
+  .composer .composer-hint {
+    display: block;
+    margin: 6px 10px 0;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  /* 上传错误重试条(tsx 增补)在窄屏的排布。 */
+  .composer .composer-upload-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 10px 0;
+    padding: 7px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--red-bg, color-mix(in srgb, var(--red, #d23434) 12%, var(--bg-panel)));
+    border: 1px solid var(--red-border, color-mix(in srgb, var(--red, #d23434) 32%, transparent));
+    color: var(--red, #d23434);
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  .composer .composer-upload-error__msg {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .composer .composer-upload-error__retry {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    min-height: 32px;
+    padding: 0 12px;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  /* --- 2.4 弹层选项行触控 → 44px(@提及项 / 斜杠命令项) ------------------ */
+  .mention-item {
+    min-height: 44px;
+  }
+  .slash-item {
+    min-height: 44px;
+  }
+
+  /* --- 2.5 + 菜单项 / 子菜单项触控 → 44px -------------------------------- */
+  .plus-menu__popup .plus-menu__item,
+  .plus-menu__flyout .plus-menu__item,
+  .plus-menu__popup .plus-menu__subitem {
+    min-height: 44px;
+  }
+
+  /* --- 2.6 附件缩略图:放大到可见可点,触发区跟随 chip 高度 ---------------
+     桌面缩略图仅 12×12,点开预览的命中区几乎为零。窄屏放大到 24×24 并让
+     触发器撑满 chip 高度(chip 已由 chat-mobile 提到 28px)。 */
+  .composer .staged-preview-trigger {
+    min-height: 28px;
+    gap: 6px;
+  }
+  .composer .staged-preview-trigger img {
+    flex-basis: 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-xs);
+  }
+  .composer .staged-preview-trigger .staged-name {
+    line-height: 1.2;
+  }
+}

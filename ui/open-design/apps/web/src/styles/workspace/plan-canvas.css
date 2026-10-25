@@ -1,0 +1,298 @@
+/* ---------- MatOS plan canvas (right-hand workspace Plan tab) ----------
+   The plan is a document under review, so the canvas reads like paper: a
+   centered measure, generous line height, quiet chrome. The approval bar is
+   the one loud element — approving is the moment the conversation flips from
+   read-only planning to execution. */
+
+.plan-canvas {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--panel);
+}
+
+.plan-canvas__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  flex: 0 0 auto;
+}
+
+.plan-canvas__header-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  color: var(--accent-strong);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.plan-canvas__heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.plan-canvas__title {
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.plan-canvas__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.plan-canvas__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.plan-canvas__status--streaming {
+  color: var(--accent-strong);
+}
+
+.plan-canvas__status--ready {
+  color: var(--ok, #2e9e6b);
+}
+
+.plan-canvas__spinner {
+  animation: plan-canvas-spin 0.9s linear infinite;
+}
+
+@keyframes plan-canvas-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.plan-canvas__steps::before {
+  content: '·';
+  margin-right: 8px;
+  color: var(--border);
+}
+
+.plan-canvas__copy {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  /* Global button reset padding (6px 12px) leaves zero content space at
+     26px border-box — flex squeezed the copy icon svg to 0 width. */
+  padding: 0;
+}
+.plan-canvas__copy svg {
+  flex: none;
+}
+
+.plan-canvas__copy:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--text-muted) 40%, transparent);
+}
+
+.plan-canvas__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  /* Paper backdrop behind the sheet. */
+  background:
+    linear-gradient(color-mix(in srgb, var(--text) 2.5%, transparent), transparent 120px),
+    var(--panel);
+}
+
+.plan-canvas__doc {
+  max-width: 720px;
+  margin: 20px auto 32px;
+  padding: 28px 34px 34px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel-raised, var(--panel));
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent);
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: var(--text);
+  overflow-wrap: break-word;
+}
+
+/* Document typography: the markdown renderer emits plain h1-h4/p/ul/ol/pre. */
+.plan-canvas__doc h1,
+.plan-canvas__doc h2 {
+  font-size: 17px;
+  line-height: 1.4;
+  margin: 20px 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.plan-canvas__doc h3 {
+  font-size: 14.5px;
+  margin: 18px 0 6px;
+}
+
+.plan-canvas__doc h4 {
+  font-size: 13.5px;
+  margin: 14px 0 4px;
+}
+
+.plan-canvas__doc h1:first-child,
+.plan-canvas__doc h2:first-child,
+.plan-canvas__doc h3:first-child {
+  margin-top: 0;
+}
+
+.plan-canvas__doc p {
+  margin: 8px 0;
+}
+
+.plan-canvas__doc ul,
+.plan-canvas__doc ol {
+  margin: 8px 0;
+  padding-left: 22px;
+}
+
+.plan-canvas__doc li {
+  margin: 4px 0;
+}
+
+.plan-canvas__doc ol > li::marker {
+  font-weight: 650;
+  color: var(--accent-strong);
+}
+
+.plan-canvas__doc pre {
+  margin: 10px 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.plan-canvas__doc code {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.92em;
+}
+
+.plan-canvas__doc blockquote {
+  margin: 10px 0;
+  padding: 4px 14px;
+  border-left: 3px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  color: var(--text-muted);
+}
+
+.plan-canvas__empty {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Streaming caret at the document tail. */
+.plan-canvas__cursor {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  margin-top: 4px;
+  border-radius: 2px;
+  background: var(--accent-strong);
+  animation: plan-canvas-blink 1s steps(2, start) infinite;
+}
+
+@keyframes plan-canvas-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.plan-canvas__actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.plan-canvas__actions-hint {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.plan-canvas__actions-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.plan-canvas__refine {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.plan-canvas__refine:hover {
+  border-color: color-mix(in srgb, var(--text-muted) 40%, transparent);
+}
+
+.plan-canvas__approve {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: var(--accent-strong);
+  color: var(--accent-contrast, #fff);
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.plan-canvas__approve:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.plan-canvas__approve:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Live dot on the workspace Plan tab while the plan is streaming. */
+.ws-tab.plan-tab .plan-tab__live {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-strong);
+  animation: plan-canvas-blink 1.2s steps(2, start) infinite;
+}

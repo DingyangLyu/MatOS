@@ -1,0 +1,31 @@
+{
+  "name": "@matos/dsh-assets",
+  "version": "0.1.0",
+  "description": "MatOS scoped assets and project policy tools for DeepSeek Harness",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./sdk": "./sdk.js",
+    "./package.json": "./package.json"
+  },
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "0.2.1-alpha.2"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-attachment": "0.2.1-alpha.2",
+    "@deepseek-ai/dsh-sdk-jsonrpc-server": "0.2.1-alpha.2",
+    "@deepseek-ai/dsh-sdk-protocol": "0.2.1-alpha.2",
+    "@deepseek-ai/dsh-mcp-client": "0.2.1-alpha.2",
+    "@deepseek-ai/dsh-system-prompt": "0.2.1-alpha.2",
+    "@deepseek-ai/dsh-skill-filesystem": "0.2.1-alpha.2",
+    "@modelcontextprotocol/client": "2.2.0",
+    "@deepseek-ai/dsh-subprocess": "0.2.1-alpha.2"
+  }
+}

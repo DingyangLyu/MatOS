@@ -1,0 +1,64 @@
+schemaVersion: 1
+name: admin-main-vasp-preflight-workflow
+version: "1.0.0"
+description: >
+  Executable VASP POTCAR preflight gate. It checks the mounted PBE
+  pseudopotential family for Ca/F/Pr, verifies LEXCH=PE, writes a report, and
+  never submits or runs a VASP calculation.
+parameters:
+  elements:
+    type: array
+    default:
+      - Ca
+      - F
+      - Pr
+  targetFunctional:
+    type: string
+    default: PBE
+policy:
+  approvalMode: bypass
+  defaultRisk: low
+nodes:
+  preflight:
+    type: exec
+    dependsOn: []
+    command: |
+      set -eu
+      root="${MATOS_WORKFLOW_ARTIFACT_ROOT:?MATOS_WORKFLOW_ARTIFACT_ROOT is required}"
+      mkdir -p "$root"
+      pp_root=/opt/matos-tools/vasp/pseudopotentials
+      family=potpaw_PBE
+      pp="$pp_root/$family"
+      report="$root/vasp-potcar-preflight.md"
+      json="$root/vasp-potcar-preflight.json"
+      test -d "$pp"
+      {
+        echo "# VASP POTCAR Preflight Gating Report"
+        echo
+        echo "- Decision: PASS"
+        echo "- Target functional: PBE"
+        echo "- Selected family: $family"
+        echo "- Checks: directory exists, element variant exists, POTCAR exists, LEXCH=PE"
+        echo
+        echo "## Elements"
+      } > "$report"
+      variants=""
+      for elem in Ca F Pr; do
+        dir=$(find "$pp" -maxdepth 1 -type d -name "${elem}*" | sort | head -1)
+        if [ -z "$dir" ]; then
+          echo "$elem: missing under $pp" >&2
+          exit 1
+        fi
+        potcar="$dir/POTCAR"
+        test -f "$potcar"
+        if ! grep -Eq 'LEXCH[[:space:]]*=[[:space:]]*PE' "$potcar"; then
+          echo "$elem: POTCAR LEXCH is not PE" >&2
+          exit 1
+        fi
+        header=$(head -1 "$potcar" | sed 's/"/\\"/g')
+        base=$(basename "$dir")
+        variants="$variants $base"
+        echo "- $elem: $base, $header" >> "$report"
+      done
+      printf '{"gatingDecision":"PASS","targetFunctional":"PBE","selectedFamily":"%s","variants":"%s"}\n' "$family" "$variants" > "$json"
+      cat "$json"

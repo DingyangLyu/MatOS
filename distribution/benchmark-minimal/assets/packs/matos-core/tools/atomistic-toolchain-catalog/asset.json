@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "id": "atomistic-toolchain-catalog",
+  "type": "tool",
+  "name": "Atomistic Toolchain Catalog",
+  "version": "1.0.0",
+  "description": "Discover and probe mounted atomistic simulation tools such as xTB, CREST, GROMACS, OpenMM, PLUMED, ABACUS, CP2K, Quantum ESPRESSO, Wannier90, GW/BSE stacks, and QMCPACK.",
+  "entry": "./tool.py",
+  "tags": [
+    "materials",
+    "simulation",
+    "dft",
+    "molecular-dynamics",
+    "qchem",
+    "xtb",
+    "crest",
+    "gromacs",
+    "openmm",
+    "plumed",
+    "abacus",
+    "cp2k",
+    "qe",
+    "quantum-espresso",
+    "wannier90",
+    "gw",
+    "bse",
+    "yambo",
+    "qmcpack",
+    "quantum-monte-carlo"
+  ],
+  "permissions": {
+    "shell": "read-only",
+    "network": "disabled",
+    "workspace": "read-only",
+    "secrets": [
+      "MATOS_EXTERNAL_TOOLCHAIN_ROOT",
+      "MATOS_CONTAINER_TOOLCHAIN_ROOT",
+      "MATOS_COMPUTE_TOOLCHAIN_CONTAINER_ROOT",
+      "MATOS_RUNTIME_EXECUTABLE_PATHS",
+      "MATOS_RUNTIME_LIBRARY_PATHS"
+    ]
+  },
+  "metadata": {
+    "kind": "external-tool",
+    "sourceFormat": "cmatos-native-tool",
+    "binding": "mcp__matos_asset__atomistic_toolchain_catalog",
+    "promptPath": "prompt.md",
+    "inputSchemaPath": "input.schema.json",
+    "isReadOnly": true,
+    "isDestructive": false,
+    "family": "atomistic-simulation",
+    "executor": {
+      "type": "matos-python",
+      "runtime": "python3",
+      "entry": "./tool.py",
+      "timeoutMs": 30000,
+      "mcpName": "atomistic_toolchain_catalog"
+    },
+    "marketplace": {
+      "visibility": "public",
+      "category": "tool"
+    }
+  }
+}

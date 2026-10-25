@@ -1,0 +1,14 @@
+parameters:
+  - name: x1
+    type: range
+    bounds: [-5.0, 10.0]
+    value_type: float
+
+  - name: x2
+    type: range
+    bounds: [0.0, 15.0]
+    value_type: float
+
+objectives:
+  - name: branin
+    minimize: true

@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "conda-environment-catalog",
+  "type": "tool",
+  "name": "Conda Environment Catalog",
+  "version": "1.0.2",
+  "description": "List system and user-persistent Conda environments available to the current MatOS agent runtime.",
+  "entry": "./tool.py",
+  "tags": [
+    "runtime",
+    "conda",
+    "python",
+    "mlip",
+    "preflight",
+    "wannier90",
+    "gw",
+    "bse",
+    "yambo",
+    "scip",
+    "pyscipopt",
+    "optimization"
+  ],
+  "permissions": {
+    "shell": "disabled",
+    "network": "disabled",
+    "workspace": "read-only",
+    "secrets": []
+  },
+  "metadata": {
+    "kind": "external-tool",
+    "sourceFormat": "cmatos-native-tool",
+    "binding": "mcp__matos_asset__conda_environment_catalog",
+    "promptPath": "prompt.md",
+    "inputSchemaPath": "input.schema.json",
+    "isReadOnly": true,
+    "isDestructive": false,
+    "family": "runtime",
+    "executor": {
+      "type": "matos-python",
+      "runtime": "python3",
+      "entry": "./tool.py",
+      "timeoutMs": 30000,
+      "mcpName": "conda_environment_catalog"
+    },
+    "marketplace": {
+      "visibility": "public",
+      "category": "tool"
+    }
+  }
+}

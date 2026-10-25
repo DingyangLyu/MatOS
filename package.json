@@ -1,0 +1,30 @@
+{
+  "name": "matos-dsh-runtime",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "bun@1.3.14",
+  "type": "module",
+  "bin": {
+    "matos": "./bin/matos"
+  },
+  "scripts": {
+    "matos": "bash ./bin/matos",
+    "matos:regression": "bash ./scripts/matos-user-test-regression.sh",
+    "matos:clean-tmp": "bash ./scripts/matos-clean-tmp.sh",
+    "test": "bash ./scripts/matos-test.sh",
+    "start": "bash ./bin/matos"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "ajv": "8.18.0",
+    "picomatch": "4.0.4",
+    "pnpm": "10.33.2",
+    "proper-lockfile": "4.1.2",
+    "shell-quote": "1.8.3",
+    "yaml": "2.8.3"
+  },
+  "devDependencies": {
+    "bun-types": "1.3.14",
+    "typescript": "5.9.3"
+  }
+}

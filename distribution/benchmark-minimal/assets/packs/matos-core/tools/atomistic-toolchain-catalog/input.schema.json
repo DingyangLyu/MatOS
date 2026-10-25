@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["xtb", "crest", "gromacs", "openmm", "plumed", "abacus", "cp2k", "qe", "wannier90", "gw", "qmcpack"]
+      },
+      "description": "Optional subset of tools to inspect. Defaults to all supported entries."
+    },
+    "toolchainRoot": {
+      "type": "string",
+      "description": "Optional container-visible toolchain root override. Defaults to MATOS_EXTERNAL_TOOLCHAIN_ROOT, MATOS_CONTAINER_TOOLCHAIN_ROOT, MATOS_COMPUTE_TOOLCHAIN_CONTAINER_ROOT, /opt/matos-tools, then the configured host toolchain root."
+    },
+    "probe": {
+      "type": "boolean",
+      "description": "Whether to run lightweight version/import probes. Defaults to true."
+    },
+    "timeoutSeconds": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 30,
+      "description": "Per-probe timeout. Defaults to 8 seconds."
+    }
+  },
+  "additionalProperties": false
+}

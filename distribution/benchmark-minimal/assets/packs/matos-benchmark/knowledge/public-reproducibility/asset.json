@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "public-reproducibility",
+  "type": "knowledge",
+  "name": "Reproducible scientific execution",
+  "version": "1.0.0",
+  "description": "Generic public evidence requirements.",
+  "entry": "KNOWLEDGE.md",
+  "metadata": {},
+  "dependencies": []
+}

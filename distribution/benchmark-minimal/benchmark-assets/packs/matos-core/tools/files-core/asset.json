@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "files-core",
+  "type": "tool",
+  "name": "Files Core",
+  "version": "1.0.0",
+  "description": "Read, search, and edit local workspace files.",
+  "metadata": {
+    "kind": "builtin-pack",
+    "builtinTools": [
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "NotebookEdit"
+    ],
+    "mcpServers": [],
+    "sourceFormat": "cmatos-native-builtin-tool-pack",
+    "marketplace": {
+      "visibility": "public",
+      "category": "tool"
+    }
+  }
+}

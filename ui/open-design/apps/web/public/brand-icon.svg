@@ -1,0 +1,28 @@
+<svg width="444" height="444" viewBox="0 0 444 444" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- MatOS monochrome brand glyph. Consumed as a CSS mask (colored via
+       background-color), so everything must render in #000000/solid
+       fill: the lattice mark only, no badge background. -->
+  <g stroke="#000000" stroke-width="14" stroke-linecap="round" fill="none">
+    <line x1="222" y1="222" x2="222" y2="106"/>
+    <line x1="222" y1="222" x2="322" y2="164"/>
+    <line x1="222" y1="222" x2="322" y2="280"/>
+    <line x1="222" y1="222" x2="222" y2="338"/>
+    <line x1="222" y1="222" x2="122" y2="280"/>
+    <line x1="222" y1="222" x2="122" y2="164"/>
+    <line x1="222" y1="106" x2="322" y2="164" stroke-width="9"/>
+    <line x1="322" y1="164" x2="322" y2="280" stroke-width="9"/>
+    <line x1="322" y1="280" x2="222" y2="338" stroke-width="9"/>
+    <line x1="222" y1="338" x2="122" y2="280" stroke-width="9"/>
+    <line x1="122" y1="280" x2="122" y2="164" stroke-width="9"/>
+    <line x1="122" y1="164" x2="222" y2="106" stroke-width="9"/>
+  </g>
+  <g fill="#000000">
+    <circle cx="222" cy="106" r="24"/>
+    <circle cx="322" cy="164" r="24"/>
+    <circle cx="322" cy="280" r="24"/>
+    <circle cx="222" cy="338" r="24"/>
+    <circle cx="122" cy="280" r="24"/>
+    <circle cx="122" cy="164" r="24"/>
+    <circle cx="222" cy="222" r="38"/>
+  </g>
+</svg>

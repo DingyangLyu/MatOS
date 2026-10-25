@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "user-feedback-critic",
+  "type": "role",
+  "name": "User Feedback Critic",
+  "version": "2.0.0",
+  "description": "Minimal public scientific workspace role.",
+  "entry": "ROLE.md",
+  "dependencies": [
+    "skill:system-role"
+  ],
+  "mounts": {
+    "skills": [
+      "skill:system-role"
+    ]
+  },
+  "metadata": {
+    "sourceFormat": "matos-public-minimal",
+    "hidden": true,
+    "group": "evolution",
+    "provider": "self-evolution",
+    "mode": "feedback-critic"
+  }
+}

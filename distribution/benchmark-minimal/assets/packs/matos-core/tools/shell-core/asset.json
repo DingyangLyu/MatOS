@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "shell-core",
+  "type": "tool",
+  "name": "Shell Core",
+  "version": "1.0.0",
+  "description": "Execute shell commands inside the current runtime.",
+  "metadata": {
+    "kind": "builtin-pack",
+    "builtinTools": [
+      "Bash",
+      "PowerShell"
+    ],
+    "mcpServers": [],
+    "sourceFormat": "cmatos-native-builtin-tool-pack",
+    "marketplace": {
+      "visibility": "public",
+      "category": "tool"
+    }
+  }
+}

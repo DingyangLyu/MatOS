@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "gemini-vision-analyze",
+  "type": "tool",
+  "name": "Gemini Vision Analyze",
+  "version": "1.0.0",
+  "description": "Analyze a local image with Gemini multimodal models through an OpenAI-compatible or native Gemini endpoint. Use when the current agent model cannot inspect images directly.",
+  "entry": "./tool.py",
+  "tags": [
+    "vision",
+    "multimodal",
+    "image",
+    "vlm",
+    "gemini"
+  ],
+  "permissions": {
+    "shell": "disabled",
+    "network": "enabled",
+    "workspace": "read-only",
+    "secrets": [
+      "GEMINI_API_KEY",
+      "GEMINI_BASE_URL",
+      "GEMINI_MODEL",
+      "GEMINI_API_STYLE",
+      "MATOS_GEMINI_ENV_FILE"
+    ]
+  },
+  "metadata": {
+    "kind": "external-tool",
+    "sourceFormat": "cmatos-native-tool",
+    "binding": "mcp__matos_asset__gemini_vision_analyze",
+    "promptPath": "prompt.md",
+    "inputSchemaPath": "input.schema.json",
+    "isReadOnly": true,
+    "isDestructive": false,
+    "family": "multimodal",
+    "executor": {
+      "type": "matos-python",
+      "runtime": "python3",
+      "entry": "./tool.py",
+      "timeoutMs": 90000,
+      "mcpName": "gemini_vision_analyze"
+    },
+    "marketplace": {
+      "visibility": "public",
+      "category": "tool"
+    }
+  }
+}

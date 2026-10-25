@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "direct-asset-editor",
+  "type": "role",
+  "name": "Direct Asset Editor",
+  "version": "2.0.0",
+  "description": "Minimal public scientific workspace role.",
+  "entry": "ROLE.md",
+  "dependencies": [
+    "skill:system-role",
+    "tool:files-core"
+  ],
+  "mounts": {
+    "skills": [
+      "skill:system-role"
+    ],
+    "tools": [
+      "tool:files-core"
+    ]
+  },
+  "metadata": {
+    "sourceFormat": "matos-public-minimal",
+    "hidden": true,
+    "group": "evolution",
+    "provider": "self-evolution",
+    "mode": "direct-edit"
+  }
+}

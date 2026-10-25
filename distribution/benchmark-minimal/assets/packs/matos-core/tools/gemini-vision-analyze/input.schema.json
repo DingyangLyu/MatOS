@@ -1,0 +1,52 @@
+{
+  "type": "object",
+  "properties": {
+    "imagePath": {
+      "type": "string",
+      "description": "Local path to the image. Relative paths are resolved from the current workspace roots when possible."
+    },
+    "context": {
+      "type": "string",
+      "description": "Short task context for the vision model: what the image is, why it matters, and what the agent/user wants to know."
+    },
+    "question": {
+      "type": "string",
+      "description": "Specific visual question to answer. Defaults to a concise description and issue-focused inspection."
+    },
+    "model": {
+      "type": "string",
+      "description": "Optional Gemini model override. Defaults to GEMINI_MODEL or gemini-3.1-pro-preview."
+    },
+    "detail": {
+      "type": "string",
+      "enum": [
+        "brief",
+        "full"
+      ],
+      "description": "Level of visual detail requested. Defaults to full."
+    },
+    "maxOutputTokens": {
+      "type": "integer",
+      "minimum": 128,
+      "maximum": 4096,
+      "description": "Maximum output tokens. Defaults to 1200."
+    },
+    "thinkingBudget": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 8192,
+      "description": "Google native thinking budget. Defaults to 0 so visual summaries do not spend the output budget on hidden thinking."
+    },
+    "temperature": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Sampling temperature. Defaults to 0."
+    }
+  },
+  "required": [
+    "imagePath",
+    "context"
+  ],
+  "additionalProperties": false
+}

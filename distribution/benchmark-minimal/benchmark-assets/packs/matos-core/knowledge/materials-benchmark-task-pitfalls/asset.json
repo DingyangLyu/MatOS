@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "materials-benchmark-task-pitfalls",
+  "type": "knowledge",
+  "name": "Materials and chemistry data-task common pitfalls",
+  "version": "0.1.0",
+  "description": "Concrete, reusable fixes for recurring failures on materials/chemistry data and visualization tasks: phonon band/DOS units, charge-density difference cumulative integral, Papyrus filtering, QSAR target typing, refractive-index modeling, dataset column names, and library API misuse. Read before phonon, charge-density, band-gap, formation-energy, QSAR, ligand/protein fingerprint, or property-prediction tasks.",
+  "entry": "KNOWLEDGE.md",
+  "tags": [
+    "materials",
+    "chemistry",
+    "benchmark",
+    "phonon",
+    "charge-density",
+    "band-gap",
+    "formation-energy",
+    "qsar",
+    "refractive-index",
+    "papyrus",
+    "ligand",
+    "pitfalls",
+    "exemplars"
+  ],
+  "metadata": {
+    "sourceFormat": "cmatos-native-knowledge",
+    "summary": "Reusable fixes for recurring materials/chemistry data-task failures (phonon units, charge-density cumulative integral, Papyrus filtering, QSAR typing, refractive index, dataset column names, API misuse). Read before these task types.",
+    "marketplace": {
+      "visibility": "public",
+      "category": "knowledge"
+    }
+  }
+}

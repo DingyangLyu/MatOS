@@ -1,0 +1,17 @@
+.footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  background: var(--bg, #fff);
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}

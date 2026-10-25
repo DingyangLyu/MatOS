@@ -1,0 +1,3 @@
+- insert:
+    - id: matos-assets
+      name: '@matos/dsh-assets'

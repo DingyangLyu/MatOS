@@ -1,0 +1,1145 @@
+/* Slash-command popover in the chat composer */
+
+/* Slash-command popover — FLOATING (positioned by CaretFloatingLayer). */
+.slash-popover {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: var(--cfl-max-h, 320px);
+  overflow: hidden;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 5px;
+  /* removed: position, bottom, left, right, margin-bottom, fixed max-height, z-index */
+}
+.slash-popover-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 7px 7px;
+  border-bottom: 1px solid var(--border-soft);
+  margin-bottom: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.slash-popover-hint {
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
+.slash-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  width: 100%;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 8px 9px;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  min-height: 34px;
+  transition: background-color 120ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.slash-item:hover { background: var(--bg-subtle); }
+.slash-item.active,
+.slash-item[aria-selected='true'] {
+  background: var(--accent-tint);
+  border-color: var(--accent-soft);
+  box-shadow: inset 2px 0 0 0 var(--accent);
+}
+.slash-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.slash-item-body { display: grid; gap: 2px; min-width: 0; flex: 1; }
+.slash-item-row { display: flex; align-items: baseline; gap: 8px; }
+.slash-item-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-strong);
+  background: transparent;
+  padding: 0;
+}
+.slash-item-arg {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+}
+/* Right-aligned provenance chip (e.g. "CLI" for native registry commands).
+   Sits flush to the row's trailing edge, subtle so it never competes with
+   the command label. */
+.slash-item-badge {
+  margin-left: auto;
+  flex-shrink: 0;
+  align-self: center;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  padding: 1px 7px;
+  line-height: 15px;
+}
+.slash-item.active .slash-item-badge,
+.slash-item[aria-selected='true'] .slash-item-badge {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-color: var(--accent-soft);
+}
+.slash-item-desc { font-size: 11px; color: var(--text-muted); line-height: 1.35; }
+
+/* --- CJK (Chinese / Japanese / Korean) Comfort Pass --- */
+:lang(zh), :lang(zh-CN), :lang(zh-TW), :lang(ja), :lang(ko) {
+  --sans: "Inter", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Hiragino Sans GB", "Source Han Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* --- Arabic & Persian Comfort Pass --- */
+[dir="rtl"] {
+  --sans: "Cairo", "Inter", "Vazirmatn", "Noto Sans Arabic", "Segoe UI Arabic", "Tahoma", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Scope line-height increase to prose and chat to avoid breaking compact UI chrome */
+[dir="rtl"] .prose,
+[dir="rtl"] .chat-message,
+[dir="rtl"] .msg .user-text {
+  line-height: 1.7;
+}
+
+[dir="rtl"] .avatar-item,
+[dir="rtl"] .settings-tab,
+[dir="rtl"] .ds-item-name {
+  text-align: right;
+}
+
+[dir="rtl"] .app-chrome-back svg,
+[dir="rtl"] .back-btn svg,
+[dir="rtl"] .icon-btn svg[data-lucide="chevron-left"],
+[dir="rtl"] .icon-btn svg[data-lucide="chevron-right"],
+[dir="rtl"] .icon-btn svg[data-lucide="arrow-left"],
+[dir="rtl"] .icon-btn svg[data-lucide="arrow-right"],
+[dir="rtl"] .newproj-tabs-arrow svg,
+[dir="rtl"] .icon-only svg[data-lucide="chevron-left"],
+[dir="rtl"] .icon-only svg[data-lucide="chevron-right"],
+[dir="rtl"] .icon-only svg[data-lucide="arrow-left"],
+[dir="rtl"] .icon-only svg[data-lucide="arrow-right"] {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .title,
+[dir="rtl"] .meta {
+  text-align: right;
+}
+
+/* ============================================================
+   Quick Switcher (Cmd/Ctrl+P file palette)
+   ============================================================ */
+.qs-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 12, 10, 0.32);
+  /* Sits in the modal tier so the palette renders above any open context
+   * menus or popovers. */
+  z-index: 1500;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+}
+.qs-palette {
+  width: min(560px, 92vw);
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--text);
+}
+.qs-input {
+  appearance: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  border-bottom: 1px solid var(--border-soft);
+}
+.qs-input::placeholder {
+  color: var(--text-faint);
+}
+.qs-list {
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+.qs-empty {
+  padding: 20px 16px;
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 13px;
+}
+.qs-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: baseline;
+  padding: 7px 16px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+}
+.qs-row-active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+}
+.qs-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.qs-path {
+  color: var(--text-muted);
+  font-size: 12.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.qs-kind {
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-weight: 600;
+}
+.qs-row-active .qs-kind {
+  color: var(--accent-strong);
+}
+.qs-footer {
+  display: flex;
+  gap: 14px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+.qs-footer kbd {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0 4px;
+  margin-right: 2px;
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* Library section (Skills & Design Systems management) */
+
+.library-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+/* Skills toolbar: two-row layout.
+   Row 1: search (grows) + New skill button (right, 12px gap).
+   Row 2: filter dropdowns with inline labels. */
+.library-toolbar.skills-toolbar {
+  flex-direction: column;
+  gap: 10px;
+}
+.skills-toolbar-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.skills-toolbar-top .library-search {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Variant: filter pills on the left, primary action on the right.
+   Used by library toolbars where there is no search input above. */
+.library-toolbar.is-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.library-toolbar.is-row .library-filters {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Primary action button positioned at the right edge of `.library-toolbar`.
+   The default button line-height makes the icon and label vertically off
+   when sitting next to filter pills; tightening the line-height aligns the
+   plus icon with the text baseline. */
+.library-toolbar-action {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1;
+}
+
+.library-search {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  background: var(--bg-panel);
+  color: var(--text);
+  outline: none;
+  box-shadow: var(--shadow-xs);
+  cursor: text;
+  transition: border-color 120ms var(--ease-out), box-shadow 120ms var(--ease-out), background 120ms var(--ease-out);
+}
+
+.library-search:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-strong);
+}
+
+.library-search:focus {
+  border-color: var(--selected);
+  box-shadow: 0 0 0 3px var(--selected-soft), var(--shadow-xs);
+}
+
+.library-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/*
+ * Compact dropdown row for Skills "Type" + "Category" filters.
+ * Pills don't scale once the option set crosses ~10 entries (Skills'
+ * Category list has 14 today and is growing); they wrap to 2-3 rows
+ * and push the actual cards far below the fold. A labelled <select>
+ * each keeps the same filter affordances in a single fixed-height
+ * row. Source filter (3 options total) keeps its pill row above
+ * because pills are still cheaper for a one-click toggle.
+ */
+.library-filter-selects {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.library-filter-select {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+  min-width: 0;
+}
+.library-filter-select-label {
+  font-weight: 500;
+  flex: 0 0 auto;
+}
+.library-filter-select select {
+  padding: 5px 28px 5px 10px;
+  font-size: 12px;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  min-width: 100px;
+  max-width: 180px;
+  cursor: pointer;
+}
+
+.library-toolbar.library-toolbar-row {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.library-toolbar.library-toolbar-row .library-search {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.library-toolbar.library-toolbar-row .library-filter-select {
+  flex: 0 0 auto;
+}
+
+.library-toolbar.library-toolbar-row .library-filter-select select {
+  min-height: 36px;
+}
+
+.library-filter-select select:hover:not(:disabled) {
+  border-color: var(--border-strong);
+}
+/* Active = something other than "All" is selected. The darker border
+   tells the user at a glance that a filter is in effect, without
+   relying on the user remembering what the dropdown's idle state
+   looked like. */
+.library-filter-select select[data-active='true'] {
+  border-color: var(--text);
+  background-color: var(--bg-subtle);
+  color: var(--text);
+  font-weight: 500;
+}
+
+.library-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.library-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.library-group-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.library-group-count {
+  font-weight: 400;
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+.library-details-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+  user-select: none;
+}
+
+.library-details-summary::-webkit-details-marker {
+  display: none;
+}
+
+.library-details-summary::before {
+  /* Caret used to render at 10px in --text-faint (#aaa). On hi-dpi
+     panels that's a fuzzy speck the user can't even tell points right.
+     Bumping to 13px (matches the summary text weight) and switching to
+     --text-muted gives the disclosure marker enough mass to be obvious
+     without dominating the row. */
+  content: '▸';
+  flex: 0 0 14px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1;
+  transition: transform 120ms var(--ease-out), color 120ms var(--ease-out);
+}
+
+.library-group[open] > .library-details-summary::before {
+  transform: rotate(90deg);
+}
+
+.library-details-summary:hover::before,
+.library-details-summary:focus-visible::before {
+  color: var(--text);
+}
+
+.library-details-summary:focus-visible {
+  outline: 2px solid var(--accent, #00946f);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+.library-details-title {
+  min-width: 0;
+}
+
+.library-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  flex-wrap: wrap;
+}
+
+/* Icon-only action buttons inside a library-card.
+   The chevron/edit/close buttons used different sizes (.library-card-expand
+   was 4px padding, .ghost was 6px 12px), which made them look misaligned
+   horizontally and stretched the card vertically. Force a uniform 28x28
+   square so they line up like a proper action group. */
+.library-card .library-card-action {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.library-card.disabled {
+  opacity: 0.45;
+}
+
+.library-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.library-card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.library-card-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.library-card-badge {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1px 6px;
+  border-radius: var(--radius-xs);
+  background: var(--accent-tint);
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.library-card-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.library-card-expand {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+}
+
+.library-card-expand:hover {
+  background: var(--bg-subtle);
+  color: var(--text);
+}
+
+.library-card-badge-user {
+  background: color-mix(in oklab, var(--accent) 16%, var(--bg-subtle));
+  color: var(--text);
+}
+
+.library-card-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: var(--text-muted);
+  border-radius: var(--radius-xs);
+}
+.library-card-delete:hover {
+  background: color-mix(in oklab, #ef4444 18%, transparent);
+  color: #ef4444;
+}
+
+.library-import-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.library-import-form {
+  margin: 12px 0;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-subtle);
+  display: grid;
+  gap: 10px;
+}
+.library-import-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.library-import-row label,
+.library-import-block {
+  display: grid;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.library-import-row input,
+.library-import-block input,
+.library-import-block textarea {
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 7px 9px;
+  font-family: inherit;
+  resize: vertical;
+}
+.library-import-block textarea {
+  min-height: 60px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+}
+.library-import-error {
+  color: #ef4444;
+  font-size: 12px;
+}
+.library-import-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.library-ds-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  padding: 10px;
+  gap: 10px;
+  transition:
+    border-color 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    background 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.library-ds-card.disabled {
+  opacity: 0.45;
+}
+
+.library-ds-card.highlighted {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--bg-panel));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.library-ds-card-content {
+  min-width: 0;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    background 120ms cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 120ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.library-ds-card-content:hover {
+  background: var(--bg-hover);
+}
+
+.library-ds-card-content:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--selected-soft);
+  background: var(--bg-hover);
+}
+
+/* Hover-reveal pencil to rename an editable (user-created) design system in
+   Settings. Sits inline after the title; only rendered for editable cards, so
+   built-in cards are unchanged. Issue #2811. */
+.library-ds-edit {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  width: 22px;
+  height: 22px;
+  margin-left: 4px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    color 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    background 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.library-ds-card-content:hover .library-ds-edit,
+.library-ds-edit:focus-visible {
+  opacity: 1;
+}
+.library-ds-edit:hover {
+  color: var(--text);
+  background: var(--bg-muted);
+}
+
+.library-ds-swatches {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.library-ds-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-xs);
+  border: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.library-ds-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.library-ds-summary {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.library-ds-toggle-cell {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-left: 10px;
+  border-left: 1px solid var(--border-subtle);
+  cursor: default;
+}
+
+.library-ds-toggle-cell .toggle-switch {
+  margin-top: 1px;
+}
+
+.library-preview {
+  width: 100%;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+
+.library-preview-body {
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.library-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  /* Tinted fill so the empty state reads as its own slot inside the
+     card. Without it the message floats in the same white as the card
+     itself and looks like a layout gap rather than an intentional
+     "you have nothing here yet" panel. */
+  padding: 28px 24px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-md, 8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.library-empty-title {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text);
+}
+.library-empty-hint {
+  margin: 0;
+  font-size: 12px;
+  max-width: 420px;
+  line-height: 1.5;
+}
+.library-empty-hint code {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  padding: 1px 6px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-xs);
+}
+
+/* Instructions card: user-authored custom instructions. */
+.instructions-field-block {
+  padding: 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
+}
+
+.instructions-block-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.instructions-block-head h4 {
+  margin: 0 0 3px;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.instructions-block-head .hint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.instructions-global-rules-input {
+  min-height: 78px;
+  margin-top: 10px;
+  resize: vertical;
+}
+
+.instructions-rules-card .instructions-block-head {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.instructions-rules-card {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+/* ============================================================
+   Project content search (Cmd/Ctrl+Shift+F) — shares the qs shell
+   ============================================================ */
+
+.ps-palette {
+  width: min(680px, 94vw);
+}
+
+.ps-list {
+  max-height: 56vh;
+}
+
+.ps-group {
+  padding: 2px 0;
+}
+
+.ps-file {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 16px 2px;
+  font-size: 12px;
+  position: sticky;
+  top: 0;
+  background: var(--bg-panel);
+  z-index: 1;
+}
+
+.ps-file-name {
+  font-weight: 700;
+}
+
+.ps-file-dir {
+  color: var(--text-faint);
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.ps-file-count {
+  margin-left: auto;
+  color: var(--text-faint);
+  font-size: 11px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0 7px;
+}
+
+.ps-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 3px 16px 3px 24px;
+  cursor: pointer;
+}
+
+.ps-line {
+  flex: 0 0 34px;
+  text-align: right;
+  color: var(--text-faint);
+  font-size: 11px;
+  font-family: var(--font-mono, monospace);
+}
+
+.ps-snippet {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono, monospace);
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.ps-snippet mark {
+  background: color-mix(in srgb, var(--accent, #c96442) 26%, transparent);
+  color: var(--text);
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* CodeMirror project text editor host */
+
+.code-editor {
+  height: 100%;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.code-editor__host {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.code-editor__host .cm-editor {
+  height: 100%;
+}
+
+/* Atomistic structure viewer (MatterViz) */
+
+.structure-viewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.structure-viewer__bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.structure-viewer__label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted, #888);
+}
+
+.structure-viewer__modes {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.structure-viewer__mode {
+  border: none;
+  background: none;
+  color: var(--text-muted, #888);
+  font-size: 11.5px;
+  padding: 3px 12px;
+  cursor: pointer;
+}
+
+.structure-viewer__mode.is-active {
+  background: var(--accent, #c96442);
+  color: #fff;
+}
+
+.structure-viewer__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.structure-viewer__body > * {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.matterviz-pane {
+  height: 100%;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.matterviz-pane__host {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* --- Materials viewer tab (matterviz:<n>) --------------------------- */
+
+.materials-viewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.materials-viewer__bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.materials-viewer__label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted, #888);
+}
+
+.materials-viewer__picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.materials-viewer__picker-label {
+  font-size: 11.5px;
+  color: var(--text-muted, #888);
+  white-space: nowrap;
+}
+
+.materials-viewer__select {
+  max-width: 320px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius, 8px);
+  background: var(--surface, #fff);
+  color: var(--text);
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.materials-viewer__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.materials-viewer__body > * {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.materials-viewer__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  padding: 32px 24px;
+  color: var(--text-muted, #888);
+}
+
+.materials-viewer__empty-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.materials-viewer__empty-body {
+  margin: 0;
+  max-width: 420px;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.materials-viewer__upload {
+  margin-top: 4px;
+  padding: 7px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--accent, #c96442);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.materials-viewer__upload:hover {
+  filter: brightness(1.05);
+}

@@ -1,0 +1,18 @@
+{
+  "name": "@open-design/matterviz-elements",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Compiles MatterViz Svelte components into framework-agnostic custom elements (mv-structure / mv-trajectory) served as a static bundle by the web app for the project structure viewer.",
+  "type": "module",
+  "scripts": {
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "6.2.4",
+    "svelte": "5.56.4",
+    "vite": "7.3.3"
+  },
+  "dependencies": {
+    "matterviz": "0.3.7"
+  }
+}

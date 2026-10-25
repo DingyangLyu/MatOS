@@ -1,0 +1,108 @@
+/* project-pager 手机适配层(mobile UX round-2)。全部规则必须包在
+   @media (max-width: 768px) 或 (hover: none) 查询内,桌面零回退。
+
+   作用域(与 home-project.css 的"首页/项目列表"域互不重叠):
+   ≤640px 项目内三页 snap pager(shell.css 的 .split 横滚容器)与
+   pager 的 hub 页(project-chats.css 的 .pcs-page 全屏形态)。
+   1. pager 页位指示点:hub|chat|canvas 三点、当前页高亮 —— 否则首次
+      用户不知道项目页可以左右滑(ProjectView 渲染 .split-pager-dots,
+      data-page 由 scroll 监听驱动,纯指示、不拦截点击);
+   2. hub 页触屏可达性:hover 显隐的会话行操作(重命名/删除)常显、
+      24px 图标钮扩到 40px 触控目标;
+   3. hub 页滚动:overscroll 收敛(到边不外溢成 pager 翻页/下拉刷新)
+      + 底部安全区留白(手势条不压住最后一行)。 */
+
+/* ============================================================
+   1. 三页 pager 页位指示点(≤640px,与 shell.css pager 同断点)
+   ============================================================ */
+@media (max-width: 640px) {
+  .split-pager-dots {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+    /* 组合器固定层(chat.css)z-index:45,指示点浮于其工作目录行上;
+       modal 背板 z:100 之下。 */
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--bg-elevated) 72%, transparent);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    box-shadow:
+      0 1px 4px rgba(0, 0, 0, 0.12),
+      inset 0 0 0 1px color-mix(in srgb, var(--border) 55%, transparent);
+    /* 纯指示器:滑动本身就是导航;不拦截其下控件的点击。 */
+    pointer-events: none;
+  }
+  .split-pager-dots i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--text-muted) 42%, transparent);
+    transition:
+      background 160ms var(--ease-out, ease),
+      transform 160ms var(--ease-out, ease);
+  }
+  .split-pager-dots[data-page='0'] i:nth-child(1),
+  .split-pager-dots[data-page='1'] i:nth-child(2),
+  .split-pager-dots[data-page='2'] i:nth-child(3) {
+    background: var(--accent);
+    transform: scale(1.3);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .split-pager-dots i {
+      transition: none;
+    }
+  }
+}
+
+/* ============================================================
+   2. hub 页(.pcs-page)触屏可达性
+   ============================================================ */
+@media (hover: none) and (pointer: coarse) {
+  /* 会话行的重命名/删除 hover 才 display:inline-flex,触屏永远看不到。
+     常显但降透明度压视觉噪音;行主区仍是切会话的主要点击面。 */
+  .pcs-page .pcs-row .pcs-row-actions {
+    display: inline-flex;
+    opacity: 0.62;
+  }
+  .pcs-page .pcs-row.is-active .pcs-row-actions {
+    opacity: 0.85;
+  }
+  /* 24px 图标钮(标题栏 +/折叠、行内重命名/删除)→ 40px 触控目标;
+     全屏 hub 页有横向余量。 */
+  .pcs-page .pcs-icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+  }
+  /* 行主区上下 8px padding(project-chats.css .pcs-page 规则)+ 40px
+     操作钮 → 整行 ≥44px;文件入口行单独补高。 */
+  .pcs-page .pcs-files {
+    min-height: 44px;
+  }
+  .pcs-page button {
+    touch-action: manipulation;
+  }
+}
+
+/* ============================================================
+   3. hub 页滚动行为 + 底部安全区
+   ============================================================ */
+@media (max-width: 640px) {
+  /* hub 页主滚动列到边继续拖,不许把手势外溢成 pager 翻页(y 轴链进
+     x snap 容器)或 WebView 下拉刷新。 */
+  .split-hub-slot .pcs-scroll,
+  .split-hub-slot .pcs-list {
+    overscroll-behavior-y: contain;
+  }
+  /* 最后一行(资产/成员)不被手势条盖住,并给底部居中的 pager
+     指示点让出一条视觉通道。 */
+  .split-hub-slot .pcs-scroll {
+    padding-bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  }
+}

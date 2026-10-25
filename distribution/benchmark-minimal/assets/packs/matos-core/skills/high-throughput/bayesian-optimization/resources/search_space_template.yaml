@@ -1,0 +1,58 @@
+# =============================================================================
+# Bayesian Optimization Search Space Template
+# =============================================================================
+# Copy this file to your research directory and edit to match your problem.
+# See ml-bayesian-optimization/SKILL.md for detailed usage instructions.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# PARAMETERS
+# Define the input variables to optimize over.
+# Only 'range' parameters are passed to the GP surrogate.
+# 'choice' and 'fixed' types are recorded in output but not optimized.
+# -----------------------------------------------------------------------------
+
+parameters:
+
+  # --- Continuous range parameter ---
+  # Example: Fe fraction in a binary Fe-Ni alloy
+  - name: x_Fe
+    type: range
+    bounds: [0.0, 1.0]          # [lower_bound, upper_bound]
+    value_type: float            # 'float' or 'int'
+
+  # --- Integer range parameter ---
+  # Example: number of layers in a supercell
+  - name: n_layers
+    type: range
+    bounds: [2, 8]
+    value_type: int
+
+  # --- Categorical choice parameter (not passed to GP; handle externally) ---
+  # Example: choice of dopant element
+  # - name: dopant
+  #   type: choice
+  #   values: ["Ti", "V", "Cr", "Mn", "Co"]
+
+  # --- Fixed parameter (recorded in output but not optimized) ---
+  # Example: fixed temperature for all evaluations
+  # - name: temperature_K
+  #   type: fixed
+  #   value: 300
+
+# -----------------------------------------------------------------------------
+# OBJECTIVES
+# Define what to optimize.
+# Single entry → single-objective BO (GP + EI).
+# Two or more entries → multi-objective BO (ParEGO scalarization).
+# -----------------------------------------------------------------------------
+
+objectives:
+
+  # --- Primary objective ---
+  - name: formation_energy_eV_atom   # Must match the column name in evaluated.csv
+    minimize: true                    # true = minimize, false = maximize
+
+  # --- Additional objective for multi-objective BO (uncomment to enable) ---
+  # - name: bandgap_eV
+  #   minimize: false                 # maximize bandgap

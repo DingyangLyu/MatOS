@@ -1,0 +1,755 @@
+/* assets-reader 手机适配层(mobile UX round-2)。全部规则必须包在
+   @media (max-width: 768px) 或 (hover: none) 查询内,桌面零回退。
+   覆盖对象:AssetsView(资产工作台)/ ReaderView(文献阅读器)/
+   LatexViewer(LaTeX 编辑 + PDF 预览)。加载顺序在全部桌面样式之后,
+   同权重选择器移动端稳赢;个别需要压过内联样式的地方才用 !important。 */
+
+/* ============================================================
+   一、AssetsView 资产工作台
+   ============================================================ */
+
+@media (max-width: 768px) {
+  /* hero 在窄屏由 integrations.css 折成 column,但 align-items:flex-start
+     让子项收缩到 max-content:nowrap 的 ref 芯片把 title/heading 撑到
+     404px(>390 视口),h1 也跟着按 404px 换行,再被 hero 的
+     overflow:hidden 硬裁。让子项恢复 stretch 并允许长 id 断行。 */
+  .assets-view .integrations-view__hero {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .assets-view .integrations-view__hero > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .assets-view .integrations-view__badge {
+    align-self: flex-start;
+  }
+
+  .assets-detail__title,
+  .assets-detail__heading {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .assets-detail__heading .entry-section__title {
+    font-size: 22px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .assets-detail__heading .integrations-view__lede {
+    overflow-wrap: anywhere;
+  }
+
+  .assets-detail__ref {
+    max-width: 100%;
+  }
+
+  .assets-detail__hero {
+    padding: 14px;
+  }
+
+  /* 详情操作区(Contribute / Publish):等宽铺满一行,好点好按。 */
+  .assets-detail__actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .assets-detail__actions .assets-btn {
+    flex: 1 1 auto;
+  }
+
+  /* 类型 tab:桌面是 2 列大卡片栅格,在 390px 上 7 个 tab 占掉约 280px
+     纵向空间;改成单行横滚 chips,hint 收起。 */
+  .assets-view__tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 6px;
+    padding: 6px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .assets-view__tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .assets-view__tabs .integrations-view__tab {
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: center;
+    scroll-snap-align: start;
+    min-height: 44px;
+    padding: 8px 12px;
+  }
+
+  .assets-view__tabs .integrations-view__tab-hint {
+    display: none;
+  }
+
+  /* 工具条:模式切换 + 导入/登记 + 搜索。搜索独占一行(桌面 min-width
+     260px 会把整行挤爆)。 */
+  .assets-view__toolbar {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .assets-view__search {
+    order: 9;
+    flex: 1 1 100%;
+    min-width: 0;
+    min-height: 44px;
+  }
+
+  /* 数据 tab 的来源/提供方过滤 chips:改单行横滚,provider 组不换行。 */
+  .assets-view__filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .assets-view__filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .assets-view__filter {
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding: 6px 14px;
+  }
+
+  .assets-view__filter-group {
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+  }
+
+  /* 卡片:名称允许换到两行(桌面单行省略在窄屏截得太狠),空描述不再
+     强撑 2.9em 的空腔。 */
+  .assets-view__grid {
+    gap: 10px;
+  }
+
+  .assets-card__name {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .assets-card__desc {
+    min-height: 0;
+  }
+
+  /* 详情面板堆叠:收紧内边距,面板头允许换行(标题+按钮挤不下时按钮
+     整体下移,不再把标题折成竖排)。 */
+  .assets-detail__stack {
+    gap: 12px;
+  }
+
+  .assets-panel {
+    padding: 14px;
+  }
+
+  .assets-panel__head {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  /* 文档编辑区:390px 下 380px 最小高 + 软键盘会顶出视口,压到 260px。 */
+  .assets-doc__textarea {
+    min-height: 260px;
+  }
+
+  /* 工作流画布:640px 固定高在 844 视口里挤掉其余卡片,按视口收缩。 */
+  .assets-workflow__canvas {
+    height: min(520px, 62vh);
+  }
+
+  /* 关系图:hint 药丸给右侧控制簇让位并省略,舞台高度随视口收缩。 */
+  .assets-graph__stage {
+    min-height: min(480px, 58vh);
+  }
+
+  .assets-graph__hint {
+    right: 64px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .assets-graph__lineage {
+    padding: 12px;
+  }
+}
+
+/* AssetsView 触控目标与输入字号(手机/平板 WebView;44px 主操作)。 */
+@media (hover: none) and (pointer: coarse) {
+  .assets-btn {
+    min-height: 44px;
+    padding: 10px 16px;
+  }
+
+  .assets-view__mode-btn {
+    width: 44px;
+    height: 40px;
+  }
+
+  .assets-detail__back {
+    width: 44px;
+    height: 44px;
+  }
+
+  .assets-detail__git {
+    min-height: 40px;
+    align-items: center;
+  }
+
+  .assets-kv__remove {
+    width: 40px;
+    height: 40px;
+  }
+
+  .assets-kv__add {
+    min-height: 40px;
+  }
+
+  .assets-advanced > summary {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .assets-advanced__tab {
+    min-height: 36px;
+    padding: 8px 12px;
+  }
+
+  .assets-graph__controls button {
+    width: 44px;
+    height: 40px;
+  }
+
+  .assets-graph__open-detail {
+    min-height: 44px;
+  }
+
+  .assets-graph__tier-node {
+    min-height: 40px;
+  }
+
+  /* ≥16px 阻止 iOS WebView 聚焦自动放大。 */
+  .assets-view__search,
+  .assets-form__field input,
+  .assets-form__field textarea,
+  .assets-chips__input,
+  .assets-kv__row input,
+  .reader-import-row input,
+  .reader-search input,
+  .reader-folder-input,
+  .reader-interests-edit textarea,
+  .reader-ask-composer textarea {
+    font-size: 16px;
+  }
+}
+
+/* ============================================================
+   二、ReaderView 文献阅读器(库 + 阅读面)
+   ============================================================ */
+
+@media (max-width: 768px) {
+  /* 导入行:输入框独占一行(桌面同行三按钮把输入框挤到 ~44px 宽),
+     按钮第二行排开。 */
+  .reader-import-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .reader-import-row input[type='text'],
+  .reader-import-row input:not([type]) {
+    flex: 1 1 100%;
+    min-height: 44px;
+  }
+
+  .reader-import-row button {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 40px;
+  }
+
+  /* 收藏夹 chips:单行横滚。 */
+  .reader-folder-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .reader-folder-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .reader-folder-chip,
+  .reader-folder-manage,
+  .reader-folder-input {
+    flex: 0 0 auto;
+  }
+
+  .reader-folder-chip {
+    min-height: 36px;
+    padding: 6px 13px;
+    font-size: 12.5px;
+  }
+
+  /* 搜索独占一行;状态 chips 与 .bib 同行,chips 可横滚。 */
+  .reader-filter-row {
+    gap: 8px;
+  }
+
+  .reader-search {
+    flex: 1 1 100%;
+    min-height: 44px;
+    padding: 6px 12px;
+  }
+
+  /* basis 0 让 chips 行宁可内部横滚也不把 .bib 顶到下一行。 */
+  .reader-status-chips {
+    flex: 1 1 0%;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .reader-status-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .reader-status-chips button {
+    flex: 0 0 auto;
+    min-height: 36px;
+    padding: 6px 13px;
+  }
+
+  .reader-export-bib {
+    min-height: 36px;
+    padding: 6px 12px;
+  }
+
+  /* 论文行:标题字号升到 14px,行高松一点;删除按钮加大。 */
+  .reader-paper-main {
+    padding: 10px;
+    gap: 3px;
+  }
+
+  .reader-paper-title {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .reader-paper-meta {
+    font-size: 12px;
+  }
+
+  /* 网页搜索结果:操作按钮换行到 meta 下方,避免标题被压瘦。 */
+  .reader-webhit {
+    flex-wrap: wrap;
+  }
+
+  .reader-webhit > button {
+    min-height: 36px;
+    padding: 6px 12px;
+  }
+
+  .reader-interest-chip {
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .reader-feed-actions button {
+    padding: 9px;
+  }
+
+  .reader-feed-main a {
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+
+  /* ---- 阅读面 ---- */
+
+  /* 阅读模式下入口壳层的内衬从 8/24 收到 4/8,把宽度还给正文。 */
+  .entry-main--scroll:has(.reader-root--reading) .entry-main__inner {
+    padding: 4px 8px 10px;
+  }
+
+  /* 头部:返回 + 操作在第一行,标题降到第二行占满,允许两行显示
+     (桌面单行省略在 390px 只剩一两个字)。 */
+  .reader-reading-head {
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    padding: 8px 10px;
+  }
+
+  .reader-reading-title {
+    order: 3;
+    flex: 1 1 100%;
+  }
+
+  .reader-reading-title span {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  /* 操作簇保持单行、必要时内部横滚:换行会让原生 select 独占一行并被
+     拉宽,视觉很怪。 */
+  .reader-reading-actions {
+    margin-left: auto;
+    min-width: 0;
+    flex: 0 1 auto;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .reader-reading-actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .reader-reading-actions select {
+    flex: 0 0 auto;
+    width: auto;
+  }
+
+  /* 引用弹窗:桌面右对齐会伸出屏幕左缘,改成近全宽的固定浮层。 */
+  .reader-cite-pop {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    top: 16vh;
+    width: auto;
+    max-height: 62vh;
+  }
+
+  /* 页面区:缩放条从右上角改为底部居中悬浮(原位置会盖住缩略图栏),
+     搜索条贴顶部通栏。 */
+  .reader-pages-scroller {
+    padding: 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .reader-zoom-bar {
+    top: auto;
+    bottom: 12px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    max-width: calc(100% - 16px);
+  }
+
+  .reader-search-bar {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+  }
+
+  .reader-search-bar input {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+  }
+
+  /* 缩略图栏收窄,给正文让位。 */
+  .reader-thumb-rail {
+    width: 92px;
+    padding: 10px 6px;
+  }
+
+  .reader-thumb-item canvas {
+    width: 72px;
+  }
+
+  /* 阅读面纵向布局:正文占大头,侧栏(笔记/目录/引用/AI)是折叠抽屉
+     ——高度由内容决定但不超过 42vh,列表在抽屉内部滚动。 */
+  .reader-viewer {
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .reader-side-panel {
+    max-height: 42vh;
+  }
+
+  .reader-side-tabs button {
+    min-height: 44px;
+    font-size: 13px;
+  }
+
+  /* 侧栏正文可读性:问答正文 16px/1.6+,笔记引文与引用条目升号。 */
+  .reader-ask-a {
+    font-size: 16px;
+    line-height: 1.62;
+  }
+
+  .reader-ask-q {
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .reader-annotation-quote {
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+
+  .reader-ref-text {
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .reader-outline-item {
+    min-height: 44px;
+    align-items: center;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .reader-refs-modes button {
+    min-height: 36px;
+    padding: 6px 12px;
+  }
+
+  .reader-ref-actions button,
+  .reader-ref-actions a {
+    min-height: 36px;
+    padding: 6px 11px;
+  }
+
+  .reader-ask-presets {
+    flex-wrap: wrap;
+  }
+
+  .reader-ask-presets button {
+    min-height: 36px;
+    padding: 6px 12px;
+  }
+
+  .reader-ask-composer textarea {
+    min-height: 44px;
+  }
+
+  .reader-ask-composer button {
+    min-height: 44px;
+  }
+
+  /* 选区工具条(高亮/翻译/问 AI):加大点按面积并防止超出屏宽。 */
+  .reader-selection-toolbar {
+    max-width: calc(100vw - 16px);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .reader-selection-toolbar button {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .reader-selection-toolbar button.reader-color-dot {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Reader 触控可见性:悬停才显示的行内控件在触屏上永远显示。 */
+@media (hover: none) {
+  .reader-paper-folder,
+  .reader-paper-delete {
+    opacity: 1;
+  }
+
+  .reader-paper-delete {
+    padding: 10px;
+  }
+
+  .reader-zoom-bar button {
+    min-width: 38px;
+    height: 38px;
+  }
+
+  .reader-zoom-pages input {
+    width: 40px;
+    padding: 6px 0;
+  }
+
+  .reader-search-bar button {
+    min-width: 38px;
+    height: 38px;
+  }
+
+  .reader-reading-actions button,
+  .reader-reading-actions a,
+  .reader-reading-actions select {
+    min-height: 40px;
+    padding: 8px 10px;
+  }
+
+  .reader-section-head button {
+    padding: 9px;
+  }
+
+  .reader-folder-manage button {
+    padding: 9px;
+  }
+
+  .reader-cite-head button {
+    min-height: 36px;
+    padding: 6px 12px;
+  }
+
+  .reader-annotation-delete {
+    padding: 8px 6px;
+  }
+
+  .reader-color-dot {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* ============================================================
+   三、LatexViewer(LaTeX 编辑 + PDF 预览 + 编译日志)
+   ============================================================ */
+
+@media (max-width: 768px) {
+  /* 编辑/预览分屏:390px 左右分屏每侧只剩 ~170px,改上下堆叠
+     (Overleaf 移动端同款);拖拽分隔条在触屏没有意义,隐藏。
+     splitRatio 的内联 flex 比例在纵向同样生效。 */
+  .latex-m-panes {
+    flex-direction: column;
+  }
+
+  .latex-m-panes [data-testid='latex-split-resizer'] {
+    display: none;
+  }
+
+  .latex-m-editor-pane,
+  .latex-m-preview-pane {
+    min-height: 140px;
+  }
+
+  /* 文件树:纵向布局里左侧竖栏没有空间。折叠态变成顶部横条,
+     展开态占满宽度、限高内滚(宽度是 JS 内联的,需要 !important)。 */
+  [data-testid='latex-file-tree-collapsed'] {
+    flex-direction: row;
+    width: 100%;
+    height: 44px;
+    padding: 0 6px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  [data-testid='latex-file-tree'] {
+    width: 100% !important;
+    max-height: 34vh;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* 工具栏:两三行换行排布,按钮触控化(次级按钮已由 .narrow 模式
+     收成图标)。 */
+  [data-testid='latex-viewer'] .viewer-toolbar {
+    padding: 8px 10px;
+    row-gap: 6px;
+  }
+
+  [data-testid='latex-viewer'] .viewer-action {
+    min-height: 40px;
+    padding: 8px 10px;
+  }
+
+  [data-testid='latex-viewer'] .viewer-toolbar [role='tablist'] button {
+    min-height: 36px;
+    padding: 8px 12px;
+  }
+
+  [data-testid='latex-engine'] {
+    min-height: 40px;
+  }
+
+  [data-testid='latex-viewer'] .viewer-toolbar input[type='checkbox'],
+  [data-testid='latex-viewer'] .viewer-toolbar input[type='radio'] {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* 编译设置弹窗:锚点贴近右缘时不超屏。 */
+  [data-testid='latex-compile-menu'] {
+    max-width: min(320px, calc(100vw - 24px));
+  }
+
+  /* 编辑器正文 16px:可读性 + 阻止 iOS 聚焦自动放大。 */
+  [data-testid='latex-editor'] .cm-content {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* 编译日志抽屉:限高 42vh 内滚,问题行触控化,日志正文可读字号。 */
+  [data-testid='latex-log'] {
+    max-height: 42vh;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  [data-testid='latex-issues'] button {
+    padding: 10px 8px;
+  }
+
+  [data-testid='latex-log'] pre {
+    font-size: 12px;
+    line-height: 1.55;
+  }
+}
+
+/* LatexViewer / LatexPdfViewer 触控目标。 */
+@media (hover: none) and (pointer: coarse) {
+  /* PDF 预览缩放条(zoomBar 是 latex-pdf-viewer 的第一个子元素)。 */
+  [data-testid='latex-pdf-viewer'] > div:first-child {
+    gap: 4px;
+  }
+
+  [data-testid='latex-pdf-viewer'] > div:first-child button {
+    min-width: 44px;
+    min-height: 40px;
+    font-size: 13px;
+  }
+
+  [data-testid='latex-pdf-pages'] {
+    padding: 12px 8px 20px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 下载 PDF 保持 <a download> 语义(App 下载桥依赖),只加大点按区。 */
+  [data-testid='latex-download-pdf'] {
+    min-height: 40px;
+    align-items: center;
+  }
+
+  [data-testid='latex-file-tree-expand'],
+  [data-testid='latex-file-tree-collapse'],
+  [data-testid='latex-files-new'],
+  [data-testid='latex-files-upload'] {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "mlip-mace-omat-0",
+  "type": "data",
+  "name": "MACE-OMAT-0 Foundation Model",
+  "version": "0",
+  "description": "MACE-OMAT-0 universal interatomic potential trained on OMat24 (PBE+U, VASP 54); strong MatBench Discovery accuracy with reduced softening. Academic Software License (ASL). Local weight enables offline mace_mp.",
+  "entry": "DATA.md",
+  "tags": [
+    "materials",
+    "mlip",
+    "mlip-model",
+    "mace",
+    "foundation-model",
+    "omat24"
+  ],
+  "permissions": {
+    "workspace": "read-only",
+    "network": "enabled",
+    "secrets": []
+  },
+  "dependencies": [
+    "tool:mlip-model-catalog"
+  ],
+  "metadata": {
+    "kind": "mlip-model",
+    "family": "mace",
+    "framework": "MACE",
+    "modelName": "MACE-OMAT-0",
+    "license": "ASL (Academic Software License; restrictions apply)",
+    "package": "mace-torch",
+    "packageImport": "mace",
+    "loader": "from mace.calculators import mace_mp; mace_mp(model='<localPath>')",
+    "sourceUrl": "https://github.com/ACEsuit/mace-foundations",
+    "payloadPolicy": "local-mounted",
+    "files": [
+      {
+        "path": "/opt/matos-tools/models/mlip/mace/mace-omat-0-medium.model",
+        "variant": "medium",
+        "url": "https://github.com/ACEsuit/mace-foundations/releases/download/mace_omat_0/mace-omat-0-medium.model",
+        "sizeBytes": 79463999,
+        "sha256": "d4b14be9afa294eebdbe31a0280b26a0fa29715771e978cbfd3ca24e0d90307a"
+      }
+    ],
+    "marketplace": {
+      "visibility": "public",
+      "category": "data"
+    }
+  }
+}

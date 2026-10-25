@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "includeSystem": {
+      "type": "boolean",
+      "default": true,
+      "description": "Include shared read-only system environments under MATOS_SYSTEM_CONDA_ENVS_PATH or /opt/matos-tools/conda/envs."
+    },
+    "includeUser": {
+      "type": "boolean",
+      "default": true,
+      "description": "Include current-user persistent environments under MATOS_USER_CONDA_ENVS_PATH or /workspace/caches/conda/envs."
+    },
+    "probePackages": {
+      "type": "boolean",
+      "default": false,
+      "description": "Run each environment's Python to probe selected imports and Torch CUDA metadata. Defaults to false so the catalog returns quickly; enable explicitly for deep preflight."
+    },
+    "includeGpu": {
+      "type": "boolean",
+      "default": false,
+      "description": "When package probing is enabled, include Torch CUDA availability/device metadata. Set true only when GPU package metadata is needed."
+    },
+    "imports": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional import names to probe. Defaults to common scientific and MLIP packages."
+    },
+    "timeoutSeconds": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 30,
+      "default": 12,
+      "description": "Per-environment Python probe timeout."
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 80,
+      "default": 40,
+      "description": "Maximum number of environments to return."
+    },
+    "includeSourceRouting": {
+      "type": "boolean",
+      "default": true,
+      "description": "Include the package-source route injected by the MatOS runtime for user environment creation."
+    },
+    "format": {
+      "type": "string",
+      "enum": ["summary", "full"],
+      "default": "summary",
+      "description": "Return a bounded routing summary by default. Use full only for operator diagnostics that need every configured recommendation and runtime hint."
+    }
+  },
+  "additionalProperties": false
+}

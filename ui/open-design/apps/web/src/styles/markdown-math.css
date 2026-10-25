@@ -1,0 +1,6 @@
+/* Shared content contract for chat, Markdown documents and report exports. */
+.md-math { max-width: 100%; }
+.md-math-display { display: block; overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+.md-math .katex { font-size: 1.08em; }
+.md-math .katex-display { margin: 0.7em 0; }
+.md-math .katex-html { white-space: nowrap; }

@@ -1,0 +1,19 @@
+{
+  "rounds": [
+    {
+      "round": 0,
+      "n_evaluated": 0,
+      "n_suggested": 5
+    },
+    {
+      "round": 1,
+      "n_evaluated": 5,
+      "n_suggested": 3
+    },
+    {
+      "round": 2,
+      "n_evaluated": 8,
+      "n_suggested": 3
+    }
+  ]
+}

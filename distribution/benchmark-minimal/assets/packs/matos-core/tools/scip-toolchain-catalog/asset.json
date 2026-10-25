@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "id": "scip-toolchain-catalog",
+  "type": "tool",
+  "name": "SCIP Toolchain Catalog",
+  "version": "1.0.0",
+  "description": "Discover and validate the mounted SCIP Optimization Suite toolchain for mixed-integer, nonlinear, and decomposition optimization tasks.",
+  "entry": "./tool.py",
+  "tags": [
+    "optimization",
+    "mathematical-optimization",
+    "mixed-integer-programming",
+    "minlp",
+    "mip",
+    "scip",
+    "soplex",
+    "gcg",
+    "pyscipopt",
+    "preflight"
+  ],
+  "permissions": {
+    "shell": "read-only",
+    "network": "disabled",
+    "workspace": "read-only",
+    "secrets": [
+      "MATOS_EXTERNAL_TOOLCHAIN_ROOT",
+      "MATOS_CONTAINER_TOOLCHAIN_ROOT",
+      "MATOS_COMPUTE_TOOLCHAIN_CONTAINER_ROOT",
+      "MATOS_RUNTIME_EXECUTABLE_PATHS",
+      "MATOS_RUNTIME_LIBRARY_PATHS"
+    ]
+  },
+  "metadata": {
+    "kind": "external-tool",
+    "sourceFormat": "cmatos-native-tool",
+    "binding": "mcp__matos_asset__scip_toolchain_catalog",
+    "promptPath": "prompt.md",
+    "inputSchemaPath": "input.schema.json",
+    "isReadOnly": true,
+    "isDestructive": false,
+    "family": "optimization",
+    "executor": {
+      "type": "matos-python",
+      "runtime": "python3",
+      "entry": "./tool.py",
+      "timeoutMs": 45000,
+      "mcpName": "scip_toolchain_catalog"
+    },
+    "marketplace": {
+      "visibility": "public",
+      "category": "tool"
+    }
+  }
+}

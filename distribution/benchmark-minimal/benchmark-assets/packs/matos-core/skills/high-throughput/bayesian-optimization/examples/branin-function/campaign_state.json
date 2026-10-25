@@ -1,0 +1,44 @@
+{
+  "rounds": [
+    {
+      "round": 0,
+      "n_evaluated": 0,
+      "n_suggested": 8
+    },
+    {
+      "round": 1,
+      "n_evaluated": 8,
+      "n_suggested": 4
+    },
+    {
+      "round": 2,
+      "n_evaluated": 12,
+      "n_suggested": 4
+    },
+    {
+      "round": 3,
+      "n_evaluated": 16,
+      "n_suggested": 4
+    },
+    {
+      "round": 4,
+      "n_evaluated": 20,
+      "n_suggested": 4
+    },
+    {
+      "round": 5,
+      "n_evaluated": 24,
+      "n_suggested": 4
+    },
+    {
+      "round": 6,
+      "n_evaluated": 28,
+      "n_suggested": 4
+    },
+    {
+      "round": 7,
+      "n_evaluated": 32,
+      "n_suggested": 4
+    }
+  ]
+}

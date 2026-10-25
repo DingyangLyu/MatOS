@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "high-throughput/property-predictor",
+  "type": "skill",
+  "name": "high-throughput/property-predictor",
+  "version": "1.0.0",
+  "description": "Train a property predictor head on top of a Machine Learning Interatomic Potential (MLIP) backbone (MACE or MatGL) to predict custom intensive or extensive properties from crystal or molecular structures.",
+  "entry": "SKILL.md",
+  "tags": [
+    "materials",
+    "atomistic",
+    "imported-source"
+  ],
+  "dependencies": [
+    "tool:materials-runtime-inventory",
+    "tool:conda-environment-catalog",
+    "tool:mlip-model-catalog",
+    "tool:local-toolchain-preflight"
+  ],
+  "metadata": {
+    "sourceFormat": "cmatos-native-skill",
+    "sourceMaterial": {
+      "name": "AtomisticSkills",
+      "sourceSkill": "ml-property-predictor",
+      "sourceRelativePath": "external-ref/AtomisticSkills/.agents/skills/ml-property-predictor"
+    },
+    "aliases": [
+      "atomisticskills:ml-property-predictor"
+    ],
+    "toolReferences": [
+      "tool:materials-runtime-inventory",
+      "tool:conda-environment-catalog",
+      "tool:mlip-model-catalog",
+      "tool:local-toolchain-preflight"
+    ],
+    "textPolicy": "copied-from-source-with-minimal-matos-path-and-environment-rewrites",
+    "environmentHints": [
+      "matos-compute",
+      "matos-mlip-gnn-py311"
+    ],
+    "marketplace": {
+      "visibility": "public",
+      "category": "skill"
+    }
+  }
+}

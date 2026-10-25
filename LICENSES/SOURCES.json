@@ -1,0 +1,22 @@
+[
+  {
+    "file": "DeepSeek-Harness-MIT.txt",
+    "source": "https://raw.githubusercontent.com/deepseek-ai/deepseek-harness/d743267388641bc76f17c45ce8b4c231aed1d32c/LICENSE",
+    "sha256": "ebb4f09972aee8608be255debaf78451a68e95c290f55c240dec2ecfa16ea6be"
+  },
+  {
+    "file": "PolyForm-Noncommercial-1.0.0.md",
+    "source": "https://raw.githubusercontent.com/polyformproject/polyform-licenses/1.0.0/PolyForm-Noncommercial-1.0.0.md",
+    "sha256": "c0ea4a896d2c8c394b29f9427589996db826cd501c512279ff0ed3ef48fabbe5"
+  },
+  {
+    "file": "MatterViz-MIT.txt",
+    "source": "https://raw.githubusercontent.com/janosh/matterviz/v0.3.7/license (npm package matterviz@0.3.7)",
+    "sha256": "f519d155d7ed90bd0e8e3ee2a669b70d9ad9f03fa532e008b1b397769f1f175b"
+  },
+  {
+    "file": "Svelte-MIT.txt",
+    "source": "npm package svelte@5.56.4 (https://github.com/sveltejs/svelte)",
+    "sha256": "06257f4847b13a49a039efb17b944c141e71b12fd8d231b362d86919067d77a3"
+  }
+]

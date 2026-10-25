@@ -1,0 +1,769 @@
+/* ---------------------------------------------------------------------
+ * MatOS 自进化评审团 (Self-Evolution Jury). A read-only projection of the
+ * hidden self-evolution pipeline, styled after the review panel and the
+ * MatOS token system: role-keyed tinting via `data-role` (each step/bubble
+ * resolves a `--evo-role` custom property; no hex literals), state via
+ * `data-state`, motion via --ease-out / --dur-* only.
+ *
+ * Anatomy: header (mark + title + trigger chip + phase pill) → five-step
+ * pipeline (role medallions joined by connectors) → live focus bubble →
+ * outcome chips → judge confidence meter → recent settled reviews.
+ * Settled reviews collapse into a compact pill (`.evo-jury-collapsed`).
+ * ------------------------------------------------------------------- */
+.evo-jury-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px 0 0 12px;
+  width: min(430px, calc(100vw - 24px));
+  min-width: 0;
+  justify-self: start;
+  align-self: start;
+}
+
+/* ProjectView mounts the jury beside the two-column workspace grid. Keep the
+ * review surface out of grid flow: otherwise its 430px card creates an
+ * implicit first column and a card-height first row, leaving the real sidebar
+ * and workspace stranded below a large empty rectangle. Settled reviews dock
+ * as a compact sidebar status; opening details intentionally floats the card
+ * over the workspace without resizing it. */
+.app.app-with-chats > .evo-jury-stack {
+  position: fixed;
+  top: 42px;
+  left: 8px;
+  z-index: 110;
+  margin: 0;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100dvh - 54px);
+}
+.app.app-with-chats > .evo-jury-stack[data-expanded='false'] {
+  width: min(212px, calc(100vw - 16px));
+}
+.app.app-with-chats > .evo-jury-stack[data-expanded='true'] {
+  width: min(430px, calc(100vw - 16px));
+}
+.app.app-with-chats > .evo-jury-stack[data-expanded='true'] > .evo-jury {
+  max-height: calc(100dvh - 54px);
+  overflow-y: auto;
+}
+.app.app-with-chats > .evo-jury-stack[data-expanded='false']
+  .evo-jury-collapsed {
+  gap: 4px;
+  padding: 5px 5px 5px 7px;
+}
+.app.app-with-chats > .evo-jury-stack[data-expanded='false']
+  .evo-jury-collapsed-summary,
+.app.app-with-chats > .evo-jury-stack[data-expanded='false']
+  .evo-jury-recent--compact {
+  display: none;
+}
+.app.app-with-chats > .evo-jury-stack[data-expanded='false']
+  .evo-jury-collapsed-trigger {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app.app-with-chats > .evo-jury-stack[data-expanded='false']
+  .evo-jury-collapsed-mark {
+  width: 16px;
+  height: 16px;
+}
+.app.app-with-chats > .evo-jury-stack[data-expanded='false'] ~ .pcs {
+  padding-top: 42px;
+}
+.evo-jury {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 13px 14px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  color: var(--text);
+  overflow: hidden;
+  width: 100%;
+  min-width: 0;
+  animation: evo-jury-in var(--dur-enter) var(--ease-out);
+}
+
+/* Phase-tinted hairline across the top of the card. */
+.evo-jury::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--accent) 65%, transparent),
+    color-mix(in srgb, var(--accent) 10%, transparent)
+  );
+}
+.evo-jury[data-phase='accepted']::before {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--green) 65%, transparent),
+    color-mix(in srgb, var(--green) 10%, transparent)
+  );
+}
+.evo-jury[data-phase='blocked']::before,
+.evo-jury[data-phase='failed']::before {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--amber) 70%, transparent),
+    color-mix(in srgb, var(--amber) 12%, transparent)
+  );
+}
+.evo-jury[data-phase='noop']::before,
+.evo-jury[data-phase='skipped']::before {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--border-strong) 80%, transparent),
+    transparent
+  );
+}
+
+/* --- header ----------------------------------------------------------- */
+.evo-jury-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+.evo-jury-heading {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.evo-jury-mark {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-tint);
+  color: var(--accent);
+}
+.evo-jury-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-strong);
+  white-space: nowrap;
+}
+.evo-jury-trigger-chip {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10.5px;
+  font-weight: 500;
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-soft);
+  color: var(--text-muted);
+}
+.evo-jury-time {
+  flex: 0 0 auto;
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+}
+.evo-jury-head-actions {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.evo-jury-progress-pill {
+  font-size: 10.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-soft);
+  color: var(--text-soft);
+}
+.evo-jury-collapse-btn,
+.evo-jury-expand-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background var(--dur-enter) var(--ease-out),
+    border-color var(--dur-enter) var(--ease-out),
+    color var(--dur-enter) var(--ease-out);
+}
+.evo-jury-collapse-btn:hover,
+.evo-jury-expand-btn:hover {
+  background: var(--bg-subtle);
+  border-color: var(--border);
+  color: var(--text-strong);
+}
+.evo-jury-collapse-btn {
+  transform: rotate(180deg);
+}
+.evo-jury-phase {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.evo-jury-phase[data-phase='reviewing'] {
+  color: var(--accent-strong);
+  background: var(--accent-tint);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+}
+.evo-jury-phase[data-phase='accepted'] {
+  color: var(--green);
+  background: var(--green-bg);
+  border-color: var(--green-border);
+}
+.evo-jury-phase[data-phase='blocked'],
+.evo-jury-phase[data-phase='failed'] {
+  color: var(--amber);
+  background: var(--amber-bg);
+  border-color: color-mix(in srgb, var(--amber) 30%, var(--border));
+}
+.evo-jury-phase-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: evo-jury-blink 1.3s ease-in-out infinite;
+}
+
+/* --- five-step pipeline ------------------------------------------------ */
+.evo-jury-track {
+  position: relative;
+  padding: 4px 0 2px;
+}
+.evo-jury-track-fill {
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  top: 17px;
+  height: 2px;
+  border-radius: 1px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--accent) 55%, transparent),
+    color-mix(in srgb, var(--accent) 25%, transparent)
+  );
+  transform-origin: left center;
+  transition: width 480ms var(--ease-out);
+  pointer-events: none;
+  z-index: 0;
+}
+.evo-jury[data-phase='accepted'] .evo-jury-track-fill {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--green) 55%, transparent),
+    color-mix(in srgb, var(--green) 20%, transparent)
+  );
+}
+.evo-jury-steps {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.evo-jury-step {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  animation: evo-jury-step-in 420ms var(--ease-out) both;
+}
+.evo-jury-step[data-role='scout'] { --evo-role: var(--blue); --evo-role-bg: var(--blue-bg); }
+.evo-jury-step[data-role='critic'] { --evo-role: var(--amber); --evo-role-bg: var(--amber-bg); }
+.evo-jury-step[data-role='refiner'] { --evo-role: var(--purple); --evo-role-bg: var(--purple-bg); }
+.evo-jury-step[data-role='editor'] { --evo-role: var(--accent); --evo-role-bg: var(--accent-tint); }
+.evo-jury-step[data-role='judge'] { --evo-role: var(--green); --evo-role-bg: var(--green-bg); }
+
+/* Connector from the previous node into this one. */
+.evo-jury-step::before {
+  content: '';
+  position: absolute;
+  top: 13px; /* node center */
+  left: calc(-50% + 17px);
+  right: calc(50% + 17px);
+  height: 2px;
+  border-radius: 1px;
+  background: var(--border-soft);
+  transition: background var(--dur-enter) var(--ease-out);
+}
+.evo-jury-step:first-child::before { display: none; }
+.evo-jury-step[data-reached='true']::before {
+  background: color-mix(in srgb, var(--evo-role) 45%, var(--border));
+}
+.evo-jury-step[data-flow='true']::before {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--evo-role) 50%, var(--border)),
+    var(--evo-role),
+    color-mix(in srgb, var(--evo-role) 20%, var(--border))
+  );
+  background-size: 200% 100%;
+  animation: evo-jury-flow 1.4s linear infinite;
+}
+
+.evo-jury-step-node {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bg-subtle);
+  border: 1.5px solid var(--border);
+  color: var(--text-faint);
+  transition:
+    background var(--dur-enter) var(--ease-out),
+    border-color var(--dur-enter) var(--ease-out),
+    color var(--dur-enter) var(--ease-out);
+}
+.evo-jury-step-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--text-soft);
+  transition: color var(--dur-enter) var(--ease-out);
+}
+
+.evo-jury-step[data-state='done'] .evo-jury-step-node {
+  background: var(--evo-role-bg);
+  border-color: color-mix(in srgb, var(--evo-role) 45%, var(--border));
+  color: var(--evo-role);
+}
+.evo-jury-step[data-state='done'] .evo-jury-step-label {
+  color: var(--text-muted);
+}
+.evo-jury-step[data-state='active'] .evo-jury-step-node {
+  background: var(--evo-role-bg);
+  border-color: var(--evo-role);
+  color: var(--evo-role);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--evo-role) 16%, transparent);
+  animation: evo-jury-halo 1.6s var(--ease-out) infinite;
+  transform: scale(1.06);
+}
+.evo-jury-step[data-state='done'] .evo-jury-step-node {
+  transform: scale(1);
+}
+.evo-jury-step[data-state='active'] .evo-jury-step-label {
+  color: var(--text-strong);
+  font-weight: 600;
+}
+.evo-jury-step[data-state='failed'] .evo-jury-step-node {
+  background: var(--red-bg);
+  border-color: color-mix(in srgb, var(--red) 55%, var(--border));
+  color: var(--red);
+}
+.evo-jury-step[data-state='failed'] .evo-jury-step-label {
+  color: var(--red);
+}
+.evo-jury-step[data-state='skipped'] .evo-jury-step-node {
+  border-style: dashed;
+  background: var(--bg-panel);
+}
+.evo-jury-step[data-state='skipped'] .evo-jury-step-label {
+  color: var(--text-faint);
+}
+
+/* --- live focus bubble -------------------------------------------------- */
+.evo-jury-focus {
+  --evo-role: var(--accent);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 11px 9px 12px;
+  border-radius: var(--radius);
+  border: 1px solid color-mix(in srgb, var(--evo-role) 22%, var(--border));
+  border-left: 3px solid color-mix(in srgb, var(--evo-role) 65%, var(--border));
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--evo-role) 7%, var(--bg-subtle)),
+    var(--bg-subtle)
+  );
+}
+.evo-jury[data-deliberating='true'] .evo-jury-focus::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  background: inherit;
+  border-top: 1px solid color-mix(in srgb, var(--evo-role) 22%, var(--border));
+  border-left: 1px solid color-mix(in srgb, var(--evo-role) 22%, var(--border));
+  transform: rotate(45deg);
+}
+.evo-jury-focus[data-role='scout'] { --evo-role: var(--blue); }
+.evo-jury-focus[data-role='critic'] { --evo-role: var(--amber); }
+.evo-jury-focus[data-role='refiner'] { --evo-role: var(--purple); }
+.evo-jury-focus[data-role='editor'] { --evo-role: var(--accent); }
+.evo-jury-focus[data-role='judge'] { --evo-role: var(--green); }
+.evo-jury-focus-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--evo-role);
+}
+.evo-jury-focus-role {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.evo-jury-focus-text {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.evo-jury-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 2px;
+}
+.evo-jury-typing i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.4;
+  animation: evo-jury-typing 1.1s ease-in-out infinite;
+}
+.evo-jury-typing i:nth-child(2) { animation-delay: 0.18s; }
+.evo-jury-typing i:nth-child(3) { animation-delay: 0.36s; }
+
+/* --- outcome chips ------------------------------------------------------ */
+.evo-jury-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.evo-jury-chip {
+  --evo-role: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-soft);
+}
+.evo-jury-chip[data-role='scout'] { --evo-role: var(--blue); }
+.evo-jury-chip[data-role='critic'] { --evo-role: var(--amber); }
+.evo-jury-chip[data-role='refiner'] { --evo-role: var(--purple); }
+.evo-jury-chip[data-role='editor'] { --evo-role: var(--accent); }
+.evo-jury-chip[data-role='judge'] { --evo-role: var(--green); }
+.evo-jury-chip-dot {
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--evo-role);
+}
+
+/* --- judge confidence meter --------------------------------------------- */
+.evo-jury-confidence {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.evo-jury-confidence-label {
+  flex: 0 0 auto;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.evo-jury-confidence-track {
+  position: relative;
+  flex: 1 1 auto;
+  height: 5px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-muted);
+  overflow: hidden;
+}
+.evo-jury-confidence-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--accent) 55%, var(--bg-muted)),
+    var(--accent)
+  );
+  transition: width 380ms var(--ease-out);
+}
+.evo-jury-confidence[data-verdict='accept'] .evo-jury-confidence-fill {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--green) 55%, var(--bg-muted)),
+    var(--green)
+  );
+}
+.evo-jury-confidence[data-verdict='rollback'] .evo-jury-confidence-fill {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--amber) 55%, var(--bg-muted)),
+    var(--amber)
+  );
+}
+.evo-jury-confidence-value {
+  flex: 0 0 auto;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-strong);
+}
+
+/* --- recent settled reviews ---------------------------------------------- */
+.evo-jury-recent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 10px 0 0;
+  border-top: 1px dashed var(--border);
+  list-style: none;
+}
+.evo-jury-recent-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-soft);
+}
+.evo-jury-recent-dot {
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+.evo-jury-recent-item[data-phase='accepted'] .evo-jury-recent-dot { background: var(--green); }
+.evo-jury-recent-item[data-phase='blocked'] .evo-jury-recent-dot,
+.evo-jury-recent-item[data-phase='failed'] .evo-jury-recent-dot { background: var(--amber); }
+.evo-jury-recent-item[data-phase='reviewing'] .evo-jury-recent-dot { background: var(--accent); }
+.evo-jury-recent-trigger {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.evo-jury-recent-phase {
+  flex: 0 0 auto;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+.evo-jury-recent-item[data-phase='accepted'] .evo-jury-recent-phase { color: var(--green); }
+.evo-jury-recent-item[data-phase='blocked'] .evo-jury-recent-phase,
+.evo-jury-recent-item[data-phase='failed'] .evo-jury-recent-phase { color: var(--amber); }
+
+/* --- collapsed settled pill (Theater parity) ----------------------------- */
+.evo-jury-collapsed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  padding: 6px 8px 6px 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.06));
+  font-size: 11.5px;
+  color: var(--text-muted);
+  animation: evo-jury-in var(--dur-enter) var(--ease-out);
+}
+.evo-jury-collapsed[data-phase='accepted'] {
+  background: color-mix(in srgb, var(--green) 8%, var(--bg-elevated));
+  border-color: var(--green-border);
+}
+.evo-jury-collapsed[data-phase='blocked'],
+.evo-jury-collapsed[data-phase='failed'] {
+  background: color-mix(in srgb, var(--amber) 8%, var(--bg-elevated));
+  border-color: color-mix(in srgb, var(--amber) 28%, var(--border));
+}
+.evo-jury-collapsed-mark {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-tint);
+  color: var(--accent);
+}
+.evo-jury-collapsed-badge {
+  flex: 0 0 auto;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+.evo-jury-collapsed-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.evo-jury-collapsed-trigger {
+  flex: 0 0 auto;
+  font-weight: 500;
+  color: var(--text-soft);
+}
+.evo-jury-collapsed-summary {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+.evo-jury-collapsed-confidence {
+  flex: 0 0 auto;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-strong);
+}
+.evo-jury-collapsed-confidence[data-verdict='accept'] { color: var(--green); }
+.evo-jury-collapsed-confidence[data-verdict='rollback'] { color: var(--amber); }
+
+/* --- touched asset refs ------------------------------------------------- */
+.evo-jury-assets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.evo-jury-asset {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10.5px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-soft);
+  color: var(--accent-strong, var(--accent));
+}
+
+.evo-jury-recent--compact {
+  padding-top: 0;
+  border-top: none;
+}
+
+.evo-jury[data-deliberating='true'] {
+  box-shadow:
+    var(--shadow-md),
+    0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+/* --- motion --------------------------------------------------------------- */
+@keyframes evo-jury-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes evo-jury-halo {
+  0%, 100% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--evo-role) 16%, transparent); }
+  50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--evo-role) 6%, transparent); }
+}
+@keyframes evo-jury-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@keyframes evo-jury-typing {
+  0%, 60%, 100% { opacity: 0.35; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-2px); }
+}
+@keyframes evo-jury-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes evo-jury-flow {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evo-jury,
+  .evo-jury-collapsed,
+  .evo-jury-step { animation: none !important; }
+  .evo-jury-step-node,
+  .evo-jury-step::before,
+  .evo-jury-step-label { transition: none !important; }
+  .evo-jury-step[data-state='active'] .evo-jury-step-node { animation: none !important; }
+  .evo-jury-phase-dot,
+  .evo-jury-typing i,
+  .evo-jury-step[data-flow='true']::before { animation: none !important; }
+  .evo-jury-confidence-fill { transition: none !important; }
+}

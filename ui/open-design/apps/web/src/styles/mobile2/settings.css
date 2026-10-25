@@ -1,0 +1,331 @@
+/* settings 手机适配层(mobile UX round-2)。全部规则必须包在
+   @media (max-width: 768px) 或 (hover: none) 查询内,桌面零回退。
+
+   适配对象:SettingsDialog(.modal-backdrop > .modal.modal-settings)。
+   选择器一律带 .modal-settings(或 :has(> .modal-settings))前缀,
+   不写通用 modal 规则,避免与「模态框全屏化」通用层撞车。
+   基线证据:matos-test-tmp/webui-ux-settings/base-*.png。 */
+
+@media (max-width: 768px) {
+  /* ============================================================
+     1. 容器全屏化 + 背景滚动锁定
+     仅当 backdrop 的直接子元素是设置对话框时生效,别的模态不受影响。
+     backdrop 本身 fixed inset:0,把子元素拉伸铺满即可,不依赖 dvh。
+     ============================================================ */
+  body:has(> #root .modal-backdrop > .modal-settings),
+  body:has(.modal-backdrop > .modal-settings) {
+    overflow: hidden;
+  }
+  .modal-backdrop:has(> .modal-settings) {
+    align-items: stretch;
+    justify-content: stretch;
+    padding: 0;
+    overscroll-behavior: contain;
+  }
+  .modal.modal-settings,
+  .modal.modal-settings.settings-fullscreen {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  /* ============================================================
+     2. 顶部 chrome:全屏切换在手机上无意义(始终全屏)→ 隐藏;
+     关闭按钮放大到 44px 触控标准,并让出状态栏安全区。
+     ============================================================ */
+  .modal-settings .settings-chrome {
+    top: max(10px, env(safe-area-inset-top, 0px));
+    right: 10px;
+    gap: 8px;
+  }
+  .modal-settings .settings-fullscreen-toggle {
+    display: none;
+  }
+  .modal-settings .settings-chrome-btn {
+    width: 44px;
+    height: 44px;
+  }
+  .modal-settings .settings-chrome-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ============================================================
+     3. 头部紧凑化:桌面为 chrome 预留 92px 右侧留白,手机上只有
+     一个关闭按钮;副标题最多两行,防止长文案(如「科研数据 API」
+     的五行说明)把导航和内容挤出首屏。
+     ============================================================ */
+  .modal.modal-settings .modal-head {
+    padding: calc(12px + env(safe-area-inset-top, 0px)) 64px 10px 16px;
+    gap: 2px;
+  }
+  .modal-settings .modal-head h2 {
+    font-size: 19px;
+  }
+  .modal-settings .modal-head .kicker {
+    font-size: 10px;
+  }
+  .modal-settings .modal-head-line > .subtitle {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ============================================================
+     4. 分区布局主修复:桌面 760px 断点把 .modal-body 改成单列
+     grid,但没定义行高 —— 内容短的分区(通知/评审团/外观)里
+     两行按 stretch 均分,导航条被撑到 200px+(见 base-210 截图)。
+     显式声明「导航 auto + 内容占余下」。
+     ============================================================ */
+  .modal.modal-settings .modal-body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  /* 横滚 tab 条:胶囊样式、44px 触控高、scroll-snap、隐藏滚动条。
+     当前分区高亮沿用 .active 的灰底 + 加粗,额外加描边增强对比。 */
+  .modal-settings .settings-sidebar {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 10px max(12px, env(safe-area-inset-right, 0px)) 10px
+      max(12px, env(safe-area-inset-left, 0px));
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .modal-settings .settings-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+  .modal-settings .settings-nav-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: auto;
+    min-width: 0;
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 8px 14px;
+    border-radius: var(--radius-pill);
+    scroll-snap-align: center;
+  }
+  .modal-settings .settings-nav-item strong {
+    white-space: nowrap;
+    font-size: 13.5px;
+  }
+  .modal-settings .settings-nav-item.active,
+  .modal-settings .settings-nav-item.active:hover {
+    border-color: var(--border-strong, var(--border));
+  }
+
+  /* ============================================================
+     5. 内容区滚动:独立滚动 + 触控惯性;底部留出安全区,
+     scroll-padding 保证键盘弹出时聚焦控件不会贴死可视区底边。
+     ============================================================ */
+  .modal-settings .settings-content {
+    padding: 14px 16px calc(28px + env(safe-area-inset-bottom, 0px));
+    -webkit-overflow-scrolling: touch;
+    scroll-padding-block: 12px 96px;
+  }
+  .modal-settings.settings-sidebar-collapsed .settings-content {
+    padding-left: 16px;
+  }
+
+  /* ============================================================
+     6. 表单控件触控目标:输入类控件 ≥44px 高;字号 16px 阻止
+     iOS WebView 聚焦自动放大(基线里大量 12px 输入框)。
+     ============================================================ */
+  .modal-settings .settings-content input,
+  .modal-settings .settings-content select,
+  .modal-settings .settings-content textarea {
+    min-height: 44px;
+    font-size: 16px;
+    padding: 10px 12px;
+  }
+  .modal-settings .settings-content select {
+    padding-right: 34px;
+  }
+  .modal-settings .settings-content textarea {
+    min-height: 96px;
+  }
+  /* BYOK 卡片里 30px 定高输入框(settings-matos-byok.css)一并放开。 */
+  .modal-settings .matos-byok-provider__field input,
+  .modal-settings .matos-byok-provider__field select {
+    height: auto;
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  /* 按钮统一 ≥44px;个别装饰性小控件在下方单独收回。 */
+  .modal-settings .settings-content button {
+    min-height: 44px;
+  }
+  .modal-settings .settings-content .seg-btn {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  /* 输入框内的「显示/隐藏密钥」眼睛按钮:视觉 36px、贴右居中,
+     并给宿主输入框让出右侧空间。 */
+  .modal-settings .settings-content .secret-visibility-button {
+    width: 36px;
+    height: 36px;
+    min-height: 0;
+    right: 5px;
+  }
+  .modal-settings .media-provider-secret-field input {
+    padding-right: 46px;
+  }
+  /* 外观主题色小圆点 22px → 32px。 */
+  .modal-settings .settings-content .accent-swatch,
+  .modal-settings .settings-content .accent-swatch-picker {
+    width: 32px;
+    height: 32px;
+    min-height: 0;
+    padding: 0;
+  }
+  /* MCP 代码块右上角的复制按钮是绝对定位在 40px 顶部留白里的,
+     44px 会压到第一行代码,收回到 32px。 */
+  .modal-settings .settings-content .mcp-copy-btn {
+    min-height: 32px;
+  }
+
+  /* 裸 checkbox 修复:全局 input{width:100%} 把评审团开关拉成
+     310×13 的一条线(base-208 截图)。收回成 22px 方形并把所在
+     label 行变成 44px 高的触控行。 */
+  .modal-settings .settings-content input[type='checkbox'],
+  .modal-settings .settings-content input[type='radio'] {
+    width: 22px;
+    height: 22px;
+    min-height: 0;
+    padding: 0;
+    flex: 0 0 auto;
+    accent-color: var(--accent);
+  }
+  .modal-settings .settings-content .field-label:has(> input[type='checkbox']) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    font-size: 14.5px;
+    color: var(--text);
+  }
+
+  /* 标签在上、控件在下(.field 本身已纵向);label+按钮混排的
+     .field-row 允许换行:输入框独占一行,按钮落到下一行可全宽点按。 */
+  .modal-settings .settings-content .field-row {
+    flex-wrap: wrap;
+  }
+  .modal-settings .settings-content .field-row > input,
+  .modal-settings .settings-content .field-row > .field-input-skeleton-wrap {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .modal-settings .settings-content .field-row > button {
+    flex: 1 1 auto;
+  }
+
+  /* ============================================================
+     7. 长内容分区窄屏化
+     ============================================================ */
+  /* 科研数据 API(media):桌面三列 grid 把密钥输入框挤成 80px
+     碎块(base-203 截图),改单列堆叠,清除按钮全宽。 */
+  .modal-settings .media-provider-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* 执行模式 →「高级:代理与自定义路径」的两列 env 表单堆叠。 */
+  .modal-settings .agent-cli-env-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* BYOK 卡片「模型 | 轻量模型」双列改堆叠。 */
+  .modal-settings .matos-byok-provider__field-row {
+    flex-direction: column;
+  }
+
+  /* 项目位置:隐藏 radio(opacity:0)吃了全局 width:100% 且绝对
+     定位,把内容区撑出 62px 横向溢出(diag contentOverflowX=62),
+     收成 1px 隐形热点;卡片改单列,「默认位置」胶囊加大到可点。 */
+  .modal-settings .project-location-default-control input {
+    width: 1px;
+    height: 1px;
+    min-height: 0;
+    left: 0;
+    top: 0;
+  }
+  .modal-settings .project-location-card,
+  .modal-settings .project-location-edit {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
+  }
+  .modal-settings .project-location-default-control {
+    justify-self: start;
+    min-height: 44px;
+  }
+  .modal-settings .project-location-default-control span {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  /* 对外 MCP 服务:代码块的 104px 右侧留白(为桌面复制按钮预留,
+     内联样式)在 358px 宽内容区里浪费近三分之一 → 顶部留白容纳
+     按钮、左右回到正常内边距;字号略缩减少换行碎行。 */
+  .modal-settings .settings-content pre[data-lang] {
+    padding: 44px 14px 12px !important;
+    font-size: 11.5px !important;
+  }
+
+  /* 危险操作(项目位置「删除」、关于「重置」、清除密钥等)已被
+     44px 按钮规则覆盖;再拉开与相邻控件的间距防误触。 */
+  .modal-settings .settings-content .icon-btn.danger {
+    margin-top: 4px;
+  }
+
+  /* 科研数据 API 卡片右上角「文档」链接:a 标签不吃按钮规则,
+     单独保证触控高度。 */
+  .modal-settings .settings-content a.ghost-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* 保持小视觉、扩大热区:眼睛按钮/主题色圆点/复制按钮用
+     ::after 把可点区域扩到 ≥44px,不改变外观。 */
+  .modal-settings .settings-content .accent-swatch {
+    position: relative;
+  }
+  .modal-settings .settings-content .secret-visibility-button::after,
+  .modal-settings .settings-content .mcp-copy-btn::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+  }
+  /* input[type=color](自定义颜色)是替换元素,::after 不生效,
+     32px 视觉即热区,不再扩展。 */
+  .modal-settings .settings-content .accent-swatch::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+  }
+
+}
+
+/* 触屏设备兜底:hover 悬浮位移动效在触屏上表现为点击闪跳,关掉。
+   仅影响设置对话框内部,桌面鼠标环境不变。 */
+@media (hover: none) and (pointer: coarse) {
+  .modal-settings .settings-chrome-btn:hover {
+    transform: none;
+  }
+  .modal-settings .settings-content button:active {
+    opacity: 0.86;
+  }
+}

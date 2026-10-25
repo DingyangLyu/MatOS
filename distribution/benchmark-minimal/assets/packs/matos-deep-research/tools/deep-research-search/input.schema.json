@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "properties": {
+    "query": {
+      "type": "string",
+      "description": "Search query (topic, keywords, or a specific question). Required."
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 15,
+      "description": "Maximum number of sources to return (default 6)."
+    },
+    "from_year": {
+      "type": "integer",
+      "description": "Optional. Only include works published on/after this year."
+    }
+  },
+  "required": [
+    "query"
+  ],
+  "additionalProperties": false
+}

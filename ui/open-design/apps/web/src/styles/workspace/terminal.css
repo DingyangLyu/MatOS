@@ -1,0 +1,24 @@
+/* xterm.js ships global structural selectors such as `.xterm-helper-textarea`;
+   keep them in the global cascade so its hidden textarea does not inherit the
+   app's visible form-field primitive styles. */
+@import '@xterm/xterm/css/xterm.css';
+
+/* Phone (<=640px): pin xterm's hidden input sink INSIDE the terminal box.
+   Upstream xterm.css parks `.xterm-helper-textarea` at `left: -9999em` — fine
+   on desktop, but the phone project split is a horizontal snap pager
+   (`.split` in shell.css): characters delivered through the composition /
+   `input` path (space, and most keys under mobile IMEs) make Chrome scroll
+   the focused textarea's caret into view, and with the textarea 9999em to
+   the LEFT that "reveal" yanks the pager back to scrollLeft 0 — snapping the
+   user from the terminal (canvas page) to the chat page mid-typing. The
+   textarea is invisible (0x0, opacity 0, z-index -5), so resting it at the
+   terminal's own top-left makes the reveal a no-op. Same specificity as the
+   upstream rule — this file imports xterm.css above, so source order wins.
+   This is the generic guard for any xterm mount; TerminalViewer.module.css
+   re-parks the textarea with !important weight and carries the matching
+   phone override. Desktop (>640px) keeps the upstream off-screen park. */
+@media (max-width: 640px) {
+  .xterm .xterm-helper-textarea {
+    left: 0;
+  }
+}

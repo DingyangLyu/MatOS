@@ -1,0 +1,13 @@
+/* 手机 UX 二轮适配层汇总:每个面板一个文件,由各自负责人独立维护,
+   避免并行修改集中在公共样式文件上。加载顺序在全部桌面样式之后,
+   同权重选择器移动端稳赢。 */
+@import './file-viewer.css';
+@import './home-project.css';
+@import './settings.css';
+@import './chat-content.css';
+@import './design-panels.css';
+@import './assets-reader.css';
+@import './project-pager.css';
+@import './chat-actions.css';
+@import './modals.css';
+@import './popover-fit.css';

@@ -1,0 +1,155 @@
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  background: #525659;
+}
+
+.loading {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 3;
+  padding: 5px 8px;
+  background: #292c30;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.zoomBar {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 8px;
+  background: rgba(28, 28, 30, 0.82);
+  color: #f2f2f2;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.zoomBtn,
+.zoomFit {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 7px;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.zoomFit {
+  min-width: 52px;
+}
+
+.zoomBtn:hover:not(:disabled),
+.zoomFit:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 18px 14px 26px;
+}
+
+.pages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.page {
+  position: relative;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* pdf.js text layer: invisible glyph boxes over the canvas so PDF text can
+   be selected and copied. This is the minimal working subset of pdf.js v6's
+   own text_layer CSS: the variable chain (--scale-factor set from JS →
+   --total-scale-factor → --text-scale-factor) drives both the layer box
+   (setLayerDimensions) and per-span font sizing, so it must stay intact. */
+.textLayer {
+  color-scheme: only light;
+  position: absolute;
+  text-align: initial;
+  inset: 0;
+  overflow: clip;
+  line-height: 1;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-size-adjust: none;
+  forced-color-adjust: none;
+  transform-origin: 0 0;
+  caret-color: CanvasText;
+  z-index: 1;
+  --user-unit: 1;
+  --total-scale-factor: calc(var(--scale-factor, 1) * var(--user-unit));
+  --scale-round-x: 1px;
+  --scale-round-y: 1px;
+  --min-font-size: 1;
+  --text-scale-factor: calc(var(--total-scale-factor) * var(--min-font-size));
+  --min-font-size-inv: calc(1 / var(--min-font-size));
+}
+
+.textLayer :global(span),
+.textLayer :global(br) {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+  user-select: text;
+}
+
+.textLayer > :global(:not(.markedContent)),
+.textLayer :global(.markedContent span:not(.markedContent)) {
+  z-index: 1;
+  --font-height: 0;
+  font-size: calc(var(--text-scale-factor) * var(--font-height));
+  --scale-x: 1;
+  --rotate: 0deg;
+  transform: rotate(var(--rotate)) scaleX(var(--scale-x)) scale(var(--min-font-size-inv));
+}
+
+.textLayer :global(.markedContent) {
+  display: contents;
+}
+
+.textLayer ::selection {
+  background: rgba(0, 100, 255, 0.28);
+  color: transparent;
+}
+
+.textLayer :global(.endOfContent) {
+  display: block;
+  position: absolute;
+  inset: 100% 0 0;
+  z-index: -1;
+  cursor: default;
+  user-select: none;
+}
+
+
+
+.error {
+  margin: auto;
+  max-width: 420px;
+  padding: 20px;
+  color: #f2f2f2;
+  font-size: 12.5px;
+  text-align: center;
+}

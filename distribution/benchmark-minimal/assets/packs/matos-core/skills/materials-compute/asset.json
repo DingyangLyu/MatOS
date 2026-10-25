@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "materials-compute",
+  "type": "skill",
+  "name": "materials-compute",
+  "version": "1.0.0",
+  "description": "Master router for MatOS materials-computation skills. READ THIS FIRST for compute tasks, then drill into the correct domain index and concrete skill guide.",
+  "entry": "SKILL.md",
+  "tags": [
+    "materials",
+    "computation",
+    "routing",
+    "master-index"
+  ],
+  "metadata": {
+    "sourceFormat": "cmatos-native-skill",
+    "migratedFrom": "../MatOS/container/skills/materials-compute/SKILL.md",
+    "toolReferences": [
+      "tool:materials-runtime-inventory",
+      "tool:local-toolchain-preflight"
+    ],
+    "marketplace": {
+      "visibility": "public",
+      "category": "skill"
+    }
+  }
+}

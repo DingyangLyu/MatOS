@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "general-tools/document-files",
+  "type": "skill",
+  "name": "Research documents and tables",
+  "version": "0.1.0",
+  "entry": "SKILL.md",
+  "description": "Local research document extraction and tabular-data handling using native document_parse and independently installed libraries.",
+  "dependencies": [
+    "tool:document-parse",
+    "tool:files-core",
+    "tool:shell-core"
+  ],
+  "metadata": {
+    "sourceFormat": "matos-authored-skill",
+    "marketplace": {
+      "visibility": "public",
+      "category": "skill"
+    }
+  }
+}

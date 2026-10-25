@@ -1,0 +1,685 @@
+/* -------- Design system picker (custom popover dropdown) ------------ */
+.ds-picker { position: relative; }
+/* While its popover is open, the picker must paint above its sibling
+   sections. Each `.newproj-section` keeps a transform applied after the
+   entrance animation (`od-fade-slide-up ... both` in entrance.css), which
+   makes every section its own stacking context — the popover's z-index
+   alone can't escape its section, so later siblings (Target platforms,
+   model picker, toggles, …) would cover the open list. Raising the open
+   picker's section above its `z-index: auto` siblings restores the
+   expected "dropdown on top" order. */
+.ds-picker:has(.ds-picker-popover) { z-index: 31; }
+.ds-picker-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 120ms var(--ease-out), box-shadow 120ms var(--ease-out);
+}
+/* New project panel triggers run a tighter 38px row so the dropdowns sit
+   close to the project-name input and the Companion toggle. Other call
+   sites (Settings dialog, model picker) keep their own sizing. */
+.newproj-section .ds-picker-trigger {
+  min-height: 38px;
+  padding: 2px 10px;
+}
+.ds-picker-trigger:hover { border-color: var(--border-strong); }
+.ds-picker-trigger.open {
+  border-color: var(--border-strong);
+  box-shadow: none;
+}
+.ds-picker-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.ds-picker-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ds-picker-extra-pill {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: var(--radius-pill);
+}
+.ds-picker-sub {
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ds-picker-chevron {
+  flex: none;
+  color: var(--text-muted);
+  transition: transform 160ms var(--ease-out);
+}
+.ds-picker-trigger.empty .ds-picker-title { color: var(--text-muted); font-weight: 500; }
+
+/* Avatar — square with 2x2 swatch grid (or "none" diagonal slash). */
+.ds-avatar {
+  position: relative;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ds-avatar-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  width: 100%;
+  height: 100%;
+}
+.ds-avatar-cell { display: block; }
+.ds-avatar-stack {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 1px 5px;
+  background: var(--text-strong);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--bg-panel);
+}
+.ds-avatar-none {
+  background: var(--bg-subtle);
+  color: var(--text-faint);
+}
+
+/* Popover */
+.ds-picker-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: ds-pop-in 140ms cubic-bezier(0.2, 0, 0.2, 1);
+}
+@keyframes ds-pop-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Rich brand preview flyout — a side panel anchored to the popover that shows
+   the compact Brand Kit card for the hovered / selected brand. It sits OUTSIDE
+   the `overflow: hidden` popover (as a sibling) so it is not clipped, and to
+   the right of the popover via the wrapper's relative positioning. */
+.ds-picker-brand-flyout {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: calc(100% + 8px);
+  z-index: 31;
+  width: 320px;
+  max-height: min(560px, 70vh);
+  overflow-y: auto;
+  padding: 14px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  animation: ds-pop-in 140ms cubic-bezier(0.2, 0, 0.2, 1);
+}
+.ds-picker-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-panel);
+}
+.ds-picker-search {
+  flex: 1;
+  padding: 6px 10px !important;
+  font-size: 12.5px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-sm) !important;
+}
+/* Mirror the `.subtab-pill` segmented control so all left/right toggles in
+   the app share one visual language — gray container, white raised tab for
+   active. Density stays popover-tight (smaller padding than the toolbar
+   variant). */
+.ds-picker-mode {
+  flex: none;
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.ds-picker-mode-btn {
+  padding: 3px 12px !important;
+  font-size: 11px !important;
+  font-weight: 500;
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: none !important;
+}
+.ds-picker-mode-btn:hover:not(.active) {
+  color: var(--text) !important;
+}
+.ds-picker-mode-btn.active {
+  background: var(--bg-panel) !important;
+  color: var(--text) !important;
+  box-shadow: var(--shadow-xs) !important;
+}
+.ds-picker-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 4px;
+}
+.ds-picker-list-design-systems {
+  min-height: 120px;
+}
+.ds-picker-empty {
+  padding: 16px 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+.ds-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+}
+.ds-picker-item:hover { background: var(--bg-subtle); }
+.ds-picker-item.active {
+  border-color: var(--border-strong);
+}
+.ds-picker-item-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.ds-picker-item-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ds-picker-item-badge {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 2px 5px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+}
+.ds-picker-item-sub {
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Selection mark — a circle for single-select, a square for multi.
+   In multi mode the active state shows the pick order (1 = primary). */
+.ds-picker-mark {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: 600;
+  color: transparent;
+}
+.ds-picker-mark.radio {
+  border-radius: 50%;
+  border: 1.5px solid var(--border-strong);
+  background: var(--bg-panel);
+  position: relative;
+}
+.ds-picker-mark.radio.active {
+  border-color: var(--text);
+}
+.ds-picker-mark.radio.active::after {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--text);
+}
+.ds-picker-mark.check {
+  border-radius: var(--radius-xs);
+  border: 1.5px solid var(--border-strong);
+  background: var(--bg-panel);
+  color: var(--bg-panel);
+}
+.ds-picker-mark.check.active {
+  border-color: var(--text);
+  background: var(--text);
+  color: var(--bg-panel);
+}
+
+.ds-picker-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-subtle);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+.ds-picker-foot-text { flex: 1; min-width: 0; }
+.ds-picker-foot-text strong { color: var(--text); font-weight: 600; }
+.ds-picker-clear {
+  flex: none;
+  padding: 4px 10px !important;
+  font-size: 11px !important;
+  background: var(--bg-panel) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+.ds-picker-clear:hover { border-color: var(--border-strong) !important; }
+
+.entry-side-foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 16px 24px 20px;
+}
+.entry-side-foot-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.entry-side-foot .foot-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 3px 8px;
+  min-height: 24px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: 10.5px;
+  color: var(--text-muted);
+  align-self: flex-start;
+  cursor: pointer;
+  text-decoration: none;
+}
+.entry-side-foot-row .foot-pill {
+  min-width: 0;
+}
+.entry-side-foot-row .foot-pill-follow {
+  flex: 0 1 auto;
+}
+/* Social cluster (Discord + X) — sits at the right end of the bottom row
+   via `margin-left: auto`, which opens flex space between the left
+   "your stuff" group (Language) and the right "follow us" group. */
+.entry-side-foot-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+.entry-side-foot-row .foot-pill-follow-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.entry-side-foot .foot-pill:hover { background: var(--bg-panel); border-color: var(--border-strong); color: var(--text); }
+.entry-side-foot .foot-pill .ico { font-size: 12px; opacity: 0.7; }
+/* The Icon component renders inline SVG with `stroke: currentColor`, so by
+   default it tracks the pill's text color exactly. Override via opacity to
+   keep the glyph muted relative to the label — on hover the icon "lifts"
+   just enough to feel active without going full black, which would make
+   it compete with the label for attention. */
+.entry-side-foot .foot-pill svg {
+  width: 10px;
+  height: 10px;
+  opacity: 0.55;
+  transition: opacity 120ms var(--ease-out);
+}
+.entry-side-foot .foot-pill:hover svg {
+  opacity: 0.75;
+}
+
+/* Language switcher pill + popover (entry sidebar foot). */
+.lang-menu-wrap {
+  position: relative;
+  align-self: flex-start;
+}
+.lang-menu-wrap .lang-pill {
+  font-variant-numeric: tabular-nums;
+}
+.lang-menu-popover {
+  position: absolute;
+  z-index: 50;
+  min-width: 180px;
+  width: max-content;
+  max-width: min(280px, calc(100vw - 48px));
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+.lang-menu-popover--up {
+  bottom: calc(100% + 6px);
+}
+.lang-menu-popover--down {
+  top: calc(100% + 6px);
+}
+.lang-menu-popover--align-start {
+  left: 0;
+}
+.lang-menu-popover--align-end {
+  right: 0;
+}
+.lang-menu-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  font-size: 12.5px;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+.lang-menu-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.lang-menu-item:hover { background: var(--bg-subtle); }
+.lang-menu-item.active { background: var(--bg-subtle); }
+.lang-menu-item .lang-menu-code {
+  color: var(--text-faint);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.lang-menu-item .lang-menu-check {
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Right side */
+.entry-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+.entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 28px 0;
+  border-bottom: 1px solid var(--border);
+  min-width: 0;
+}
+.entry-header-tabs-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.entry-tabs {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+.entry-tabs::-webkit-scrollbar { display: none; }
+.entry-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 6px 4px 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  transition: none;
+}
+.entry-tab:focus,
+.entry-tab:active {
+  background: transparent;
+  border-color: transparent;
+  border-bottom-color: transparent;
+  outline: none;
+  color: var(--text-muted);
+}
+.entry-tab:focus-visible {
+  outline: 2px solid var(--selected);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+  color: var(--text);
+}
+.entry-tab:hover:not(:disabled) {
+  background: transparent;
+  border-color: transparent;
+  border-bottom-color: transparent;
+  outline: none;
+  color: var(--text);
+}
+.entry-tab.active,
+.entry-tab.active:hover:not(:disabled),
+.entry-tab.active:focus,
+.entry-tab.active:focus-visible {
+  color: var(--text);
+  border-bottom-color: var(--text);
+}
+.entry-header-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.entry-tab-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 22px 28px 32px;
+  background: var(--bg);
+}
+
+.tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.tab-panel-toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  /* Older browsers ignore row-gap on flex with wrap — explicit row-gap keeps
+     the wrapped row visually separated rather than flush against the pill. */
+  row-gap: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: var(--bg-panel);
+}
+.tab-panel-toolbar .toolbar-left {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+.tab-panel-toolbar .toolbar-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.tab-panel-toolbar .toolbar-search {
+  position: relative;
+  flex: 1 1 180px;
+  min-width: 140px;
+  max-width: 280px;
+}
+/* Narrow columns (entry tab content sometimes lands at ~570px wide) — keep
+   the segmented pill on its own row above the search/view toggle so the
+   search input never collapses into a tiny stub squeezed between two pills. */
+@media (max-width: 720px) {
+  .tab-panel-toolbar { flex-direction: column; align-items: stretch; }
+  .tab-panel-toolbar .toolbar-left { justify-content: flex-start; }
+  .tab-panel-toolbar .toolbar-right { justify-content: space-between; }
+  .tab-panel-toolbar .toolbar-search { max-width: none; }
+}
+.tab-panel-toolbar .toolbar-search input {
+  padding-left: 30px;
+  background: var(--bg-panel);
+}
+.tab-panel-toolbar .toolbar-search input[type='search']::-webkit-search-cancel-button {
+  /* Hide the native clear control; we render our own styled button. */
+  appearance: none;
+  -webkit-appearance: none;
+}
+.tab-panel-toolbar .toolbar-search input[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.tab-panel-toolbar.designs-toolbar {
+  /* The projects toolbar lives in the entry scroll column (surface
+     var(--bg)) below the sticky entry topbar. It used to be transparent,
+     which let project cards scroll straight through the controls — paint
+     the entry surface underneath and pin the bar just below the topbar
+     (not behind it) so the stuck state reads as one clean layer. */
+  top: var(--entry-topbar-h, 44px);
+  background: var(--bg);
+  padding-bottom: 8px;
+}
+/* Phones: the stacked (column) toolbar is far too tall to keep pinned —
+   it would cover half the viewport while scrolling. Let it scroll away
+   with the content instead. */
+@media (max-width: 640px) {
+  .tab-panel-toolbar.designs-toolbar {
+    position: static;
+    padding-bottom: 0;
+  }
+}
+.tab-panel-toolbar .toolbar-search .toolbar-search-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-faint);
+  cursor: pointer;
+  transition: background-color 120ms var(--ease-out), color 120ms var(--ease-out);
+}
+.tab-panel-toolbar .toolbar-search .toolbar-search-clear:hover {
+  background: var(--bg-subtle);
+  color: var(--text);
+}
+.tab-panel-toolbar .toolbar-search .toolbar-search-clear:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+.tab-panel-toolbar .toolbar-search .search-icon {
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-faint);
+  font-size: 13px;
+  pointer-events: none;
+}
+.tab-empty {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}

@@ -1,0 +1,740 @@
+{
+  "schemaVersion": 1,
+  "edition": "benchmark-minimal",
+  "assetCount": 28,
+  "assets": [
+    {
+      "ref": "data:mlip-mace-mp-0@0",
+      "mode": "sanitized",
+      "reason": "Original asset, limited to references within this package."
+    },
+    {
+      "ref": "data:mlip-mace-omat-0@0",
+      "mode": "sanitized",
+      "reason": "Original asset, limited to references within this package."
+    },
+    {
+      "ref": "knowledge:materials-benchmark-task-pitfalls@0.1.0",
+      "mode": "restored",
+      "reason": "Original asset."
+    },
+    {
+      "ref": "role:compute@1.0.26",
+      "mode": "sanitized",
+      "reason": "Original role text; mounts the catalog, preflight and Materials Project tools directly."
+    },
+    {
+      "ref": "role:research-scientist@0.1.0",
+      "mode": "restored",
+      "reason": "Original asset."
+    },
+    {
+      "ref": "skill:answer-finalization@0.1.1",
+      "mode": "sanitized",
+      "reason": "Adds a Step 4 rule: write a single requested value bare."
+    },
+    {
+      "ref": "skill:high-throughput/bayesian-optimization@1.0.0",
+      "mode": "restored",
+      "reason": "Original asset."
+    },
+    {
+      "ref": "skill:high-throughput/property-predictor@1.0.0",
+      "mode": "sanitized",
+      "reason": "Original asset, limited to references within this package."
+    },
+    {
+      "ref": "skill:materials-compute@1.0.0",
+      "mode": "sanitized",
+      "reason": "Original asset, limited to references within this package."
+    },
+    {
+      "ref": "skill:scientific-programming@0.1.0",
+      "mode": "restored",
+      "reason": "Original asset."
+    },
+    {
+      "ref": "tool:agent-orchestration@1.0.0",
+      "mode": "restored",
+      "reason": "Original asset."
+    },
+    {
+      "ref": "tool:atomistic-toolchain-catalog@1.0.0",
+      "mode": "sanitized",
+      "reason": "Original asset, limited to references within this package."
+    },
+    {
+      "ref": "tool:battery-electrochem-catalog@1.0.0",
+      "mode": "restored",
+      "reason": "Original asset."
+    },
+    {
+      "ref": "tool:conda-environment-catalog@1.0.2",
+      "mode": "sanitized",
+      "reason": "Original asset, limited to references within this package."
+    },
+    {
+      "ref": "tool:conda-environment-manager@1.0.0",
+      "mode": "sanitized",
+      "reason": "Original asset, limited to references within this package."
+    },
+    {
+      "ref": "tool:deep-research-search@0.1.0",
+      "mode": "sanitized",
+      "reason": "Original asset, limited to references within this package."
+    },
+    {
+      "ref": "tool:document-parse@0.1.0",
+      "mode": "restored",
+      "reason": "Original asset."
+    },
+    {
+      "ref": "tool:files-core@1.0.0",
+      "mode": "restored",
+      "reason": "Original asset."
+    },
+    {
+      "ref": "tool:gemini-vision-analyze@1.0.0",
+      "mode": "restored",
+      "reason": "Original asset."
+    },
+    {
+      "ref": "tool:literature-access@0.1.0",
+      "mode": "sanitized",
+      "reason": "Original asset, limited to references within this package."
+    },
+    {
+      "ref": "tool:local-toolchain-preflight@1.0.1",
+      "mode": "sanitized",
+      "reason": "Original asset, limited to references within this package."
+    },
+    {
+      "ref": "tool:materials-runtime-inventory@1.0.0",
+      "mode": "sanitized",
+      "reason": "Original asset, limited to references within this package."
+    },
+    {
+      "ref": "tool:mlip-model-catalog@1.0.1",
+      "mode": "restored",
+      "reason": "Original asset."
+    },
+    {
+      "ref": "tool:mp-query@1.0.0",
+      "mode": "restored",
+      "reason": "Original asset."
+    },
+    {
+      "ref": "tool:scip-toolchain-catalog@1.0.0",
+      "mode": "sanitized",
+      "reason": "Original asset, limited to references within this package."
+    },
+    {
+      "ref": "tool:shell-core@1.0.0",
+      "mode": "restored",
+      "reason": "Original asset."
+    },
+    {
+      "ref": "tool:web-read@0.2.0",
+      "mode": "sanitized",
+      "reason": "Original asset, limited to references within this package."
+    },
+    {
+      "ref": "tool:web-research@1.0.0",
+      "mode": "restored",
+      "reason": "Original asset."
+    }
+  ],
+  "files": [
+    {
+      "path": "packs/matos-core/data/mlip-mace-mp-0/DATA.md",
+      "sha256": "a066e149fd5d90666446ef0d4e9cb962dce69c076bf9efb79544b1c926657395",
+      "bytes": 1001
+    },
+    {
+      "path": "packs/matos-core/data/mlip-mace-mp-0/asset.json",
+      "sha256": "06091e0001916a2f90689cb4af5864f98d5855f26245d71b328e1ee291037d5f",
+      "bytes": 2348
+    },
+    {
+      "path": "packs/matos-core/data/mlip-mace-omat-0/DATA.md",
+      "sha256": "2fc98dce97e2f1ba1457510a01ad74fd4728551ae8d43b339b3d6f59d128b8f5",
+      "bytes": 612
+    },
+    {
+      "path": "packs/matos-core/data/mlip-mace-omat-0/asset.json",
+      "sha256": "f16bc4475c19d8d81a10c7d7b96b5340714506852998ab4ca65d6571785f33f8",
+      "bytes": 1549
+    },
+    {
+      "path": "packs/matos-core/knowledge/materials-benchmark-task-pitfalls/KNOWLEDGE.md",
+      "sha256": "cbdbd74fa47ef4ebe9408aef9b5ef2d413cb843c2eff87f6ee7be39e32b7b9e3",
+      "bytes": 4722
+    },
+    {
+      "path": "packs/matos-core/knowledge/materials-benchmark-task-pitfalls/asset.json",
+      "sha256": "e2f6e6d91b5fabc483f23655109479f18094a3c147bed20290ac1d20b5cd96db",
+      "bytes": 1284
+    },
+    {
+      "path": "packs/matos-core/roles/compute/ROLE.md",
+      "sha256": "cad17c60842859df6b485829146c359468907532b31fdc0800d9daeecb1216fa",
+      "bytes": 25423
+    },
+    {
+      "path": "packs/matos-core/roles/compute/asset.json",
+      "sha256": "54dfe534dfb053095cb20f2aa319e14ff339e8afae2f01ed9d8c6ce296849214",
+      "bytes": 2323
+    },
+    {
+      "path": "packs/matos-core/skills/answer-finalization/SKILL.md",
+      "sha256": "4abbc0a2dc00dcf49be8dac1c00e8ce58ad3f360897bb632c28a57e3b56e93b0",
+      "bytes": 6326
+    },
+    {
+      "path": "packs/matos-core/skills/answer-finalization/asset.json",
+      "sha256": "28ae492f3e539f5eac9f7594acf5ce5d027903574995718dbebd2526f5fca0bf",
+      "bytes": 736
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/SKILL.md",
+      "sha256": "d8f6bbaa48708ce3c725e470c78dfc18c81ef9fd9aefb689a6901aeac6ab89cf",
+      "bytes": 9414
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/asset.json",
+      "sha256": "71168cb407ac332da0a6ea8b4e6339776e3b45b104167234b43f9a2486578afc",
+      "bytes": 1427
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/README.md",
+      "sha256": "b4cc77acfe035700bd3e24e960719b85b80aae3a1e4725d41851bb54d0b476ae",
+      "bytes": 6148
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/campaign_state.json",
+      "sha256": "adc9711ce2861ac290c87651e524cf125f59a75cff1ac92d4d4312ff603dae54",
+      "bytes": 651
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/candidates_round_0.csv",
+      "sha256": "8665473144f9a62543462be287caf0f2336526eb2f54acb72cd350b7d78adb2d",
+      "bytes": 306
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/candidates_round_1.csv",
+      "sha256": "eb56d5d2bcd2432f1c459930a9ec986c9d3b8967f052d0ce36f013a070994dd1",
+      "bytes": 125
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/candidates_round_2.csv",
+      "sha256": "8620de3897b6185c4f00c1601ab05f66edea9dc2e51d5ae05b559f0cd5c90b7a",
+      "bytes": 128
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/candidates_round_3.csv",
+      "sha256": "568d0f0c9c8fab8b59436a8cb15219de75ba764f2ebf516b2a5b837a47589e54",
+      "bytes": 144
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/candidates_round_4.csv",
+      "sha256": "6ebc082f41190c3af461f62a83471d7c09380d3b90fc13dbe03ae51a72062d3c",
+      "bytes": 154
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/candidates_round_5.csv",
+      "sha256": "c9d45fee531eb4776fff1e210ad524a60291047d2726a4bc783ba9f422e39e41",
+      "bytes": 141
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/candidates_round_6.csv",
+      "sha256": "b515a987c5321e627cd2e9b3478b90632a4577ed19b00de283c73e9de9786eb8",
+      "bytes": 155
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/candidates_round_7.csv",
+      "sha256": "ee6661b7c6e7deb7020a2fdc699b7177880afcb0c7c7c80bd385c7898c83d5e6",
+      "bytes": 150
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/convergence_curve.png",
+      "sha256": "be28cd18255af57a9355893c16740c6669809a1720f4d0f875af46e520614271",
+      "bytes": 47670
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/evaluated.csv",
+      "sha256": "43bb4c558a663e9df65127a6150d6d3e3d45bd6e38ee519bdfb94ed77419439e",
+      "bytes": 1604
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/gp_model_2d.png",
+      "sha256": "3314b9b70d9a029b9d160e6773002bf508b819f745f868a7d25c2d274bd84845",
+      "bytes": 292040
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/parameter_importance.png",
+      "sha256": "f14e416a0f60b641ffa796d1cd3e5c6e5435de060b7c93ee11b0c4a31f625165",
+      "bytes": 63929
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/branin-function/search_space.yaml",
+      "sha256": "863a47e306f54738511dd6c61a3456c528624598f9c618e48e521c41b0cc26e0",
+      "bytes": 213
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/li-ag-phases/README.md",
+      "sha256": "1679c132693810ed3d847d35643c6de1fc27c89f2fa263db0eed62b2a997ed9d",
+      "bytes": 4566
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/li-ag-phases/campaign_state.json",
+      "sha256": "5da322762574436cddef93f8313a81366932aad3f4de222d565dcdc648b117fa",
+      "bytes": 255
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/li-ag-phases/candidates_round_0.csv",
+      "sha256": "973669767847a5d10bf7394ed0a5a335faafd8dd322d6f9bf083e83eea42d933",
+      "bytes": 99
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/li-ag-phases/candidates_round_1.csv",
+      "sha256": "1af5bd2c49b49e6a36431f33b1d41001b9179e1ac288f576ee2bdf447f6959ae",
+      "bytes": 63
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/li-ag-phases/candidates_round_2.csv",
+      "sha256": "49e10846c79c561004002cc03be638366300d50f3d906af7935925642901c373",
+      "bytes": 47
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/li-ag-phases/convergence_curve.png",
+      "sha256": "09d97608d82ce7e4fffa70a4eda62af6e89418a252daf6492aa2f35239d45a5a",
+      "bytes": 53768
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/li-ag-phases/evaluated.csv",
+      "sha256": "7c612130302d3755f8b860b40d806f3301cabf98f8af569a960181083f3d39a3",
+      "bytes": 354
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/li-ag-phases/gp_model_1d.png",
+      "sha256": "47f7164b5de7745dd6ea49f3f312c0237185421eb01aa2cc1648ccebf7dda7be",
+      "bytes": 167031
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/li-ag-phases/li_ag_phases.csv",
+      "sha256": "329653acce938f6ae5935d22e6f44d84daa52ae9a0c1984360cb9ee0af46d2bd",
+      "bytes": 539
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/li-ag-phases/parameter_importance.png",
+      "sha256": "f3089c8df155652fdcccab5d382a63a21b369aa392c80f8653247364f2088a23",
+      "bytes": 52932
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/examples/li-ag-phases/search_space.yaml",
+      "sha256": "d4ecaf54c61190059508dff8503dc248cd25b5a856123080e7612701e5ebf4e0",
+      "bytes": 156
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/resources/search_space_template.yaml",
+      "sha256": "1081a32cc3c02f1f250f0e90dadbdb2a934f505251ce46f5645d8016ef5993e4",
+      "bytes": 2247
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/scripts/plot_bo_results.py",
+      "sha256": "0ba135924afb8d6cd743b94534d3dc2bbb3d44e9d9fafe60e72999ce37cee6c8",
+      "bytes": 20124
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/bayesian-optimization/scripts/suggest_candidates.py",
+      "sha256": "0880abfaa0d2317e5c1940a0802e7f4a14106d1a1c83573b9deade8095301f9d",
+      "bytes": 12207
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/property-predictor/SKILL.md",
+      "sha256": "f6c70f2ebb0f21f3b24dfcf23df1e498c95ec4500fbb6f6656d32fe9287bf2e9",
+      "bytes": 6072
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/property-predictor/asset.json",
+      "sha256": "1402721370cea420ff076de5c4eac7d72c1892b14222e68e084ce16dde093d1c",
+      "bytes": 1434
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/property-predictor/examples/mace_bulk_modulus/README.md",
+      "sha256": "4457fc3df86ca30fc5e394e0fffabc6aacc0f30084a176e863f96b65ecf07c6b",
+      "bytes": 1626
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/property-predictor/examples/mace_bulk_modulus/run_mace.py",
+      "sha256": "31f26951fcccdde64bb76815e6595ebd8b8bcf7f883344a1588e3a766ca424ad",
+      "bytes": 2688
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/property-predictor/examples/matgl_bulk_modulus/README.md",
+      "sha256": "17231313da2d944e94564dabcf24e17ff27e3122dbf9a6420ef85e460535da42",
+      "bytes": 1740
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/property-predictor/examples/matgl_bulk_modulus/matgl_model/model.json",
+      "sha256": "95efdc616938bcba31b31cb8a84fa606e995d7292e45b0bdbf39f21f0ab98785",
+      "bytes": 2470
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/property-predictor/examples/matgl_bulk_modulus/run_matgl.py",
+      "sha256": "5cbb2b4e548e6caf7b8e6753ba7b9668ee398aac679f16f71e5c2eb6f4d90cf0",
+      "bytes": 2572
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/property-predictor/scripts/train_mace_property.py",
+      "sha256": "572cd4212188df3eff532b2cada3b7911dd1f1b4f9bda547eacf07a00d8aef50",
+      "bytes": 8002
+    },
+    {
+      "path": "packs/matos-core/skills/high-throughput/property-predictor/scripts/train_matgl_property.py",
+      "sha256": "6a3460aa1708025dd322df9d75ca4ac81dece2f57b7a0b59a151d4b242c90036",
+      "bytes": 11253
+    },
+    {
+      "path": "packs/matos-core/skills/materials-compute/SKILL.md",
+      "sha256": "db39e4ec11d0f090284f82da80f38c5f6baff8e3a45f714a4d25d17709feac3f",
+      "bytes": 10396
+    },
+    {
+      "path": "packs/matos-core/skills/materials-compute/asset.json",
+      "sha256": "38629438c04005df589184e480b2cdd46940a8037ca38c019f209d34ec6a4801",
+      "bytes": 747
+    },
+    {
+      "path": "packs/matos-core/skills/scientific-programming/SKILL.md",
+      "sha256": "97ada7862947bcc046de76fc705fbbba1319e90196d0debecf1a25ef35f0dded",
+      "bytes": 5106
+    },
+    {
+      "path": "packs/matos-core/skills/scientific-programming/asset.json",
+      "sha256": "c1fe26f10699b7556962dd6598a33e78b6c82b8d9ad2afd8f356a9531b774eaa",
+      "bytes": 820
+    },
+    {
+      "path": "packs/matos-core/tools/agent-orchestration/asset.json",
+      "sha256": "6d1f76cd619909163354f0c3555412babacfcac52e4b630d6bff29ab449b0372",
+      "bytes": 638
+    },
+    {
+      "path": "packs/matos-core/tools/atomistic-toolchain-catalog/asset.json",
+      "sha256": "151aef36814ce6b57d649f5c648c4496c6a9120d9a9a669a4c177e553de437e3",
+      "bytes": 1600
+    },
+    {
+      "path": "packs/matos-core/tools/atomistic-toolchain-catalog/input.schema.json",
+      "sha256": "36114d4697fd7c972e90d431be9f88521c49fd73768c89d3c69ea249e2bfa7c3",
+      "bytes": 1051
+    },
+    {
+      "path": "packs/matos-core/tools/atomistic-toolchain-catalog/prompt.md",
+      "sha256": "f88f9bec110faa4c297b7812359ba177715953bc984774f8fe524e7754351670",
+      "bytes": 4766
+    },
+    {
+      "path": "packs/matos-core/tools/atomistic-toolchain-catalog/tool.py",
+      "sha256": "d351fae8ebc5bb7839397b71004634f2cf36da76828ac16c256207364eb9e64a",
+      "bytes": 59149
+    },
+    {
+      "path": "packs/matos-core/tools/battery-electrochem-catalog/asset.json",
+      "sha256": "87b9559878d2f218076c74c1f9cab39cbe5832f602c2039928c98e6a4f1e7cb6",
+      "bytes": 1184
+    },
+    {
+      "path": "packs/matos-core/tools/battery-electrochem-catalog/input.schema.json",
+      "sha256": "0bda2cb152074421eb38c1c4dcbded78831f049be4657c8d6a0afd75c008f536",
+      "bytes": 1066
+    },
+    {
+      "path": "packs/matos-core/tools/battery-electrochem-catalog/prompt.md",
+      "sha256": "b6301e9857addd44fabe2e1fae40e697b2fee77170a4a2bb3f9b3e9e6dfc13d1",
+      "bytes": 384
+    },
+    {
+      "path": "packs/matos-core/tools/battery-electrochem-catalog/tool.py",
+      "sha256": "97457272d6107f30187251aea8cd766ce8e61c292213a4b8b1453e6ef88fc473",
+      "bytes": 8780
+    },
+    {
+      "path": "packs/matos-core/tools/conda-environment-catalog/asset.json",
+      "sha256": "118e3b6cfeaa0c192d48e24e2111124ccc1e891587c5721aee4a08582e36271f",
+      "bytes": 1163
+    },
+    {
+      "path": "packs/matos-core/tools/conda-environment-catalog/input.schema.json",
+      "sha256": "9857d337560466f353114b21e74927b53a764c897ca53a9b37305cf0109db090",
+      "bytes": 2098
+    },
+    {
+      "path": "packs/matos-core/tools/conda-environment-catalog/prompt.md",
+      "sha256": "f55280019e37d2ea89ec66ade75876ab4a199827e8512ebbf569a02a61491563",
+      "bytes": 4670
+    },
+    {
+      "path": "packs/matos-core/tools/conda-environment-catalog/tool.py",
+      "sha256": "46c9b8e2026d8451c49c32634129aa50689ce040c2d77db9dd4c208794c80413",
+      "bytes": 55022
+    },
+    {
+      "path": "packs/matos-core/tools/conda-environment-manager/asset.json",
+      "sha256": "93bf24e462e1bd97fbbbbebeb45085d4077fd301b9ed0fd51ac34cd38beb5c43",
+      "bytes": 1349
+    },
+    {
+      "path": "packs/matos-core/tools/conda-environment-manager/input.schema.json",
+      "sha256": "20b682098340726b2f4ec01c9cae678ab4fdedef27409090f1f0a7cf13639213",
+      "bytes": 1911
+    },
+    {
+      "path": "packs/matos-core/tools/conda-environment-manager/prompt.md",
+      "sha256": "5ed21da85d089f7a85e364897b332553b0c6a42e295f73992013f920e15d69ba",
+      "bytes": 1426
+    },
+    {
+      "path": "packs/matos-core/tools/conda-environment-manager/tool.py",
+      "sha256": "9a72b5465aed23a2fd5f695b0f18816be6eb4c94d4d307e7c03d2a7d153d24c8",
+      "bytes": 15515
+    },
+    {
+      "path": "packs/matos-core/tools/document-parse/asset.json",
+      "sha256": "b61d6199c982dbca3ee6c1ca7f295724a46edb7534e82060e963fe79b106ce1b",
+      "bytes": 1084
+    },
+    {
+      "path": "packs/matos-core/tools/document-parse/input.schema.json",
+      "sha256": "1f4aad731a875c8a26c44e9ffea60944cfdb4c19d1c133aa2aa1939522d124f2",
+      "bytes": 649
+    },
+    {
+      "path": "packs/matos-core/tools/document-parse/prompt.md",
+      "sha256": "dee329efac4c7d1a178bca55681b498ed61b6e054bcb54e7d0e430b82cd485bb",
+      "bytes": 1254
+    },
+    {
+      "path": "packs/matos-core/tools/document-parse/tool.py",
+      "sha256": "68934a61d49c4df466437ec437d049158b21267c2321fca886c3603d2df15481",
+      "bytes": 9286
+    },
+    {
+      "path": "packs/matos-core/tools/files-core/asset.json",
+      "sha256": "1940b8b8b50a57b7c8a8a19ee1308a01321ec7e21df9514e46cc1f958b297986",
+      "bytes": 506
+    },
+    {
+      "path": "packs/matos-core/tools/gemini-vision-analyze/asset.json",
+      "sha256": "5273e24e39e4eee9da1e4ef92e5061f4f5c543b9f8c6bdf508e1b5d9ce264335",
+      "bytes": 1256
+    },
+    {
+      "path": "packs/matos-core/tools/gemini-vision-analyze/input.schema.json",
+      "sha256": "662d59a7a8c86dcca3773e34b0159690c600b35055dde7ff207e294592721008",
+      "bytes": 1550
+    },
+    {
+      "path": "packs/matos-core/tools/gemini-vision-analyze/prompt.md",
+      "sha256": "552c14a73253c1d6c4cc3c94f9b55e4742f17fdb964e67ac9c728313d25766e7",
+      "bytes": 1047
+    },
+    {
+      "path": "packs/matos-core/tools/gemini-vision-analyze/tool.py",
+      "sha256": "6ef3609fd30af057de016b503127a4c8346c56dcd22633d3af72f60a45f8fdc7",
+      "bytes": 25452
+    },
+    {
+      "path": "packs/matos-core/tools/literature-access/asset.json",
+      "sha256": "6e7ef6b524a831e62ad1d3497a69a8e8e7dd07241fd7746e3cef44631c17d607",
+      "bytes": 1400
+    },
+    {
+      "path": "packs/matos-core/tools/literature-access/input.schema.json",
+      "sha256": "9d30fa6b1ff36288edba56d36fb85a05838aa948213d21a1befc0a7bd3134717",
+      "bytes": 1380
+    },
+    {
+      "path": "packs/matos-core/tools/literature-access/prompt.md",
+      "sha256": "cda469484bcceafee719071db29a6628f456629c3cff1aa58bc3ba3b8d44cdca",
+      "bytes": 1746
+    },
+    {
+      "path": "packs/matos-core/tools/literature-access/tool.py",
+      "sha256": "91f96646864365416a3cb60d85f348845a775debc79877096148360b01421111",
+      "bytes": 12002
+    },
+    {
+      "path": "packs/matos-core/tools/local-toolchain-preflight/asset.json",
+      "sha256": "faf03285d8aafb1486b8cd66a4578c231fdbd47f9a9adc11807e206d83e004f6",
+      "bytes": 1698
+    },
+    {
+      "path": "packs/matos-core/tools/local-toolchain-preflight/input.schema.json",
+      "sha256": "5dc96811bb403b223bb3f386e5560bd2b7948da04b2c323d9dd2bb753f6d18c5",
+      "bytes": 2237
+    },
+    {
+      "path": "packs/matos-core/tools/local-toolchain-preflight/prompt.md",
+      "sha256": "196b8607e205712f8444eb9c26eda5fa9506423d6118b50d47b3d0310588b054",
+      "bytes": 4516
+    },
+    {
+      "path": "packs/matos-core/tools/local-toolchain-preflight/tool.py",
+      "sha256": "fa6631adce8261a9b9653e3a80c8e3a8dafdfdcedbbbcd76283dc0b35257a20b",
+      "bytes": 81684
+    },
+    {
+      "path": "packs/matos-core/tools/materials-runtime-inventory/asset.json",
+      "sha256": "26ae68ff3526ead0edb70715d23b4dc1fc5e21cef94323dd0f8103d094f7dd5d",
+      "bytes": 1290
+    },
+    {
+      "path": "packs/matos-core/tools/materials-runtime-inventory/input.schema.json",
+      "sha256": "9d8d311251ec2e8cd00e93d275a647b34012602d3e83f3e019f790ce28e1c915",
+      "bytes": 1209
+    },
+    {
+      "path": "packs/matos-core/tools/materials-runtime-inventory/prompt.md",
+      "sha256": "b7b791a14aa047f7a3eabb6104090eec49bdd592ad299bff78d0b4f77eca0387",
+      "bytes": 906
+    },
+    {
+      "path": "packs/matos-core/tools/materials-runtime-inventory/tool.py",
+      "sha256": "4cbd01156aa32e07fc72f4c52070ac92a1906533db0ec37b8b1e4567c72001f6",
+      "bytes": 8091
+    },
+    {
+      "path": "packs/matos-core/tools/mlip-model-catalog/asset.json",
+      "sha256": "e629550665bc693c0998e4d08c80fcd3acbda794ffe9ee74fceb52180e5315af",
+      "bytes": 1046
+    },
+    {
+      "path": "packs/matos-core/tools/mlip-model-catalog/input.schema.json",
+      "sha256": "fb8c26bd30d17c9bb1c5da5766d6069a382a1e94c36b19050cd16c2cc7395d94",
+      "bytes": 1047
+    },
+    {
+      "path": "packs/matos-core/tools/mlip-model-catalog/prompt.md",
+      "sha256": "72aabe5710001692afe5c2f7b303bee0ff4325eba4f95a32b0198d26d96d01b3",
+      "bytes": 1223
+    },
+    {
+      "path": "packs/matos-core/tools/mlip-model-catalog/tool.py",
+      "sha256": "1967b785e16e5825af22812e6ed1b2358d112337586fdc955849126acd79edda",
+      "bytes": 10414
+    },
+    {
+      "path": "packs/matos-core/tools/mp-query/README.md",
+      "sha256": "6dfc241e388823edd7864cd59ebb1420a7bc8f5ed561c67c8eaa18964c5b21c8",
+      "bytes": 1582
+    },
+    {
+      "path": "packs/matos-core/tools/mp-query/asset.json",
+      "sha256": "1ecc22043ede66ca0ed6ac8615fdb11052f87093fc0560dce804020bd05b70ba",
+      "bytes": 1118
+    },
+    {
+      "path": "packs/matos-core/tools/mp-query/input.schema.json",
+      "sha256": "2ee29a1e5341ceae27b7f3046ebd1abf31b3fe86daf4c2f35c06b3cfccf48f04",
+      "bytes": 831
+    },
+    {
+      "path": "packs/matos-core/tools/mp-query/matos.tool.json",
+      "sha256": "5778c4566b15eb71588db2229a9c318efdb92e50b2302a415a03d99a4db54057",
+      "bytes": 734
+    },
+    {
+      "path": "packs/matos-core/tools/mp-query/prompt.md",
+      "sha256": "3cb2495bd4b3b3b8cd0b4a677638653c15599fea00d41f96b47e59306e2e1597",
+      "bytes": 1161
+    },
+    {
+      "path": "packs/matos-core/tools/mp-query/tool.py",
+      "sha256": "038089e9f146e2052f24250bac62cf85f6fb95a416ba17c7666d7723d3783a42",
+      "bytes": 6428
+    },
+    {
+      "path": "packs/matos-core/tools/scip-toolchain-catalog/asset.json",
+      "sha256": "5aa3b54f56df1395d0ed7bd1744ca9b1f28d617b07fcb3e8d7c8b435579873ac",
+      "bytes": 1414
+    },
+    {
+      "path": "packs/matos-core/tools/scip-toolchain-catalog/input.schema.json",
+      "sha256": "e469bb8b24e25f4a4b34553411f8917c58b922bf8786d09c7aac78e7288cf158",
+      "bytes": 877
+    },
+    {
+      "path": "packs/matos-core/tools/scip-toolchain-catalog/prompt.md",
+      "sha256": "3e454cfdbbeecbcd8d725f1601943710c6374411c704f719cdbc4a38658ae662",
+      "bytes": 1015
+    },
+    {
+      "path": "packs/matos-core/tools/scip-toolchain-catalog/tool.py",
+      "sha256": "c6bce1922846ca4833a829ec358e9c2e43a8f9c74dc52e7e832770eaef158b3d",
+      "bytes": 12365
+    },
+    {
+      "path": "packs/matos-core/tools/shell-core/asset.json",
+      "sha256": "35a54e324b188d662c9d00cf1e1da437cf620cf4ef2bfe0e1c42567d9d4256ba",
+      "bytes": 452
+    },
+    {
+      "path": "packs/matos-core/tools/web-read/asset.json",
+      "sha256": "31d92efe668b2b1e00a285af8bd68db82ee426f4c31bd4c160d1265b44956323",
+      "bytes": 1356
+    },
+    {
+      "path": "packs/matos-core/tools/web-read/input.schema.json",
+      "sha256": "d9ac384221bb4dc29f7c2a9bc0c4c8f90049b37b691375bafa19fa42c4464b26",
+      "bytes": 478
+    },
+    {
+      "path": "packs/matos-core/tools/web-read/prompt.md",
+      "sha256": "886271ee6f6edebccaa06857793af042c546c3088052858c3d4c980ab4149f5b",
+      "bytes": 1217
+    },
+    {
+      "path": "packs/matos-core/tools/web-read/tool.py",
+      "sha256": "e53e6c04f7a0911df203663e943e54dc330e851e68eaddf0730fba18c17f0cf1",
+      "bytes": 23493
+    },
+    {
+      "path": "packs/matos-core/tools/web-research/asset.json",
+      "sha256": "1d4b128bf2c6759e4f3d70fa4ef001d49bacaf2aaa970cb9a96552ebc729e9b8",
+      "bytes": 444
+    },
+    {
+      "path": "packs/matos-deep-research/tools/deep-research-search/asset.json",
+      "sha256": "70915d700fa6eef181322d0ffa5bec077ffafae7ae89115dead51456ff93f9c6",
+      "bytes": 1132
+    },
+    {
+      "path": "packs/matos-deep-research/tools/deep-research-search/input.schema.json",
+      "sha256": "87fa477f1afb58eb1c788c10618f299e4841b996cc4919379711b114a39e62a3",
+      "bytes": 539
+    },
+    {
+      "path": "packs/matos-deep-research/tools/deep-research-search/prompt.md",
+      "sha256": "85f9b4a7e3cb59f946c7924db889cedb6e015a9b290c81b4a3c0607f0daddce3",
+      "bytes": 1339
+    },
+    {
+      "path": "packs/matos-deep-research/tools/deep-research-search/tool.py",
+      "sha256": "039c61e96556c6a47713c390f7d65d12b9528a205e30e54cf52b359c985615c8",
+      "bytes": 9445
+    },
+    {
+      "path": "packs/matos-research-direct/roles/research-scientist/ROLE.md",
+      "sha256": "fd3ecaa69108a3f3467ff1b17df9a895e310decd266cbdf37f9b2dca6dc581cc",
+      "bytes": 3646
+    },
+    {
+      "path": "packs/matos-research-direct/roles/research-scientist/asset.json",
+      "sha256": "29fff0ba92ee500ce80b040f1bd9bcdc2d673bffaed7a01a0acbd7d5680400a8",
+      "bytes": 1468
+    }
+  ],
+  "profile": "benchmark"
+}

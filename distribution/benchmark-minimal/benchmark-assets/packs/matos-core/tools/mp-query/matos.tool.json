@@ -1,0 +1,29 @@
+{
+  "kind": "tool",
+  "id": "mp-query",
+  "version": "1.0.0",
+  "label": "Materials Project Query",
+  "description": "Query the Materials Project database for crystal structures and computed properties by formula or materials-id.",
+  "categories": ["materials", "databases", "network"],
+  "engineBuiltin": null,
+  "prompt": "./prompt.md",
+  "inputSchema": "./input.schema.json",
+  "impl": {
+    "type": "python",
+    "entry": "./tool.py",
+    "runtime": "python3",
+    "timeoutMs": 30000
+  },
+  "permissions": {
+    "shell": "disabled",
+    "network": "enabled",
+    "workspace": "read-only",
+    "secrets": ["MP_API_KEY"]
+  },
+  "ui": {
+    "tone": "search",
+    "family": "mcp"
+  },
+  "isReadOnly": true,
+  "isDestructive": false
+}

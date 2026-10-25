@@ -1,0 +1,86 @@
+/* chat-actions 手机适配层(mobile UX round-2)。全部规则必须包在
+   @media (max-width: 768px) 或 (hover: none) 查询内,桌面零回退。
+
+   作用域(chat-content.css 头注声明"消息 hover 操作与代码块复制按钮"
+   属其他负责人 —— 即本文件;两文件互不重叠):
+   1. 消息操作触屏化:assistant 底部操作条(复制/分叉/点赞)桌面靠
+      .msg.assistant:hover 显现,触屏没有 hover → 常显半透明;当前/
+      流式消息由 routines.css 更高特异性规则保持全亮;
+   2. 代码块:字号提到 ≥12px 可读线;头部"复制/折叠"钮扩到 40px
+      触控目标;可横滚代码加左右滚动阴影提示(GFM 表格的同款提示由
+      chat-content.css 负责,此处只管 .md-code 系);
+   3. 群聊标题重命名铅笔 hover 显隐 → 触屏常显低透明度;
+   4. ≤640px 工作目录 pill 限宽:给底部居中的 pager 页位指示点
+      (project-pager.css)让出水平空间。 */
+
+/* ============================================================
+   1. 触屏消息操作常显(hover:none 设备)
+   ============================================================ */
+@media (hover: none) and (pointer: coarse) {
+  /* routines.css: .app .assistant-footer { opacity: 0 } + :hover 显现。
+     触屏常显 72%,历史消息操作可达且不过分抢眼;data-last /
+     data-streaming 的 0-3-0 规则仍把当前消息拉回 100%。 */
+  .app .assistant-footer {
+    opacity: 0.72;
+  }
+  /* 群聊标题的重命名铅笔(chat.css: 标题 hover 才 0.8)。 */
+  .chat-group-header-title svg {
+    opacity: 0.55;
+  }
+}
+
+/* ============================================================
+   2. 代码块可读性 + 触控 + 横滚提示(.md-code 系)
+   ============================================================ */
+@media (hover: none) and (pointer: coarse) {
+  /* 手机实测 11.96px(primitives 的 code{0.92em} × 13px)低于 12px
+     可读线;转写区内统一 12.5px。仅限 .msg,查看器/工作台不动。 */
+  .msg .md-code,
+  .msg .md-code code,
+  .msg .md-code-highlighted code {
+    font-size: 12.5px;
+  }
+  /* 头部动作(复制 / 折叠展开):26px 高 → 40px 触控目标。 */
+  .msg .md-code-action {
+    min-height: 40px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  .msg .md-code-action-icon {
+    min-width: 40px;
+    padding: 8px;
+  }
+  /* 压缩头部因按钮变高多出的空隙,保持代码块紧凑。 */
+  .msg .md-code-header {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  /* 可横滚代码的边缘阴影提示:local 附着的"遮罩"随内容滚动,滚到边
+     时盖住 scroll 附着的"阴影";内容不可滚时两侧同时被盖 = 无提示。
+     底色用 var(--bg)(md-code-block 背景透明,透出的就是聊天区底色),
+     深浅主题都成立。表格的同款提示在 chat-content.css,不重复。 */
+  .msg .md-code,
+  .msg .md-code-highlighted {
+    background:
+      linear-gradient(to right, var(--bg) 38%, rgba(255, 255, 255, 0)) left center / 34px 100% no-repeat,
+      linear-gradient(to left, var(--bg) 38%, rgba(255, 255, 255, 0)) right center / 34px 100% no-repeat,
+      radial-gradient(farthest-side at 0 50%, color-mix(in srgb, var(--text) 17%, transparent), transparent) left center / 13px 100% no-repeat,
+      radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, var(--text) 17%, transparent), transparent) right center / 13px 100% no-repeat;
+    background-attachment: local, local, scroll, scroll;
+  }
+}
+
+/* ============================================================
+   3. ≤640px:工作目录 pill 限宽,让位 pager 指示点
+   ============================================================ */
+@media (max-width: 640px) {
+  /* WorkingDirPicker 的 triggerLabel(CSS module,哈希类名含原名,用
+     [class*=] 钩住)桌面限宽 240px;390px 视口下会伸进底部居中的
+     .split-pager-dots(≈x170-220)。96px 上限让触发器整体收在 x<165。
+     类名钩子失效时仅回退为可能与指示点重叠,功能无损。 */
+  .chat-composer-fixed-layer .composer-workdir-row [class*='triggerLabel'],
+  .app .composer-workdir-row [class*='triggerLabel'] {
+    max-width: 96px;
+  }
+}

@@ -1,0 +1,35 @@
+/* The native grid and Home rail share the same compact, fixed card geometry. */
+.gridCard:global(.design-card) {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  min-width: 0;
+  height: 142px;
+}
+
+.recentCard:global(.recent-projects__card) {
+  min-width: 0;
+  height: 142px;
+  gap: 0;
+}
+
+.recentCard :global(.recent-projects__card-main) {
+  height: 140px;
+  flex: none;
+  gap: 0;
+}
+
+.shared {
+  position: absolute;
+  inset: 8px auto auto 8px;
+  max-width: calc(100% - 52px);
+  z-index: 1;
+}
+
+.gridCard:global(.select-mode) .shared { left: 36px; }
+
+.kanbanCard:global(.design-kanban-card) {
+  min-height: 78px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}

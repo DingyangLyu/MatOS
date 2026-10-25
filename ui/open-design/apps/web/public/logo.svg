@@ -1,0 +1,28 @@
+<svg width="444" height="444" viewBox="0 0 444 444" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- MatOS logo on a dark plate (dark-badge variant of the lattice mark). -->
+  <rect width="444" height="444" fill="#16202B"/>
+  <g stroke="#EAF8FB" stroke-width="12" stroke-linecap="round" fill="none">
+    <line x1="222" y1="222" x2="222" y2="112"/>
+    <line x1="222" y1="222" x2="317" y2="167"/>
+    <line x1="222" y1="222" x2="317" y2="277"/>
+    <line x1="222" y1="222" x2="222" y2="332"/>
+    <line x1="222" y1="222" x2="127" y2="277"/>
+    <line x1="222" y1="222" x2="127" y2="167"/>
+    <line x1="222" y1="112" x2="317" y2="167" stroke-opacity="0.5" stroke-width="8"/>
+    <line x1="317" y1="167" x2="317" y2="277" stroke-opacity="0.5" stroke-width="8"/>
+    <line x1="317" y1="277" x2="222" y2="332" stroke-opacity="0.5" stroke-width="8"/>
+    <line x1="222" y1="332" x2="127" y2="277" stroke-opacity="0.5" stroke-width="8"/>
+    <line x1="127" y1="277" x2="127" y2="167" stroke-opacity="0.5" stroke-width="8"/>
+    <line x1="127" y1="167" x2="222" y2="112" stroke-opacity="0.5" stroke-width="8"/>
+  </g>
+  <g>
+    <circle cx="222" cy="112" r="20" fill="#FFFFFF"/>
+    <circle cx="317" cy="167" r="20" fill="#FFFFFF"/>
+    <circle cx="317" cy="277" r="20" fill="#FFFFFF"/>
+    <circle cx="222" cy="332" r="20" fill="#FFFFFF"/>
+    <circle cx="127" cy="277" r="20" fill="#FFFFFF"/>
+    <circle cx="127" cy="167" r="20" fill="#FFFFFF"/>
+    <circle cx="222" cy="222" r="30" fill="#5EEAD4"/>
+    <circle cx="222" cy="222" r="30" stroke="#FFFFFF" stroke-width="6" fill="none"/>
+  </g>
+</svg>

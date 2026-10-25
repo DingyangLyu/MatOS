@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "agent-orchestration",
+  "type": "tool",
+  "name": "Agent Orchestration",
+  "version": "1.0.0",
+  "description": "Sub-agent, task, and coordination tools used for multi-step workflows.",
+  "metadata": {
+    "kind": "builtin-pack",
+    "builtinTools": [
+      "Agent",
+      "SendMessage",
+      "Skill",
+      "Task",
+      "TaskOutput",
+      "TaskStop",
+      "TeamCreate",
+      "TeamDelete",
+      "TodoWrite",
+      "ToolSearch"
+    ],
+    "mcpServers": [],
+    "sourceFormat": "cmatos-native-builtin-tool-pack",
+    "marketplace": {
+      "visibility": "public",
+      "category": "tool"
+    }
+  }
+}

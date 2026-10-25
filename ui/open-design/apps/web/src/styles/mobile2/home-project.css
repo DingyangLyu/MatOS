@@ -1,0 +1,423 @@
+/* home-project 手机适配层(mobile UX round-2)。全部规则必须包在
+   @media (max-width: 768px) 或 (hover: none) 查询内,桌面零回退。
+
+   覆盖对象:首页 HomeHero/HomeView(含最近项目条、资产瓦片区)、
+   项目列表 DesignsTab(design-card / designs-toolbar)、新建项目
+   (new-project-modal + matos-np + newproj)、入口壳页内内容。
+   审计基线:390x844 触屏,截图与量测见
+   /srv/matos-test-fixtures/matos-test-tmp/webui-ux-home/。 */
+
+/* ============================================================
+   1. 首页 HomeHero — 390px 字号阶梯与首屏密度
+   桌面 40px/900px 断点 30px 的大标题在 390px 依旧偏重,
+   顶部 32px 空带 + 品牌行 + 标题 + 副标题吃掉首屏近 1/3。
+   ============================================================ */
+@media (max-width: 480px) {
+  .home-hero {
+    padding-top: 18px;
+    gap: 12px;
+  }
+  .home-hero__title {
+    font-size: 26px;
+    line-height: 1.22;
+    /* 中文标题 26px 单行;英文长标题允许两行但不撑破。 */
+    padding: 0 8px;
+    overflow-wrap: break-word;
+  }
+  .home-hero__subtitle {
+    font-size: 12.5px;
+    padding: 0 16px;
+  }
+}
+
+/* ============================================================
+   2. 首页「从模板开始…」横向卡片轮播 — 触屏滚动体验
+   卡片 156px、容器 362px:天然露出第 3 张的一角作为滚动暗示,
+   这里补 scroll-snap(滑动后对齐卡片)+ 右缘渐隐(未滚到底时
+   持续提示"右侧还有"),与顶部导航条的做法一致。
+   ============================================================ */
+@media (max-width: 768px) and (hover: none) and (pointer: coarse) {
+  .home-hero__type-tabs.home-hero__scenario-cards {
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 12px;
+    /* 右缘 28px 渐隐:被裁切的卡片以"淡出"呈现,读作可滑动。
+       左缘保持锐利(起点)。蒙版只在触屏手机生效,桌面无变化。 */
+    -webkit-mask-image: linear-gradient(
+      to right,
+      #000 calc(100% - 28px),
+      color-mix(in srgb, #000 35%, transparent)
+    );
+    mask-image: linear-gradient(
+      to right,
+      #000 calc(100% - 28px),
+      color-mix(in srgb, #000 35%, transparent)
+    );
+  }
+  [dir='rtl'] .home-hero__type-tabs.home-hero__scenario-cards {
+    -webkit-mask-image: linear-gradient(
+      to left,
+      #000 calc(100% - 28px),
+      color-mix(in srgb, #000 35%, transparent)
+    );
+    mask-image: linear-gradient(
+      to left,
+      #000 calc(100% - 28px),
+      color-mix(in srgb, #000 35%, transparent)
+    );
+  }
+  .home-hero__scenario-cards .home-hero__scenario-card {
+    scroll-snap-align: start;
+  }
+}
+
+/* ============================================================
+   3. 首页资产瓦片(MatOSAssetsHomeSection,plugins-home 画廊骨架)
+   触屏下「打开」主操作条常显(hover:none 已由桌面层翻开)且
+   绝对定位在 300px 框内底部,44px 高的按钮直接压住依赖列表
+   最后 1-2 行(审计截图 audit-12-home-bottom.png)。给瓦片正文
+   预留底部空间,内容不再被按钮遮挡。仅作用于 MatOS 资产瓦片,
+   社区插件画廊的 iframe 预览瓦片不受影响。
+   ============================================================ */
+@media (hover: none) and (pointer: coarse) {
+  .matos-assets-home__card .matos-assets-home__tile-body {
+    padding-bottom: 76px;
+  }
+  /* 工作流瓦片的 foot(统计 + 描述)同样贴底,一并让位。 */
+  .matos-assets-home__card .matos-assets-home__wf-foot {
+    padding-bottom: 62px;
+  }
+  /* 稀疏瓦片是垂直居中排版,底部 padding 会把内容顶得太高,
+     改回对称留白(仍避开操作条,内容本来就短)。 */
+  .matos-assets-home__card .matos-assets-home__tile-body--sparse {
+    padding-bottom: 64px;
+  }
+}
+
+/* ============================================================
+   4. 项目列表 DesignsTab — 工具条触控目标(390px 审计:
+   新建项目/刷新/选择 33px、子页签 28px、视图切换 24x30、
+   搜索框 36px/13.5px 字号会触发 iOS 聚焦自动放大)。
+   全部只在触屏设备放大;鼠标窄窗口保持桌面紧凑度。
+   仅作用于项目列表工具条(.designs-toolbar),不动其他工具条
+   等共享 tab-panel-toolbar 的其他面板。
+   ============================================================ */
+@media (hover: none) and (pointer: coarse) {
+  .designs-toolbar .subtab-pill button {
+    min-height: 38px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    font-size: 13px;
+  }
+  .designs-toolbar .subtab-pill button:has(> svg:only-child) {
+    min-width: 44px;
+    min-height: 38px;
+  }
+  .designs-toolbar .designs-new-project-button,
+  .designs-toolbar .designs-import-project-button,
+  .designs-toolbar .designs-refresh-button,
+  .designs-toolbar .designs-select-toggle {
+    min-height: 44px;
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+  .designs-toolbar .toolbar-search input {
+    min-height: 44px;
+    /* 16px 以下的输入框字号会让 iOS 在聚焦时整页放大。 */
+    font-size: 16px;
+  }
+  .designs-toolbar .toolbar-search .toolbar-search-clear {
+    width: 28px;
+    height: 28px;
+  }
+  .designs-toolbar .toolbar-search .toolbar-search-clear::before {
+    /* 命中区扩到 ≥44,不改视觉。 */
+    content: '';
+    position: absolute;
+    inset: -9px;
+  }
+  /* 批量选择条:已选 N 项 / 删除所选 / 取消(审计 28-30px)。 */
+  .designs-toolbar .designs-select-bar {
+    min-height: 44px;
+  }
+  .designs-toolbar .designs-select-delete,
+  .designs-toolbar .designs-select-cancel {
+    min-height: 36px;
+    padding: 6px 14px;
+    font-size: 12.5px;
+  }
+}
+
+/* ============================================================
+   5. 项目卡 design-card — 操作菜单触屏化
+   触屏下 ⋯ 已由桌面层常显(hover:none opacity:1),但 26x26 太小;
+   菜单行 33px 也低于 44px 平台底线。选择模式的复选指示 22px 放大。
+   看板视图的 X(移除)22px hover 显隐 → 触屏常显放大。
+   ============================================================ */
+@media (hover: none) and (pointer: coarse) {
+  .design-card-more {
+    width: 34px;
+    height: 34px;
+    position: relative;
+  }
+  .design-card-more::after {
+    /* 34px 视觉、44px 命中:卡片右上角没有相邻控件,溢出安全。 */
+    content: '';
+    position: absolute;
+    inset: -5px;
+  }
+  .design-card-menu {
+    min-width: 180px;
+  }
+  .design-card-menu button {
+    min-height: 44px;
+    padding: 10px 12px;
+    font-size: 13.5px;
+  }
+  .design-card-checkbox {
+    width: 26px;
+    height: 26px;
+  }
+  .design-card-close {
+    width: 30px;
+    height: 30px;
+  }
+  /* 看板卡的移除按钮同样加大命中区。 */
+  .design-kanban-card .design-card-close::after {
+    content: '';
+    position: absolute;
+    inset: -7px;
+    border-radius: 50%;
+  }
+}
+
+/* 390px:项目卡网格间距略收,首屏多露出半张卡。 */
+@media (max-width: 480px) {
+  .design-grid {
+    gap: 12px;
+  }
+}
+
+/* ============================================================
+   6. 重命名 / 删除确认弹窗(DesignsTab 内 Dialog)
+   重命名输入框继承全局 13.5px → iOS 聚焦放大;按钮偏小。
+   ============================================================ */
+@media (hover: none) and (pointer: coarse) {
+  .modal-rename input {
+    font-size: 16px;
+    min-height: 44px;
+  }
+  .modal-rename .row button,
+  .modal-confirm .row button {
+    min-height: 44px;
+  }
+}
+
+/* ============================================================
+   7. 新建项目 — 手机全高工作单(sheet)
+   桌面态是 56/32px 内边距的悬浮卡(390px 时仅 326px 宽),
+   手机改为通栏 sheet:宽度吃满、100dvh 高、方角;键盘弹出时
+   (Android/resizes-content)dvh 收缩,固定在 sheet 底部的
+   「创建项目」始终可见;iOS 键盘悬浮时系统会把聚焦输入滚入
+   视口,收起键盘即见提交按钮。同时覆盖 matos-np 与上游
+   NewProjectPanel 两种表单形态。
+   ============================================================ */
+@media (max-width: 768px) {
+  .new-project-modal-backdrop {
+    padding: 0;
+    align-items: stretch;
+    /* 桌面 backdrop z-index 920 低于手机顶部导航条的 1800
+       (entry-layout.css 触屏块):全屏 sheet 会被导航条压住,
+       右上角设置齿轮恰好盖住弹窗关闭钮。抬到导航条与其弹出
+       菜单(1900)之上。 */
+    z-index: 2100;
+  }
+  .new-project-modal {
+    max-width: none;
+    width: 100%;
+    /* vh 兜底不支持 dvh 的旧 WebView;支持时 dvh 覆盖,
+       Android 键盘弹出(resizes-content)会收缩视口,
+       固定底部的「创建项目」保持可见。 */
+    height: 100vh;
+    max-height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    /* 全屏后 sheet 顶部与导航条(z-index 1800 的合成层)在空间上
+       重叠;静态子元素不成层时,Chromium 对头部条的命中测试落回
+       backdrop(实测 debug-bisect:fullRelZ 通过、其余变体失败)。
+       让 sheet 自成层,关闭钮/标题恢复可点。 */
+    position: relative;
+    z-index: 1;
+  }
+  .new-project-modal__head {
+    /* WebView 全面屏时头部让出状态栏;env() 在普通浏览器为 0。 */
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+  }
+  .new-project-modal__body {
+    /* 首页指示条 / iPhone 底部横条区域留白。 */
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+  .matos-np__scroll {
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 24px;
+  }
+  /* 工作文件夹一行三件套([图标][位置下拉][文件夹名])在 366px
+     内挤成 110px 的下拉 + 迷你输入框;拆成两行,输入框独占整行。 */
+  .matos-np__folder-row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .matos-np__folder-row > .matos-np__input {
+    grid-column: 1 / -1;
+  }
+  .matos-np__folder-row--managed {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}
+
+/* 新建项目表单的触控目标与 iOS 聚焦缩放(所有触屏宽度)。 */
+@media (hover: none) and (pointer: coarse) {
+  .matos-np__input,
+  .matos-np__select {
+    min-height: 44px;
+    font-size: 16px;
+  }
+  .matos-np__input--name {
+    min-height: 46px;
+    font-size: 16px;
+  }
+  .matos-np__textarea {
+    min-height: 88px;
+    font-size: 16px;
+  }
+  .matos-np__label {
+    font-size: 12.5px;
+  }
+  .matos-np__hint {
+    font-size: 12px;
+  }
+  .matos-np__member-remove {
+    width: 36px;
+    height: 36px;
+  }
+  .matos-np__add-member {
+    height: 40px;
+    padding: 0 14px;
+    font-size: 13px;
+  }
+  .matos-np__create {
+    min-height: 48px;
+    font-size: 15px;
+  }
+  .new-project-modal__close {
+    width: 44px;
+    height: 44px;
+  }
+  /* 上游 NewProjectPanel(模板/技能 create 流)同一层触控地板:
+     模板卡、设计系统选择器、输入框。 */
+  .newproj input[type='text'],
+  .newproj input:not([type]),
+  .newproj textarea,
+  .newproj select {
+    font-size: 16px;
+    min-height: 44px;
+  }
+  .newproj textarea {
+    min-height: 88px;
+  }
+  .newproj .template-option {
+    min-height: 44px;
+  }
+  .newproj .ds-picker-trigger {
+    min-height: 44px;
+  }
+  .ds-picker-popover .ds-picker-item {
+    min-height: 44px;
+  }
+  .ds-picker-popover .ds-picker-search input {
+    font-size: 16px;
+    min-height: 42px;
+  }
+}
+
+/* ============================================================
+   8. 首页最近项目条 — 卡片菜单已在桌面层触屏化(36px + 44 命中、
+   菜单行 42px);这里补齐菜单宽度与标题字号,窄屏卡片名 13px
+   偏小、菜单 134px 偏窄易误触边缘。
+   ============================================================ */
+@media (max-width: 768px) and (hover: none) and (pointer: coarse) {
+  .recent-projects__card-menu {
+    min-width: 176px;
+  }
+  .recent-projects__card-name {
+    font-size: 14px;
+  }
+}
+
+/* ---- 卡片视觉三轮(项目页):挤压修复 + 类型色统一精修 ----
+   挤压根因:thumb div 自身带 cover-kind 类 project-thumb-fallback,与
+   二轮内层卡面 span 同名,卡面的 height:100% 泄漏到 thumb 上——网格行高
+   按内在尺寸(min-height=108)测量,最终布局却按卡高 100% 再被
+   max-height=128 钳制,多出的 ~20px 让 meta 区被卡片 overflow:hidden
+   裁掉(生产 390x844 实测 clippedPx=19)。修复:卡面 span 改名
+   project-thumb-face 并绝对定位(drawer.css),thumb 在手机改确定高度,
+   内在测量与最终布局恒等。 */
+@media (max-width: 768px) {
+  .design-card {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+  }
+  .design-card-thumb {
+    height: 112px;
+    min-height: 0;
+    max-height: none;
+    flex: 0 0 auto;
+  }
+  /* 图标磁贴在 112px 卡面里的比例(桌面 58/30,手机略收一档)。 */
+  .project-thumb-face .project-thumb-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 15px;
+    font-size: 28px;
+  }
+  .project-thumb-glyph-chip {
+    left: calc(50% + 13px);
+    top: calc(50% + 13px);
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    font-size: 11px;
+  }
+  /* 文字层级:名称主导,badge/meta 行退为辅助;间距走 8/12 节奏 */
+  .design-card-name {
+    font-size: 15px;
+    font-weight: 650;
+    line-height: 1.35;
+  }
+  .design-card-meta {
+    font-size: 12px;
+    line-height: 1.4;
+    gap: 8px;
+  }
+  .design-card-meta-time {
+    font-size: 11px;
+    color: var(--text-faint);
+    font-variant-numeric: tabular-nums;
+  }
+  .design-card-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.01em;
+    margin-bottom: 0;
+  }
+  .design-card-meta-block {
+    padding: 12px;
+    gap: 6px;
+  }
+  /* 状态不加圆点:JSX 在状态前已有文本分隔符「 · 」,再加 CSS 圆点
+     会变成「· ●未开始」双分隔(生产注入实测);状态色由
+     .design-card-status-* 文字色承担已足够。 */
+}

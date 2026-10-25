@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "id": "compute",
+  "type": "role",
+  "name": "Compute",
+  "version": "1.0.26",
+  "description": "Computation agent — lightweight umbrella router for DFT, MD, MLIP, and specialized compute subroles",
+  "entry": "ROLE.md",
+  "dependencies": [
+    "skill:answer-finalization",
+    "skill:scientific-programming",
+    "skill:materials-compute",
+    "skill:system-role",
+    "tool:files-core",
+    "tool:shell-core",
+    "tool:web-research",
+    "tool:web-read",
+    "tool:gemini-vision-analyze",
+    "tool:deep-research-search",
+    "tool:literature-access",
+    "tool:document-parse",
+    "tool:agent-orchestration",
+    "tool:materials-runtime-inventory",
+    "tool:atomistic-toolchain-catalog",
+    "tool:battery-electrochem-catalog",
+    "tool:scip-toolchain-catalog",
+    "knowledge:materials-benchmark-task-pitfalls",
+    "tool:conda-environment-catalog",
+    "tool:conda-environment-manager",
+    "tool:local-toolchain-preflight",
+    "tool:mlip-model-catalog",
+    "tool:mp-query"
+  ],
+  "mounts": {
+    "skills": [
+      "skill:answer-finalization",
+      "skill:scientific-programming",
+      "skill:materials-compute",
+      "skill:system-role"
+    ],
+    "tools": [
+      "tool:files-core",
+      "tool:shell-core",
+      "tool:web-research",
+      "tool:web-read",
+      "tool:gemini-vision-analyze",
+      "tool:deep-research-search",
+      "tool:literature-access",
+      "tool:document-parse",
+      "tool:agent-orchestration",
+      "tool:materials-runtime-inventory",
+      "tool:atomistic-toolchain-catalog",
+      "tool:battery-electrochem-catalog",
+      "tool:scip-toolchain-catalog",
+      "tool:conda-environment-catalog",
+      "tool:conda-environment-manager",
+      "tool:local-toolchain-preflight",
+      "tool:mlip-model-catalog",
+      "tool:mp-query"
+    ],
+    "roles": [],
+    "data": [],
+    "knowledge": [
+      "knowledge:materials-benchmark-task-pitfalls"
+    ],
+    "workflows": [],
+    "mcp": []
+  },
+  "runtime": {
+    "permissionMode": "bypassPermissions"
+  },
+  "metadata": {
+    "sourceFormat": "cmatos-native-role",
+    "aliases": [
+      "computation",
+      "calc"
+    ],
+    "excludedSkills": [
+      "intelligence",
+      "modeling",
+      "academic"
+    ],
+    "marketplace": {
+      "visibility": "public",
+      "category": "role"
+    },
+    "toolReferences": [],
+    "runtimeWorkflowRefs": []
+  }
+}

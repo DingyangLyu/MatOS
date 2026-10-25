@@ -1,0 +1,79 @@
+node_modules/
+dist/
+out/
+.next/
+.next-*/
+.tmp/
+.DS_Store
+*.log
+/OpenDesign.exe
+.vite
+.astro/
+.wrangler/
+.vscode
+
+# Local runtime data — auto-created by the daemon on first start.
+# Holds app.sqlite (project metadata), projects/<id>/ (per-project artifacts,
+# the agent's CWD), and artifacts/ (one-off renders). Never commit.
+.od
+test-results
+playwright-report
+apps/web/playwright/
+
+# Playwright MCP capture output (YAML page snapshots + PNG screenshots).
+# Written ad-hoc during local visual checks; never commit — these hold local
+# UI/session state and are not a maintained test fixture.
+.playwright-mcp/
+
+# Legacy folder name from before the rename; keep ignored so existing
+# clones don't accidentally stage stale runtime data.
+.ocd
+
+tsconfig.tsbuildinfo
+
+# Generated from the checked-in compressed vendor source during postinstall.
+apps/desktop/vendor/dom-to-pptx/dom-to-pptx.bundle.js
+
+**/.claude-sessions/*
+
+.cursor/
+.agents/
+.opencode/
+.claude/*
+# Exception: od-contribute skill ships with the repo so the OD app can mount it
+# for non-coder contributors. Personal Claude state (sessions, settings, etc.) stays ignored.
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/od-contribute/
+!.claude/commands/
+.claude/commands/*
+!.claude/commands/od-contribute.md
+.codex/
+.deepseek/
+.antigravitycli/
+
+# Commander task scratchpad; keep local task notes out of git by default.
+.task/
+task.md
+.ralph/
+docs/superpowers/
+
+# Nix and direnv
+.direnv/
+.envrc
+# Local secrets (PostHog keys, BYOK creds for local testing, etc.)
+.env.local
+.env.*.local
+# Local design assistant context
+.impeccable.md
+
+growth/**
+
+# Agent long-running task memory
+.task/
+
+# MatOS runtime state written under the open-design app tree (algorithm
+# decision logs, workbench triggers, etc.). Auto-generated per deployment —
+# never commit. The root .gitignore only anchors these at the repo root, so
+# the nested copy needs its own rule here.
+.matos/

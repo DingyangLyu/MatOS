@@ -1,0 +1,101 @@
+/* ============================================================
+   MatOS first-run welcome — capability cards layered onto the
+   upstream onboarding cloud-landing shell (onboarding-cloud__*).
+   ============================================================ */
+
+.matos-onboarding__center {
+  max-width: 660px;
+}
+
+.matos-onboarding__connect {
+  width: 100%;
+  margin: 0 0 26px;
+  text-align: left;
+}
+
+.matos-onboarding__connect h2 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--text-strong);
+}
+
+.matos-onboarding__connect > p {
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.matos-onboarding__cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  margin: 26px 0 30px;
+}
+
+.matos-onboarding__card {
+  appearance: none;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 14px 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
+  transition: border-color 130ms var(--ease-out), transform 130ms var(--ease-out);
+}
+
+.matos-onboarding__card:hover {
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--border));
+  transform: translateY(-1px);
+}
+
+.matos-onboarding__card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.matos-onboarding__card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border));
+  border-radius: var(--radius-sm);
+  background: var(--accent-tint);
+  color: var(--accent-strong, var(--accent));
+}
+
+.matos-onboarding__card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.matos-onboarding__card-text strong {
+  font-size: 13.5px;
+  font-weight: 650;
+  color: var(--text-strong);
+}
+
+.matos-onboarding__card-text em {
+  font-style: normal;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .matos-onboarding__cards {
+    grid-template-columns: 1fr;
+  }
+}

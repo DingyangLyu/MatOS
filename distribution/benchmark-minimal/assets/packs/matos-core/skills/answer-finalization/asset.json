@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "answer-finalization",
+  "type": "skill",
+  "name": "answer-finalization",
+  "version": "0.1.1",
+  "description": "Finalize the answer to the exact contract the task or benchmark expects: parse the required output format, self-check against it, and normalize types, keys, ordering, precision, and exception labels before submitting. Use this last, right before returning a final answer or writing a submission file.",
+  "entry": "SKILL.md",
+  "tags": [
+    "answer-contract",
+    "output-format",
+    "finalization",
+    "benchmark",
+    "self-check"
+  ],
+  "metadata": {
+    "sourceFormat": "cmatos-native-skill",
+    "marketplace": {
+      "visibility": "public",
+      "category": "skill"
+    }
+  }
+}

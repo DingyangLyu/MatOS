@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "high-throughput/bayesian-optimization",
+  "type": "skill",
+  "name": "high-throughput/bayesian-optimization",
+  "version": "1.0.0",
+  "description": "Iteratively optimize expensive black-box objectives — such as materials properties, experimental yields, or simulation outputs — by learning from past evaluations to select the most promising next candidates.",
+  "entry": "SKILL.md",
+  "tags": [
+    "materials",
+    "atomistic",
+    "imported-source"
+  ],
+  "dependencies": [
+    "tool:materials-runtime-inventory",
+    "tool:conda-environment-catalog",
+    "tool:mlip-model-catalog",
+    "tool:local-toolchain-preflight"
+  ],
+  "metadata": {
+    "sourceFormat": "cmatos-native-skill",
+    "sourceMaterial": {
+      "name": "AtomisticSkills",
+      "sourceSkill": "ml-bayesian-optimization",
+      "sourceRelativePath": "external-ref/AtomisticSkills/.agents/skills/ml-bayesian-optimization"
+    },
+    "aliases": [
+      "atomisticskills:ml-bayesian-optimization"
+    ],
+    "toolReferences": [
+      "tool:materials-runtime-inventory",
+      "tool:conda-environment-catalog",
+      "tool:mlip-model-catalog",
+      "tool:local-toolchain-preflight"
+    ],
+    "textPolicy": "copied-from-source-with-minimal-matos-path-and-environment-rewrites",
+    "environmentHints": [
+      "matos-compute"
+    ],
+    "marketplace": {
+      "visibility": "public",
+      "category": "skill"
+    }
+  }
+}

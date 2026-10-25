@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "family": {
+      "type": "string",
+      "description": "Optional model family filter, for example mace, chgnet, matgl, sevennet, orb, mattersim, fairchem, nequip, or torchsim."
+    },
+    "availableOnly": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, only return model assets with an existing local model file."
+    },
+    "includePackages": {
+      "type": "boolean",
+      "default": true,
+      "description": "Include import/package availability for known MLIP runtimes."
+    },
+    "verifyChecksum": {
+      "type": "boolean",
+      "default": false,
+      "description": "Compute SHA-256 for local files and compare with manifest checksums. This may read large model files."
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 500,
+      "default": 100,
+      "description": "Maximum number of model assets to return."
+    }
+  },
+  "additionalProperties": false
+}

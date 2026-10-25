@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "id": "mlip-mace-mp-0",
+  "type": "data",
+  "name": "MACE-MP-0 Foundation Model",
+  "version": "0",
+  "description": "MACE-MP-0 universal interatomic potential (89 elements, trained on MPtrj, PBE+U). Small/medium/large checkpoints. MIT license. Local weights let mace_mp(model=path) run offline.",
+  "entry": "DATA.md",
+  "tags": [
+    "materials",
+    "mlip",
+    "mlip-model",
+    "mace",
+    "foundation-model"
+  ],
+  "permissions": {
+    "workspace": "read-only",
+    "network": "enabled",
+    "secrets": []
+  },
+  "dependencies": [
+    "tool:mlip-model-catalog"
+  ],
+  "metadata": {
+    "kind": "mlip-model",
+    "family": "mace",
+    "framework": "MACE",
+    "modelName": "MACE-MP-0",
+    "license": "MIT",
+    "package": "mace-torch",
+    "packageImport": "mace",
+    "loader": "from mace.calculators import mace_mp; mace_mp(model='<localPath>')",
+    "sourceUrl": "https://github.com/ACEsuit/mace-foundations",
+    "payloadPolicy": "local-mounted",
+    "downloadBase": "https://github.com/ACEsuit/mace-foundations/releases/download/mace_mp_0",
+    "files": [
+      {
+        "path": "/opt/matos-tools/models/mlip/mace/2023-12-03-mace-128-L1_epoch-199.model",
+        "variant": "medium",
+        "url": "https://github.com/ACEsuit/mace-foundations/releases/download/mace_mp_0/2023-12-03-mace-128-L1_epoch-199.model",
+        "sizeBytes": 44422970,
+        "sha256": "01bfe22100139f424713cf921144e5509cbe353d67aa9fa1be9c6e1e0ed35845"
+      },
+      {
+        "path": "/opt/matos-tools/models/mlip/mace/2023-12-10-mace-128-L0_energy_epoch-249.model",
+        "variant": "small",
+        "url": "https://github.com/ACEsuit/mace-foundations/releases/download/mace_mp_0/2023-12-10-mace-128-L0_energy_epoch-249.model",
+        "sizeBytes": 32581838,
+        "sha256": "2ddb079cee0e131eaaf6912ba581b394551ead283e95c99cfe78c605d10b5736"
+      },
+      {
+        "path": "/opt/matos-tools/models/mlip/mace/2024-01-07-mace-128-L2_epoch-199.model",
+        "variant": "large",
+        "url": "https://github.com/ACEsuit/mace-foundations/releases/download/mace_mp_0/2024-01-07-mace-128-L2_epoch-199.model",
+        "sizeBytes": 63509066,
+        "sha256": "514bd2f1938653c37929f7c275a489378f03a7e3ffb27aa2ae0ddce8d0c859c8"
+      }
+    ],
+    "marketplace": {
+      "visibility": "public",
+      "category": "data"
+    }
+  }
+}

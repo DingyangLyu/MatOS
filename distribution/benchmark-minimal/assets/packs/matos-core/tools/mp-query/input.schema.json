@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "formula": {
+      "type": "string",
+      "description": "Chemical formula to search, e.g. 'Si' or 'SiO2'."
+    },
+    "material_id": {
+      "type": "string",
+      "description": "Materials Project id, e.g. 'mp-149'.",
+      "pattern": "^mp-[0-9]+$"
+    },
+    "fields": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Optional list of property fields to return."
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50,
+      "default": 20,
+      "description": "Max number of entries to return when searching by formula."
+    }
+  },
+  "oneOf": [
+    { "required": ["formula"] },
+    { "required": ["material_id"] }
+  ],
+  "additionalProperties": false
+}

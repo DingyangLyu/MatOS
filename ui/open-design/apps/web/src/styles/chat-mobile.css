@@ -1,0 +1,207 @@
+/* =====================================================================
+   Chat / project-session mobile polish (phone WebView, 390px class).
+   Loaded LAST from index.css on purpose: the desktop-dense 28px composer
+   control system is pinned by viewer/routines.css (a later stylesheet than
+   chat.css), so these touch-target overrides must win later-file ties.
+   Scope: chat transcript, composer, chat header, run-provenance chips only.
+   ===================================================================== */
+
+/* The portaled composer layer is fixed to the viewport bottom (bottom: 0 on
+   phones), so without env(safe-area-inset-bottom) the send row sits inside
+   the iOS home-indicator / Android gesture zone. env() is 0 elsewhere, and
+   it starts paying out once the shell opts into viewport-fit=cover. */
+.chat-composer-fixed-layer .composer {
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Horizontal scrollers inside messages (code blocks / GFM tables) must not
+   chain their overscroll into the phone project pager (.split is an x-snap
+   scroller), or a table swipe flips the chat page over to the canvas page. */
+.msg .md-code,
+.msg .md-code-highlighted,
+.msg .md-table-wrap {
+  overscroll-behavior-x: contain;
+}
+/* Keep transcript overscroll from rubber-banding / pull-to-refreshing the
+   whole WebView once the log hits its top or bottom edge. */
+.chat-log {
+  overscroll-behavior-y: contain;
+}
+
+@media (max-width: 700px) {
+  /* Run-provenance row above user bubbles: nowrap + overflow:hidden at phone
+     width ellipsized every segment ("Default design… @0… new-gener…"). Let
+     the chips wrap onto a second line and drop the version tag — the context
+     title and task name are the parts a phone reader needs. */
+  .msg-run-context-row {
+    flex-wrap: wrap;
+    overflow: visible;
+    row-gap: 2px;
+  }
+  .msg-context-chip__version {
+    display: none;
+  }
+  /* 9px type inside an 18px chip is illegible at arm's length. */
+  .msg-mode-chip {
+    height: 20px;
+    font-size: 10px;
+  }
+  .msg-mode-chip svg {
+    width: 9px;
+    height: 9px;
+  }
+
+  /* 78% bubble + 20px gutters left only ~280px of text column at 390px;
+     widen both so long prompts / URLs stay readable. */
+  .msg.user {
+    max-width: min(88%, 560px);
+  }
+  .chat-log {
+    padding: 16px 12px 24px;
+  }
+}
+
+/* Soft-keyboard compaction: with ~480px of visible height the 72px editor
+   floor + footer controls left <100px of transcript. Only the floor shrinks;
+   typing still grows the editor up to its max-height. */
+@media (max-height: 600px) {
+  .composer-input-editor,
+  .composer-input-editor [contenteditable='true'],
+  .composer-input-editor .composer-editable {
+    min-height: 44px;
+  }
+}
+
+/* iOS focus auto-zoom guard: WebKit zooms the whole page when a focused
+   text input computes to <16px. The shell viewport adds maximum-scale=1
+   (app/layout.tsx), but a real ≥16px floor keeps the fix robust on
+   Android WebViews and any shell that drops that meta. Gated on
+   touch-primary devices so desktop keeps the dense 13.5px type. The
+   placeholder + carousel hint overlay the editable, so all three must
+   move together or the empty→typing transition visibly jumps size. */
+@media (hover: none) and (pointer: coarse) {
+  .composer-input-editor [contenteditable='true'],
+  .composer-input-editor .composer-editable,
+  .composer-input-placeholder,
+  .composer-input-wrap .home-hero__carousel {
+    font-size: 16px;
+  }
+  /* Chat-surface rename fields (13/13.5px) — same focus-zoom trigger. */
+  .chat-active-conversation-input,
+  .chat-group-header-rename {
+    font-size: 16px;
+  }
+}
+
+/* ---- Touch-target audit (hover:none + pointer:coarse devices) ----------
+   Audited at 390×844: send 32×28, "+" 28×28, mode 44×28, avatar 58×28,
+   back/history 28×28, chip remove 16×16 — all under the 44px guideline. */
+@media (hover: none) and (pointer: coarse) {
+  /* Chat header: back + conversation-history triggers. */
+  .chat-project-header {
+    height: 48px;
+  }
+  .chat-project-back,
+  .chat-session-trigger {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Composer footer controls up to 44px. Selector pairs mirror the
+     .app / .chat-composer-fixed-layer split used by routines.css (the
+     composer mounts through a body-level portal, outside .app). */
+  .app .composer-row,
+  .chat-composer-fixed-layer .composer-row {
+    min-height: 44px;
+    gap: 8px;
+  }
+  .app .composer-row .icon-btn,
+  .chat-composer-fixed-layer .composer-row .icon-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 16px;
+  }
+  .app .composer-row .session-mode-toggle,
+  .chat-composer-fixed-layer .composer-row .session-mode-toggle,
+  .app .composer-row .session-mode-toggle__trigger,
+  .chat-composer-fixed-layer .composer-row .session-mode-toggle__trigger,
+  .app .composer-row .avatar-agent-trigger,
+  .chat-composer-fixed-layer .composer-row .avatar-agent-trigger {
+    height: 44px;
+    min-height: 44px;
+  }
+  /* min-width also floors the icon-only width:32px from the @container
+     (max-width: 430px) collapse in chat.css. */
+  .app .composer-row .composer-send,
+  .chat-composer-fixed-layer .composer-row .composer-send {
+    height: 44px;
+    min-height: 44px;
+    min-width: 52px;
+  }
+  /* Kill double-tap-zoom latency/zoom on chat controls. */
+  .composer-row button,
+  .chat-project-header button,
+  .msg button {
+    touch-action: manipulation;
+  }
+
+  /* Staged context/attachment chips + role/model pickers: unify the mixed
+     22/28px heights to 28px and grow the 16px remove “×” to 24px. */
+  .composer .staged-row {
+    gap: 6px;
+  }
+  .composer .staged-chip,
+  .composer .staged-context,
+  .composer .staged-context-picker {
+    height: 28px;
+    min-height: 28px;
+  }
+  .composer .staged-chip {
+    font-size: 11.5px;
+    padding: 2px 7px 2px 4px;
+  }
+  .composer .staged-context-picker .home-hero__ds-row-trigger,
+  .composer .staged-context-picker--design-system .project-ds-picker-trigger {
+    height: 28px;
+    min-height: 28px;
+    font-size: 12px;
+  }
+  .composer .staged-context .staged-icon {
+    width: 16px;
+    height: 16px;
+    flex-basis: 16px;
+  }
+  .composer .staged-context .staged-icon svg {
+    width: 10px;
+    height: 10px;
+  }
+  .composer .staged-chip .staged-remove,
+  .composer .staged-context .staged-remove {
+    width: 24px;
+    height: 24px;
+    flex-basis: 24px;
+  }
+  .composer .staged-chip .staged-remove svg,
+  .composer .staged-context .staged-remove svg {
+    width: 11px;
+    height: 11px;
+  }
+  .composer .staged-context .staged-name {
+    max-width: 140px;
+  }
+
+  /* Per-message actions (copy / fork / feedback) and the jump pill. */
+  .msg.user .user-copy-btn {
+    padding: 8px;
+  }
+  .assistant-copy-button,
+  .assistant-feedback-button {
+    width: 36px;
+    height: 36px;
+  }
+  .chat-jump-btn {
+    min-height: 36px;
+  }
+}

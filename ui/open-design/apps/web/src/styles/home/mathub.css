@@ -1,0 +1,2513 @@
+/* ============================================================
+   Mathub source library — GitHub-style repository list inside
+   the Integrations route's visual shell.
+   ============================================================ */
+
+.mathub-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mathub-view__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.mathub-view__search {
+  position: relative;
+  min-width: 300px;
+}
+
+.mathub-view__search-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.mathub-view__search input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 12px 8px 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
+  color: var(--text);
+  font-size: 13px;
+  box-shadow: var(--shadow-xs);
+}
+
+.mathub-view__list-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+}
+
+.mathub-view__state {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.mathub-view__state--error {
+  color: #c0392b;
+}
+
+.mathub-view__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transition: opacity 120ms var(--ease-out);
+}
+
+.mathub-view__list[data-loading='true'] {
+  opacity: 0.55;
+}
+
+/* GitHub-style divided repo rows */
+.mathub-view__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+}
+
+.mathub-view__row:first-child {
+  border-top: none;
+}
+
+.mathub-view__row-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mathub-view__row-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mathub-view__row-glyph {
+  color: var(--text-muted);
+  flex: 0 0 auto;
+}
+
+.mathub-view__repo-link {
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--accent-strong, var(--accent));
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mathub-view__repo-link:hover {
+  text-decoration: underline;
+}
+
+.mathub-view__row-badge {
+  flex: 0 0 auto;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 0 8px;
+  line-height: 1.7;
+}
+
+.mathub-view__row-desc {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mathub-view__row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.mathub-view__row-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.mathub-view__row-actions {
+  flex: 0 0 auto;
+  padding-top: 2px;
+}
+
+.mathub-view__clone-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 120ms var(--ease-out);
+}
+
+.mathub-view__clone-btn:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+}
+
+.mathub-view__pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.mathub-view__pager-btn {
+  appearance: none;
+  padding: 7px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
+  color: var(--text);
+  font-size: 12.5px;
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
+}
+
+.mathub-view__pager-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.mathub-view__pager-info {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   Repository import (/design-systems repurposed for MatOS) —
+   master-detail split mirroring the upstream Design Systems
+   manager: sidebar (primary action, search, filter chips, rows)
+   + large detail preview with banner, editable description, and
+   metadata panels.
+   ============================================================ */
+
+.repo-import {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.repo-import__split {
+  display: grid;
+  grid-template-columns: 304px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+/* ---- sidebar ---- */
+
+.repo-import__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow-xs);
+}
+
+.repo-import__primary {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  padding: 9px 14px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.repo-import__primary:hover {
+  filter: brightness(1.06);
+}
+
+.repo-import__search {
+  position: relative;
+}
+
+.repo-import__search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.repo-import__search input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 7px 10px 7px 29px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12.5px;
+}
+
+.repo-import__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.repo-import__chip {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  color: var(--text-muted);
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+.repo-import__chip.is-active {
+  color: var(--accent-strong, var(--accent));
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  background: var(--accent-tint);
+}
+
+.repo-import__chip-count {
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.repo-import__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 520px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.repo-import__side-empty {
+  padding: 26px 8px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.repo-import__row {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.repo-import__row:hover {
+  background: var(--bg-subtle);
+}
+
+.repo-import__row.is-active {
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
+  background: var(--accent-tint);
+}
+
+.repo-import__row-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border-radius: var(--radius-sm);
+  color: #fff;
+}
+
+.repo-import__row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+.repo-import__row-text strong {
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--text-strong);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.repo-import__row-text em {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.repo-import__dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.repo-import__dot--done {
+  background: #2f9e6e;
+}
+
+.repo-import__dot--running {
+  background: var(--accent);
+  animation: repo-import-pulse 1.4s ease-in-out infinite;
+}
+
+.repo-import__dot--failed {
+  background: #c0392b;
+}
+
+@keyframes repo-import-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* ---- preview / detail ---- */
+
+.repo-import__preview {
+  min-width: 0;
+}
+
+.repo-import__blank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 380px;
+  padding: 40px 20px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  text-align: center;
+}
+
+.repo-import__blank-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border));
+  border-radius: var(--radius);
+  background: var(--accent-tint);
+  color: var(--accent-strong, var(--accent));
+}
+
+.repo-import__blank h2 {
+  margin: 0;
+  font-size: 17px;
+  color: var(--text-strong);
+}
+
+.repo-import__blank p {
+  margin: 0;
+  max-width: 420px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.repo-import__blank .repo-import__primary {
+  width: auto;
+}
+
+.repo-import__detail {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.repo-import__banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-xs);
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.repo-import__banner-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  flex: 0 0 auto;
+  border-radius: var(--radius);
+  color: #fff;
+  box-shadow: var(--shadow-xs);
+}
+
+.repo-import__banner-text {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.repo-import__banner-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.repo-import__banner-title h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-strong);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.repo-import__banner-text p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.repo-import__banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+}
+
+.repo-import__action-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
+  color: var(--text);
+  font-size: 12.5px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: var(--shadow-xs);
+}
+
+.repo-import__action-btn:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+}
+
+.repo-import__action-btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.repo-import__panelgrid {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.repo-import__desc {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.repo-import__meta-mono {
+  font-family: var(--font-mono, monospace);
+  font-size: 11.5px !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 220px;
+}
+
+.repo-import__status {
+  flex: 0 0 auto;
+  font-size: 10.5px;
+  font-weight: 650;
+  border-radius: var(--radius-pill);
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.repo-import__status--running {
+  color: var(--accent-strong, var(--accent));
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  background: var(--accent-tint);
+}
+
+.repo-import__status--done {
+  color: #2f9e6e;
+  border-color: color-mix(in srgb, #2f9e6e 40%, var(--border));
+  background: color-mix(in srgb, #2f9e6e 8%, transparent);
+}
+
+.repo-import__status--failed {
+  color: #c0392b;
+  border-color: color-mix(in srgb, #c0392b 45%, var(--border));
+  background: color-mix(in srgb, #c0392b 7%, transparent);
+}
+
+@media (max-width: 980px) {
+  .repo-import__split {
+    grid-template-columns: 1fr;
+  }
+
+  .repo-import__panelgrid {
+    grid-template-columns: 1fr;
+  }
+
+  /* NOTE: `.repo-import-create__*` responsive overrides live at the end of
+     this file — their base rules are declared below this block, and an
+     equal-specificity override must come after them to win the cascade. */
+}
+
+.repo-import-create {
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 40px 24px 64px;
+  box-sizing: border-box;
+}
+
+.repo-import-create__topbar {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  max-width: 1020px;
+  margin: 0 auto 26px;
+}
+
+.repo-import-create__topbar h1 {
+  margin: 2px 0 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.repo-import-create__topbar p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  max-width: 640px;
+}
+
+.repo-import-create__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(260px, 2fr);
+  gap: 20px;
+  max-width: 1020px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* ---- left form: numbered sections ---- */
+
+.repo-import-create__form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.repo-import-create__section {
+  display: flex;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow-xs);
+}
+
+.repo-import-create__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  background: var(--accent-tint);
+  color: var(--accent-strong, var(--accent));
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.repo-import-create__section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.repo-import-create__section-body h2 {
+  margin: 2px 0 0;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--text-strong);
+}
+
+.repo-import-create__sources {
+  display: flex;
+  gap: 8px;
+}
+
+.repo-import-create__source {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 120ms var(--ease-out), background-color 120ms var(--ease-out);
+}
+
+.repo-import-create__source.is-active {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+  background: var(--accent-tint);
+  color: var(--accent-strong, var(--accent));
+}
+
+.repo-import-create__url {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.repo-import-create__url > span {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.repo-import-create__url-box {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text-muted);
+}
+
+.repo-import-create__url-box:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+}
+
+.repo-import-create__url-box input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 13.5px;
+  padding: 11px 0;
+  font-family: var(--font-mono, monospace);
+}
+
+/* ---- right aside: live preview + next steps ---- */
+
+.repo-import-create__aside {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: 24px;
+}
+
+.repo-import-create__preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-xs);
+  transition: opacity 150ms var(--ease-out);
+}
+
+.repo-import-create__preview[data-ready='false'] {
+  opacity: 0.65;
+}
+
+.repo-import-create__preview-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.repo-import-create__preview-text strong {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-strong);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.repo-import-create__preview-text em {
+  font-style: normal;
+  font-size: 12px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.repo-import-create__preview-target {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+}
+
+.repo-import-create__preview-target span {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.repo-import-create__preview-target code {
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  color: var(--text-strong);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.repo-import-create__next {
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow-xs);
+}
+
+.repo-import-create__next h3 {
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.repo-import-create__next ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.repo-import-create__next li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.repo-import-create__next li svg {
+  margin-top: 2px;
+  flex: 0 0 auto;
+  color: var(--accent-strong, var(--accent));
+}
+
+.repo-import-create__next li[data-active='false'] {
+  color: var(--text-muted);
+}
+
+.repo-import-create__next li[data-active='false'] svg {
+  color: var(--text-muted);
+}
+
+.repo-import-create__toggle {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  cursor: pointer;
+}
+
+.repo-import-create__toggle input {
+  margin-top: 3px;
+}
+
+.repo-import-create__toggle span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.repo-import-create__toggle strong {
+  font-size: 13px;
+  color: var(--text-strong);
+}
+
+.repo-import-create__toggle em {
+  font-style: normal;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.repo-import-create__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ============================================================
+   Nav rail create menu — the "+" popover listing every MatOS
+   creatable (project + asset families).
+   ============================================================ */
+
+.entry-nav-rail__create {
+  position: relative;
+}
+
+.create-menu {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: -6px;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 264px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.22);
+}
+
+.create-menu__item {
+  appearance: none;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.create-menu__item:hover {
+  background: var(--bg-subtle);
+}
+
+.create-menu__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
+  border-radius: var(--radius-sm);
+  background: var(--accent-tint);
+  color: var(--accent-strong, var(--accent));
+}
+
+.create-menu__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.create-menu__text strong {
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--text-strong);
+}
+
+.create-menu__text em {
+  font-style: normal;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.create-menu__divider {
+  height: 1px;
+  margin: 4px 6px;
+  background: var(--border);
+}
+
+/* MatOS model-access row inside the execution popover. */
+.inline-switcher__matos-env-btn {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+  min-width: 0;
+}
+
+.inline-switcher__matos-env-btn:hover {
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--border));
+}
+
+.inline-switcher__matos-env-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-family: var(--font-mono, monospace);
+  color: var(--text-muted);
+}
+
+.inline-switcher__matos-env-cta {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--accent-strong, var(--accent));
+}
+
+/* ============================================================
+   Message channels guide (Integrations · use-everywhere tab):
+   Feishu bridge setup steps over the assets panel family.
+   ============================================================ */
+
+.integrations-view__use-everywhere-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.channels-guide {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow-xs);
+}
+
+.channels-guide__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
+  background: var(--accent-tint);
+  color: var(--accent-strong, var(--accent));
+  font-size: 11.5px;
+  font-weight: 650;
+}
+
+.channels-guide__head h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.channels-guide__head p {
+  margin: 6px 0 14px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 720px;
+}
+
+.channels-guide__stream {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--accent) 6%, var(--bg-panel));
+}
+
+.channels-guide__stream-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  background: var(--accent-tint);
+  color: var(--accent-strong, var(--accent));
+}
+
+.channels-guide__stream-body {
+  min-width: 0;
+}
+
+.channels-guide__stream-body strong {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--text-strong);
+}
+
+.channels-guide__stream-body p {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.channels-guide__step-hint {
+  margin: 6px 0 0 !important;
+  font-size: 12px !important;
+  line-height: 1.5;
+  color: var(--accent-strong, var(--accent)) !important;
+}
+
+.channels-guide__steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.channels-guide__step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.channels-guide__step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  background: var(--accent-tint);
+  color: var(--accent-strong, var(--accent));
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.channels-guide__step-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.channels-guide__step-body strong {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--text-strong);
+}
+
+.channels-guide__step-body p {
+  margin: 3px 0 6px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.channels-guide__cmd {
+  margin: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  overflow-x: auto;
+}
+
+.channels-guide__cmd code {
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  color: var(--text);
+  white-space: pre;
+}
+
+.channels-guide__foot {
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Scan-to-connect surface: the interactive QR/connect card that replaces
+   the command list as the primary Feishu setup path. */
+.channels-connect {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, 10px);
+  background: color-mix(in srgb, var(--accent-tint) 26%, var(--bg));
+}
+.channels-connect__actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.channels-connect__role-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: min(220px, 100%);
+}
+.channels-connect__role-picker > span {
+  font-size: 11.5px;
+  font-weight: 650;
+  color: var(--text-muted);
+}
+.channels-connect__role-picker select,
+.channels-connect__account-select {
+  min-height: 36px;
+  padding: 7px 30px 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: 12.5px;
+}
+.channels-connect__role-picker select:focus-visible,
+.channels-connect__account-select:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 42%, transparent);
+  outline-offset: 1px;
+}
+.channels-connect__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  align-self: flex-start;
+  padding: 9px 18px;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.channels-connect__cta:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.channels-connect__qr {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.channels-connect__qr-img {
+  width: 232px;
+  height: 232px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fff;
+  padding: 6px;
+}
+.channels-connect__qr-fallback {
+  font-size: 13px;
+  color: var(--accent);
+  text-decoration: underline;
+}
+.channels-connect__qr-side {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 220px;
+  flex: 1 1 220px;
+}
+.channels-connect__qr-side strong {
+  font-size: 14px;
+  color: var(--text-strong);
+}
+.channels-connect__qr-side p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+.channels-connect__waiting {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--accent) !important;
+  font-weight: 600;
+}
+.channels-connect__spinner {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-top-color: var(--accent);
+  animation: channels-spin 0.9s linear infinite;
+}
+@keyframes channels-spin {
+  to { transform: rotate(360deg); }
+}
+.channels-connect__done {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--success, #16a34a);
+}
+.channels-connect__error {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--danger, #dc2626);
+}
+.channels-connect__accounts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.channels-connect__accounts-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-strong);
+  font-size: 13.5px;
+}
+.channels-connect__account-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+.channels-connect__account-id {
+  font-family: var(--font-mono, monospace);
+  font-size: 12.5px;
+  color: var(--text-strong);
+}
+.channels-connect__account-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 180px;
+  flex-direction: column;
+  gap: 2px;
+}
+.channels-connect__account-copy strong {
+  overflow: hidden;
+  font-size: 12.5px;
+  color: var(--text-strong);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.channels-connect__account-select {
+  flex: 0 1 220px;
+  min-width: min(180px, 100%);
+}
+.channels-guide__advanced {
+  margin-top: 16px;
+}
+.channels-guide__advanced > summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.channels-guide__advanced[open] > summary {
+  margin-bottom: 10px;
+}
+
+/* ============================================================
+   MatOS operations view (Tasks surface repurposed): resource
+   meters, self-evolution status, workflow run history.
+   ============================================================ */
+
+.matos-ops {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.matos-ops__hero-side {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.matos-ops__refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-muted);
+  cursor: pointer;
+  /* Global button reset padding (6px 12px) leaves 4px of content at 30px
+     border-box — flex squeezed the refresh icon svg to a sliver. */
+  padding: 0;
+  transition: color 120ms var(--ease-out), border-color 120ms var(--ease-out);
+}
+.matos-ops__refresh svg {
+  flex: none;
+}
+
+.matos-ops__refresh:hover {
+  color: var(--text-strong);
+  border-color: var(--border-strong, var(--border));
+}
+
+/* Headline stat band: four tiles with the numbers an operator scans first.
+   Each tile carries a small meter so trend and pressure read at a glance. */
+.matos-ops__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.matos-ops__stat {
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 12px);
+  background: var(--bg);
+  padding: 12px 14px 12px 17px;
+  overflow: hidden;
+}
+
+/* Left accent edge — the tile's tone in one narrow stripe. */
+.matos-ops__stat::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--matos-ops-tone, var(--border));
+}
+
+.matos-ops__stat[data-tone='cool'] { --matos-ops-tone: #3b82f6; }
+.matos-ops__stat[data-tone='warm'] { --matos-ops-tone: #d97706; }
+.matos-ops__stat[data-tone='hot'] { --matos-ops-tone: #dc2626; }
+.matos-ops__stat[data-tone='accent'] { --matos-ops-tone: var(--accent); }
+
+.matos-ops__stat-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.matos-ops__stat-head svg {
+  flex: 0 0 auto;
+  color: var(--matos-ops-tone, var(--text-muted));
+}
+
+.matos-ops__stat-head span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.matos-ops__stat-value {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text-strong);
+  font-family: var(--font-mono, monospace);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 10px;
+  min-width: 0;
+}
+
+.matos-ops__stat-value em {
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.matos-ops__stat-meter {
+  height: 5px;
+}
+
+.matos-ops__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.matos-ops__panel {
+  min-width: 0;
+}
+
+.matos-ops__mode {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.matos-ops__mode code {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  color: var(--text);
+}
+
+.matos-ops__meters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Multi-GPU hosts: two meters per row so eight cards stay one screenful. */
+.matos-ops__meters--gpu {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 18px;
+}
+
+/* Compact load-average footnote under the resource meters. */
+.matos-ops__loads {
+  display: flex;
+  gap: 14px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono, monospace);
+}
+
+.matos-ops__loads strong {
+  color: var(--text-strong);
+  font-weight: 650;
+}
+
+/* Self-evolution acceptance-rate meter. */
+.matos-ops__accept {
+  margin: 2px 0 4px;
+}
+
+.matos-ops__meter-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.matos-ops__meter-head span {
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text-strong);
+}
+
+.matos-ops__meter-head em {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono, monospace);
+}
+
+.matos-ops__meter-track {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-subtle);
+  overflow: hidden;
+}
+
+.matos-ops__meter-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width 400ms var(--ease-out);
+}
+
+.matos-ops__meter-fill[data-tone='cool'] {
+  background: #3b82f6;
+}
+
+.matos-ops__meter-fill[data-tone='warm'] {
+  background: #d97706;
+}
+
+.matos-ops__meter-fill[data-tone='hot'] {
+  background: #dc2626;
+}
+
+.matos-ops__meter-fill[data-tone='accent'] {
+  background: var(--accent);
+}
+
+.matos-ops__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.matos-ops__chip {
+  font-size: 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 2px 9px;
+  color: var(--text-muted);
+  font-family: var(--font-mono, monospace);
+}
+
+.matos-ops__chip strong {
+  color: var(--text-strong);
+}
+
+/* Chip tones map outcomes to product meaning (good / info / warn / bad). */
+.matos-ops__chip[data-tone='good'] {
+  color: #15803d;
+  border-color: color-mix(in srgb, #16a34a 35%, var(--border));
+  background: color-mix(in srgb, #16a34a 8%, transparent);
+}
+
+.matos-ops__chip[data-tone='good'] strong { color: #15803d; }
+
+.matos-ops__chip[data-tone='info'] {
+  color: #1d4ed8;
+  border-color: color-mix(in srgb, #3b82f6 35%, var(--border));
+  background: color-mix(in srgb, #3b82f6 8%, transparent);
+}
+
+.matos-ops__chip[data-tone='info'] strong { color: #1d4ed8; }
+
+.matos-ops__chip[data-tone='warn'] {
+  color: #b45309;
+  border-color: color-mix(in srgb, #d97706 35%, var(--border));
+  background: color-mix(in srgb, #d97706 8%, transparent);
+}
+
+.matos-ops__chip[data-tone='warn'] strong { color: #b45309; }
+
+.matos-ops__chip[data-tone='bad'] {
+  color: #b91c1c;
+  border-color: color-mix(in srgb, #dc2626 35%, var(--border));
+  background: color-mix(in srgb, #dc2626 8%, transparent);
+}
+
+.matos-ops__chip[data-tone='bad'] strong { color: #b91c1c; }
+
+.matos-ops__run-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+.matos-ops__runs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  max-height: 420px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.matos-ops__run {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 6px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+  min-width: 0;
+  border-radius: var(--radius-sm, 6px);
+  transition: background 120ms var(--ease-out);
+}
+
+.matos-ops__run:hover {
+  background: var(--bg-subtle);
+}
+
+.matos-ops__run:first-child {
+  border-top: none;
+}
+
+.matos-ops__run-ref {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  color: var(--text);
+}
+
+.matos-ops__run-time {
+  flex: 0 0 auto;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+@media (max-width: 900px) {
+  .matos-ops__grid {
+    grid-template-columns: 1fr;
+  }
+  .matos-ops__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .matos-ops__stats {
+    gap: 10px;
+  }
+  .matos-ops__meters--gpu {
+    grid-template-columns: 1fr;
+  }
+  .matos-ops__run-summary {
+    display: none;
+  }
+  .matos-ops__hero-side {
+    align-self: flex-start;
+  }
+}
+
+/* Project-card badge for MatOS asset drafts (knowledge / skill / ...). */
+.design-card-tag.tag-matos-asset {
+  color: var(--accent-strong, var(--accent));
+  background: var(--accent-tint);
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
+  font-weight: 600;
+}
+
+/* In-place text editing inside the project file viewer (asset drafts). */
+.text-viewer__editor {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border: none;
+  outline: none;
+  resize: none;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono, monospace);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.viewer-action--primary {
+  color: var(--accent-strong, var(--accent));
+}
+
+/* ============================================================
+   Server-side folder picker — modal directory browser over the
+   daemon's jailed workspace roots (headless/gateway fallback
+   for the native OS folder dialog).
+   ============================================================ */
+
+.server-folder__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, #000 42%, transparent);
+  padding: 24px;
+}
+
+.server-folder {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(520px, 92vw);
+  max-height: min(640px, 86vh);
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.3);
+}
+
+.server-folder__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.server-folder__head h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-strong);
+}
+
+.server-folder__close {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.server-folder__roots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.server-folder__root {
+  appearance: none;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  color: var(--text-muted);
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+.server-folder__root.is-active {
+  color: var(--accent-strong, var(--accent));
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  background: var(--accent-tint);
+}
+
+.server-folder__crumb {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text-muted);
+  min-width: 0;
+}
+
+.server-folder__crumb code {
+  font-family: var(--font-mono, monospace);
+  font-size: 11.5px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+}
+
+.server-folder__list {
+  flex: 1 1 auto;
+  min-height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+}
+
+.server-folder__state {
+  padding: 40px 12px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.server-folder__row {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  border: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
+  background: transparent;
+  color: var(--text);
+  font-size: 12.5px;
+  text-align: left;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.server-folder__row:hover {
+  background: var(--bg-subtle);
+}
+
+.server-folder__row span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.server-folder__row svg {
+  color: var(--text-muted);
+  flex: 0 0 auto;
+}
+
+.server-folder__newrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  border-radius: var(--radius-sm);
+  background: var(--accent-tint);
+  color: var(--text-muted);
+}
+
+.server-folder__newrow input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 12.5px;
+}
+
+.server-folder__foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.server-folder__new-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.server-folder__foot-spacer {
+  flex: 1;
+}
+
+/* ============================================================
+   Asset version history + evolution graph (GitHub-style) —
+   rendered inside the structured asset detail panels.
+   ============================================================ */
+
+.assets-history__refs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.assets-history__ref {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-size: 12px;
+}
+
+/* The whole ref row is a click target that expands the commit drilldown. */
+.assets-history__ref-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
+  padding: 6px 10px;
+  background: none;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  border-radius: inherit;
+}
+
+.assets-history__ref-toggle:hover {
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+.assets-history__ref-badge {
+  flex: 0 0 auto;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-pill);
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.assets-history__ref--main .assets-history__ref-badge {
+  color: var(--accent-strong, var(--accent));
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  background: var(--accent-tint);
+}
+
+.assets-history__ref--accepted .assets-history__ref-badge {
+  color: #2f9e6e;
+  border-color: color-mix(in srgb, #2f9e6e 40%, var(--border));
+  background: color-mix(in srgb, #2f9e6e 8%, transparent);
+}
+
+.assets-history__ref--evolution .assets-history__ref-badge {
+  color: #8e6fd8;
+  border-color: color-mix(in srgb, #8e6fd8 40%, var(--border));
+  background: color-mix(in srgb, #8e6fd8 8%, transparent);
+}
+
+.assets-history__ref-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono, monospace);
+  font-size: 11.5px;
+  color: var(--text);
+}
+
+.assets-history__ref-hash {
+  flex: 0 0 auto;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.assets-history__ref-head {
+  flex: 0 0 auto;
+  font-size: 10px;
+  font-weight: 700;
+  color: #2f9e6e;
+  border: 1px solid color-mix(in srgb, #2f9e6e 40%, var(--border));
+  border-radius: var(--radius-pill);
+  padding: 1px 7px;
+}
+
+.assets-history__ref-date {
+  flex: 0 0 auto;
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.assets-history__evolution {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 8px 10px;
+  border: 1px dashed color-mix(in srgb, #8e6fd8 35%, var(--border));
+  border-radius: var(--radius-sm);
+}
+
+.assets-history__evolution-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 650;
+  color: #8e6fd8;
+}
+
+/* Commit timeline: dot + rail, GitHub commit-list flavor. */
+.assets-history__commits {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.assets-history__commit {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  padding: 0 4px;
+}
+
+.assets-history__commit-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 12px;
+  flex: 0 0 auto;
+}
+
+.assets-history__commit-dot {
+  width: 9px;
+  height: 9px;
+  margin-top: 7px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: var(--bg-panel);
+  flex: 0 0 auto;
+}
+
+.assets-history__commit-line {
+  flex: 1 1 auto;
+  width: 2px;
+  background: var(--border);
+}
+
+.assets-history__commit-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 4px 0 14px;
+}
+
+.assets-history__commit-subject {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-strong);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.assets-history__commit-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.assets-history__commit-meta code {
+  font-family: var(--font-mono, monospace);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0 5px;
+  background: var(--bg);
+}
+
+/* Commit rows expand into a diff drilldown. */
+.assets-history__commit-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  width: 100%;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  background: none;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.assets-history__commit-toggle:hover {
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+.assets-history__commit-toggle:hover .assets-history__commit-subject {
+  color: var(--accent-strong, var(--accent));
+}
+
+/* --- commit diff drilldown (what actually evolved) ------------------------ */
+
+.assets-diff {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 6px 0 10px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel, var(--bg));
+  min-width: 0;
+}
+
+.assets-diff__hint {
+  margin: 0;
+}
+
+.assets-diff__evolution {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, #8e6fd8 35%, var(--border));
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, #8e6fd8 6%, transparent);
+}
+
+.assets-diff__evolution-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 11.5px;
+  font-weight: 650;
+  color: #8e6fd8;
+}
+
+.assets-diff__evolution-head code {
+  font-family: var(--font-mono, monospace);
+  font-size: 10.5px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.assets-diff__verdict {
+  flex: 0 0 auto;
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-pill);
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.assets-diff__verdict--accept {
+  color: #2f9e6e;
+  border-color: color-mix(in srgb, #2f9e6e 40%, var(--border));
+  background: color-mix(in srgb, #2f9e6e 8%, transparent);
+}
+
+.assets-diff__verdict--rollback,
+.assets-diff__verdict--reject {
+  color: #d1553f;
+  border-color: color-mix(in srgb, #d1553f 40%, var(--border));
+  background: color-mix(in srgb, #d1553f 8%, transparent);
+}
+
+.assets-diff__evolution-summary,
+.assets-diff__evolution-behavior {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.assets-diff__evolution-behavior {
+  color: var(--text-muted);
+  font-size: 11.5px;
+}
+
+.assets-diff__files {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.assets-diff__files-count {
+  font-weight: 650;
+  color: var(--text);
+}
+
+.assets-diff__file {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 1px 8px;
+  background: var(--bg);
+}
+
+.assets-diff__file code {
+  font-family: var(--font-mono, monospace);
+  font-size: 10.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 320px;
+}
+
+.assets-diff__file-add {
+  color: #2f9e6e;
+  font-weight: 650;
+}
+
+.assets-diff__file-del {
+  color: #d1553f;
+  font-weight: 650;
+}
+
+.assets-diff__patch {
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  line-height: 1.5;
+  overflow: auto;
+  max-height: 380px;
+  white-space: pre;
+}
+
+.assets-diff__line {
+  display: block;
+  min-width: 0;
+}
+
+.assets-diff__line--add {
+  color: #2f9e6e;
+  background: color-mix(in srgb, #2f9e6e 8%, transparent);
+}
+
+.assets-diff__line--del {
+  color: #d1553f;
+  background: color-mix(in srgb, #d1553f 8%, transparent);
+}
+
+.assets-diff__line--hunk {
+  color: #8e6fd8;
+  background: color-mix(in srgb, #8e6fd8 7%, transparent);
+}
+
+.assets-diff__line--meta {
+  color: var(--text-muted);
+  font-weight: 650;
+}
+
+/* ============================================================
+   Repo import create wizard — responsive. Kept at the end of the
+   file so these equal-specificity overrides beat the base rules
+   above (a media block earlier in the file silently loses).
+   ============================================================ */
+
+@media (max-width: 980px) {
+  .repo-import-create__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .repo-import-create__aside {
+    position: static;
+  }
+}
+
+/* ============================================================
+   Phone-width (~390px WebView) adaptation for the Mathub list
+   and the asset-detail history cards that live in this file. Kept at the end so the overrides win the cascade.
+   ============================================================ */
+
+@media (max-width: 560px) {
+  /* Right-anchored 300px search box left dead space on a 358px content box;
+     stretch it across the row like the assets toolbar. */
+  .mathub-view__search {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* Tighter row padding buys the repo name + Clone button more room. */
+  .mathub-view__row {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+}
+
+@media (pointer: coarse) {
+  /* Desktop-sized controls (~30px) sit under the comfortable tap minimum. */
+  .mathub-view__clone-btn {
+    min-height: 40px;
+    padding: 8px 14px;
+  }
+
+  .mathub-view__pager-btn {
+    min-height: 40px;
+  }
+
+  /* ≥16px keeps iOS Safari/WebView from auto-zooming the focused field. */
+  .mathub-view__search input {
+    font-size: 16px;
+  }
+
+  /* Asset detail history cards: row-sized toggles need a taller tap area on
+     touch screens. */
+  .assets-history__ref-toggle {
+    min-height: 40px;
+  }
+
+  .assets-history__commit-toggle {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+}
+
+@media (max-width: 700px) {
+  .repo-import-create {
+    padding: 18px 14px 48px;
+  }
+
+  .repo-import-create__topbar {
+    margin-bottom: 16px;
+  }
+
+  .repo-import-create__section {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .repo-import-create__sources {
+    flex-wrap: wrap;
+  }
+
+  /* Comfortable touch targets for the provider + action buttons. */
+  .repo-import-create__source {
+    min-height: 40px;
+  }
+
+  .repo-import-create__url-box input {
+    /* ≥16px keeps iOS Safari from auto-zooming the focused field. */
+    font-size: 16px;
+  }
+
+  .repo-import-create__actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .repo-import-create__actions .assets-btn {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+  }
+}
