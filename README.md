@@ -12,6 +12,7 @@
 <p align="center">
   <a href="README_zh.md"><img src="https://img.shields.io/badge/中文-README-blue" alt="中文"></a>&nbsp;
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue.svg" alt="PolyForm Noncommercial 1.0.0"></a>&nbsp;
+  <a href="https://github.com/bjzgcai"><img src="https://img.shields.io/badge/Linked%20to-bjzgcai%20Org-blue?logo=github" alt="bjzgcai Org"></a>&nbsp;
   <img src="https://img.shields.io/badge/Linux-x86__64-FCC624?logo=linux&logoColor=black" alt="Linux x86_64">&nbsp;
   <img src="https://img.shields.io/badge/Node.js-24-339933?logo=nodedotjs&logoColor=white" alt="Node.js 24">&nbsp;
   <img src="https://img.shields.io/badge/Bun-1.3.14-000000?logo=bun&logoColor=white" alt="Bun 1.3.14">&nbsp;
