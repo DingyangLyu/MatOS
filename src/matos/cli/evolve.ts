@@ -232,17 +232,16 @@ function printHelp(io: MatOSEvolveIO): void {
   matos evolve gc [--dry-run|--apply] [--keep-days <n>] [--keep-runs <n>] [--json]
 
 MatOS self-evolution is direct-editor-first: critic-approved feedback and
-workflow evidence directly update scoped role, skill, workflow, tool, MCP, and
+workflow evidence directly update scoped role, skill, workflow, tool, MCP and
 knowledge assets. The approval policy decides how far it goes on its own: off
 (no automatic runs), manual (gate-passing edits wait as proposals for
-direct-editor approve/reject) or auto (gate-passing edits are accepted). Experience assets are legacy/optional provenance and are
-disabled by default. Repeated same-signature workflow failures cluster into
-replay clusters; reproduced clusters materialize promotion-gated stable
-improvement candidates. Failure2Asset turns teaching episodes into
-draft-first proposals, generated asset packs, and replayable regression
+direct-editor approve/reject) or auto (gate-passing edits are accepted).
+Experience assets are optional and disabled by default. Repeated
+same-signature workflow failures group into replay clusters, and reproduced
+clusters become improvement candidates. Failure2Asset turns teaching episodes
+into draft-first proposals, generated asset packs and replayable regression
 benchmarks (proposals generate -> draft-assets -> benchmarks draft/run, or the
-one-shot factory). Legacy native jobs, signals, promotions, hidden reflection
-forks, and apply queues have been removed from the product surface.
+one-shot factory).
 `)
 }
 
